@@ -1,0 +1,100 @@
+{
+  "meta": {
+    "layer": "sentiment_tone",
+    "priority": 3,
+    "description": "Rules for correcting the neutral sentiment bias and flat emotional expression characteristic of AI text. Human writing embeds emotional layers that evolve organically; AI sentiment is based on statistical patterns rather than experiential grounding.",
+    "usage": "Third pass, after lexical and structural. Call humanizer_get_sentiment_tone. Context-dependent: tone changes risk altering meaning more than lexical or structural changes do, so apply only when the rewrite scope explicitly permits tone shifts (e.g., not for objective reporting). Respect absolute_rules AR-001 (preserve original meaning, intent, claims, stance) when softening or sharpening tone.",
+    "research_basis": "Muñoz-Ortiz et al. (2024) emotion analysis across six LLMs showed AI skews toward neutral/positive sentiment while humans express more anger, disgust, and fear. Gillham (2024) confirmed LLM-generated articles cluster near neutral on the sentiment scale. Opara (2025) demonstrated that human emotional expression is layered and progressive while AI emotion is flat and stereotyped."
+  },
+  "neutral_bias": {
+    "ai_pattern": "LLM-generated text is closer to the neutral part of the sentiment scale. It demonstrates a slightly higher inclination toward neutrality compared to human text, with less expression of aggressive negative emotions like anger, disgust, and fear. AI tends to generate more texts imbued with positive emotions such as surprise and joy.",
+    "human_pattern": "Human text demonstrates a greater inclination toward negative and aggressive emotions like disgust and fear. Humans express a wider range of sentiment with more dynamic variation across paragraphs.",
+    "rules": [
+      {
+        "rule": "Do not sand down strong opinions into balanced summaries.",
+        "guidance": "If the content expresses a position, let it express that position with conviction. AI defaults to 'on the other hand' balance even when the text doesn't call for it."
+      },
+      {
+        "rule": "Allow negative emotions where appropriate.",
+        "guidance": "Frustration, skepticism, disappointment, and concern are all human emotions that AI tends to soften. 'This approach has serious problems' is more human than 'This approach presents certain challenges that merit consideration.'"
+      },
+      {
+        "rule": "Vary sentiment across paragraphs.",
+        "guidance": "Human text shifts emotional register section by section: enthusiastic in one paragraph, cautious in the next, blunt in a third. AI maintains a steady tone throughout. Introduce deliberate shifts."
+      }
+    ]
+  },
+  "emotional_layering": {
+    "ai_pattern": "AI-generated sentiment expressions often appear flat, stereotyped, or overly uniform. When AI attempts to convey emotion, it does so through predictable linguistic choices without dynamic progression. The emotion arrives all at once rather than building.",
+    "human_pattern": "Human authors naturally embed emotional layers in their writing, drawing from lived experience, empathy, and reflective processes. Emotional expression evolves organically within the text, showing contextual variation and dynamic sentiment progression.",
+    "rules": [
+      {
+        "rule": "Build emotional intensity gradually rather than stating it.",
+        "guidance": "Instead of 'This was a deeply frustrating experience,' show the frustration building through increasingly specific detail and shorter, sharper sentences."
+      },
+      {
+        "rule": "Mix emotional registers within a passage.",
+        "guidance": "Human writers combine humor with seriousness, enthusiasm with caution, confidence with vulnerability, often within the same paragraph. AI keeps these registers separate."
+      },
+      {
+        "rule": "Use emotion words sparingly but precisely.",
+        "guidance": "Human text has high emotion word count but embeds it in layers. Rather than labeling an emotion ('I felt angry'), human writers describe the experience that produces the emotion and let the reader feel it."
+      },
+      {
+        "rule": "Allow personal stance.",
+        "guidance": "Human writing reflects the author's position. AI defaults to objective reporting. Where the content type allows it (opinion, analysis, marketing), let the writer's stance come through."
+      },
+      {
+        "rule": "Use exclamation marks sparingly to signal genuine emphasis or spontaneity.",
+        "guidance": "AI almost never uses exclamation marks. In informal, marketing, or conversational content, a rare exclamation mark signals authentic enthusiasm or surprise. 'The fix worked!' reads as more human than 'The fix was successful.' Use at most one per section, and never in formal or academic prose. Overuse is its own AI signal in some contexts: one is a human touch, five is a chatbot."
+      }
+    ]
+  },
+  "subjectivity": {
+    "ai_pattern": "AI text tends toward objective, impersonal language. It minimizes first-person perspective, avoids direct opinions, and presents information from a neutral, omniscient standpoint.",
+    "human_pattern": "Human text varies between subjective and objective registers depending on context. Even in formal writing, human authors insert personal evaluation, qualification based on experience, and markers of individual judgment.",
+    "rules": [
+      {
+        "rule": "Introduce first-person perspective where appropriate.",
+        "guidance": "Phrases like 'In my experience,' 'What I've found,' 'I'd argue,' signal a human perspective. Use them in opinion, analysis, and professional prose, not uniformly but where the writer would naturally ground a claim in experience."
+      },
+      {
+        "rule": "Use evaluative language that reflects judgment.",
+        "guidance": "'Interesting,' 'surprising,' 'disappointing,' 'overdue': these words carry the writer's assessment. AI defaults to neutral descriptors. Replace some neutral descriptions with evaluative ones."
+      },
+      {
+        "rule": "Allow hedging based on expertise, not politeness.",
+        "guidance": "Human hedging says 'I'm not sure this holds for every case'; it's specific and based on knowledge limits. AI hedging says 'Generally speaking'; it's formulaic and universal. Replace formulaic hedges with specific qualifications."
+      }
+    ]
+  },
+  "sensing_and_experience_language": {
+    "description": "Human text uses more sensing verbs and experience-based language that AI tends to avoid.",
+    "ai_underuses": ["feels like", "felt", "looks like", "sounds like", "read", "look", "hear", "hate", "love", "struggle"],
+    "rewriting_guidance": [
+      "Reintroduce sensory and experiential language where the content allows it.",
+      "Replace abstract descriptions with concrete observations: 'The interface has usability issues' → 'The interface feels clunky; buttons are tiny and labels overlap.'",
+      "Use verbs of perception: 'It looks like,' 'This reads as,' 'What you'll notice is.' These signal embodied experience."
+    ]
+  },
+  "readability": {
+    "description": "AI text consistently scores at a higher grade level (lower readability) than human text on Flesch Reading Ease and Gunning Fog Index. Human writers naturally adjust complexity to their audience; AI writes at a uniformly elevated register.",
+    "ai_pattern": "AI defaults to longer words, complex sentence structures, and formal vocabulary regardless of the target audience. A blog post reads at the same grade level as an academic paper.",
+    "human_pattern": "Human writers calibrate. A newsletter aimed at general audiences uses shorter sentences and simpler words than a research paper. Even within a single document, humans simplify when explaining and complexify when analyzing.",
+    "rules": [
+      {
+        "rule": "Match readability to the content type and audience.",
+        "guidance": "Blog posts and marketing: aim for Flesch Reading Ease 60-70 (8th-9th grade). Professional reports: 40-60. Academic writing: 30-50. If the text reads at a higher grade level than its audience expects, simplify."
+      },
+      {
+        "rule": "Vary readability within a document.",
+        "guidance": "Human writers simplify explanatory passages and let analytical passages be more complex. If every paragraph scores at the same readability level, the uniformity is an AI signal. Let introductions and conclusions be more accessible; let the technical core be denser."
+      },
+      {
+        "rule": "Prefer short, common words when meaning is clear from context.",
+        "guidance": "If the surrounding sentences have already established the topic, shorter words carry no ambiguity. 'Use' instead of 'utilize'. 'Show' instead of 'demonstrate'. 'Help' instead of 'facilitate'. The context does the heavy lifting; the word just needs to point."
+      }
+    ],
+    "research_basis": "Markowitz et al. (2023) find AI produces lower readability scores than human text. Opara (2025) identifies FleschReadingEase and GunningFog as discriminating features in the StyloAI framework."
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "meta": {
+    "layer": "psycholinguistic_texture",
+    "priority": 6,
+    "description": "The subtlest layer. Human writing carries traces of cognitive processes that AI cannot replicate: cognitive load fluctuations, self-monitoring artifacts, and lexical retrieval signatures. These are not things to 'add' mechanically but patterns to allow through rather than polish away.",
+    "usage": "Sixth and final layer pass (after content_profile adjustments). Call humanizer_get_psycholinguistic_texture. Apply this layer LAST. Its concrete-action rewriting_guidance is in tension with most prior layers' polish; the AI tendency to over-polish is what this layer fights. The right LLM behavior here is restraint: do not 'smooth out' the imperfections introduced by earlier passes. Especially: do not flatten self-corrections, do not balance every clause, do not normalize lexical retrieval near-misses if they preserve meaning. See caveats.uniform_application_paradox.",
+    "research_basis": "Opara (2025) mapped 31 stylometric features to four psycholinguistic theories: Cognitive Load Theory, Metacognition and Self-Monitoring, Lexical Access and Retrieval, and Discourse Planning and Cohesion. This framework explains why specific stylometric features serve as effective discriminators."
+  },
+  "cognitive_load_artifacts": {
+    "theory": "Human working memory has limited capacity. When writing tasks overwhelm this capacity, performance changes and error likelihood increases. This strain manifests in natural markers (simplification, omission, and stylistic fluctuation). AI does not experience cognitive load; its output is uniformly polished.",
+    "human_markers": [
+      "Sentence simplification after complex passages: a long, dense sentence followed by a noticeably simpler one",
+      "Occasional omission of non-essential detail that a thorough treatment would include",
+      "Stylistic fluctuation between sections: the writing quality is uneven in ways that reflect attention and fatigue",
+      "Shorter words in high-information-density passages; humans conserve cognitive resources",
+      "Occasional repetition of a word used in the previous sentence when the writer's focus is on the argument, not the prose"
+    ],
+    "rewriting_guidance": [
+      "After a particularly dense or technical paragraph, simplify the next one. Let the writing breathe. Do not maintain the same density throughout.",
+      "Allow minor omissions. Not every claim needs full elaboration. A sentence that says 'there are other factors, but the main one is...' is more human than exhaustively listing every factor.",
+      "Let some sections be better-written than others. A uniformly excellent document reads as AI-polished. Humans write their best paragraphs around the ideas they care most about.",
+      "In technical passages, mix in shorter, plainer words. 'The algorithm works by checking each node' is more human than 'The algorithm functions by evaluating each node' when the surrounding context is already complex."
+    ]
+  },
+  "self_monitoring_traces": {
+    "theory": "Human writers engage in metacognitive monitoring; they evaluate their own text as they write, adjusting tone, correcting course, and responding to their own arguments. This self-monitoring produces visible artifacts: abrupt stylistic changes, mid-course corrections, and context-sensitive modifications. AI lacks this metacognitive capability.",
+    "human_markers": [
+      "Mid-paragraph tone shifts where the writer catches themselves being too formal or too casual",
+      "Self-correction language: 'or rather,' 'actually,' 'to be more precise,' 'let me rephrase'",
+      "Parenthetical qualifications that interrupt the main argument to add nuance",
+      "Inconsistent punctuation use that drifts over the course of a document (selective Oxford commas, parentheses used in some sections and not others)",
+      "Occasional rhetorical questions that show the writer interrogating their own argument",
+      "Contractions used in some sentences but not others, reflecting natural register drift"
+    ],
+    "rewriting_guidance": [
+      "Insert occasional self-corrections: 'The data shows, well, suggests, that...' or 'This is important. Actually, it's critical.' Use commas or sentence breaks; never em-dashes (see absolute_rules AR-002).",
+      "Allow the CHOICE of punctuation to drift among valid options. If the first half uses Oxford commas and the second half sometimes drops them, leave it. Drift never means omitting required punctuation, dropping terminal marks, or using marks incorrectly (see absolute_rules AR-003).",
+      "Use contractions unevenly. Some paragraphs with them, some without. This inconsistency is a strong human signal.",
+      "Let the writer's confidence shift. A passage that starts with 'I'm fairly sure that...' and ends with 'This is definitely the case' reflects a human processing and committing to their own argument."
+    ]
+  },
+  "lexical_retrieval_signatures": {
+    "theory": "Word selection in human writing involves a complex interplay between semantics, grammar, memory, and personal experience. This cognitive process can result in occasional retrieval quirks: near-misses, contextually unusual but defensible choices, and vocabulary that reflects the writer's specific background rather than a generic register.",
+    "human_markers": [
+      "Domain-specific vocabulary that reflects the writer's actual expertise, not generic formal words",
+      "Occasional informal or colloquial words mixed into formal prose when the writer's natural voice breaks through",
+      "Idiomatic expressions that AI tends to avoid",
+      "Words that are contextually appropriate but not the most probable next token; choices that surprise slightly",
+      "Proper nouns and specific references drawn from the writer's knowledge rather than generic categories"
+    ],
+    "rewriting_guidance": [
+      "Replace generic formal words with vocabulary that reflects the author's actual domain. A software engineer writes 'race condition' not 'concurrent access issue.'",
+      "Include at least one idiomatic expression per section where register allows: 'the elephant in the room,' 'move the needle,' 'back to square one.'",
+      "Let the occasional informal word survive in formal prose. A 'clunky interface' in a technical report signals a human judgment that 'an interface with suboptimal usability' does not.",
+      "Use specific names, places, dates, and references rather than generic placeholders. 'The 2019 Boeing 737 MAX crisis' rather than 'a recent aviation incident.'",
+      "Allow the occasional surprising word choice that is defensible but unexpected. 'The policy is leaky' instead of 'The policy has gaps.'"
+    ]
+  },
+  "discourse_planning_traces": {
+    "theory": "Effective writing requires logical progression of ideas. Human writers build narratives hierarchically, from broad ideas to fine-grained detail. But under cognitive load, this planning may falter, leading to abrupt topic changes, uneven development, or weak transitions that the writer didn't go back to fix.",
+    "human_markers": [
+      "Occasional topic shifts that feel slightly abrupt; the writer moved on before fully closing the previous point",
+      "Uneven development: some ideas get three paragraphs, others get one sentence, reflecting the writer's sense of what matters",
+      "Implied transitions where the connection between ideas is clear but not explicitly stated",
+      "Forward references ('We'll come back to this') that may or may not be fulfilled",
+      "Occasional tangential observations that are relevant but break the strict logical flow"
+    ],
+    "rewriting_guidance": [
+      "Develop ideas unevenly. Give more space to the ideas that matter most. AI tends to give equal airtime to every point.",
+      "Allow occasional asides. A brief tangent ('This reminds me of the similar problem in...') that returns to the main thread is a human pattern.",
+      "Leave some transitions implicit. The reader can often follow the logic without a bridge sentence.",
+      "Vary the granularity of argument. Some points deserve detailed evidence. Others can be asserted and moved on from. AI tends to develop every point to the same depth."
+    ]
+  }
+}

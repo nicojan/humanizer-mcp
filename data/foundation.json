@@ -1,0 +1,302 @@
+{
+  "meta": {
+    "name": "Human-Patterned Language",
+    "abbreviation": "HPL",
+    "version": "1.3.0",
+    "purpose": "Universal reference for rewriting AI-generated text into human-patterned prose. Brand-agnostic. Works as a standalone tool or as a final editing pass after any brand-specific style system.",
+    "usage_modes": {
+      "full_guide": "Use humanizer_get_guide only for major writing tasks (new articles, full rewrites). Returns all nine data dimensions (foundation, the six prioritized layers, anti_patterns, caveats) plus the resolved content_profile. Worth the token cost when starting from scratch.",
+      "summary": "Use humanizer_get_summary for quick edits, revision passes, or orientation. Returns absolute_rules, core principle, priority hierarchy, and a compact content profile (roughly 10-15% of the tokens of the full guide).",
+      "targeted": "For single-dimension fixes, call individual tools: humanizer_get_lexical_patterns for word-level cleanup, humanizer_get_structural_patterns for sentence variety, humanizer_get_discourse_cohesion for transitions, etc.",
+      "minimum_viable": "For the lightest touch, call humanizer_get_foundation alone. It contains the absolute_rules, core principle, two axes, and priority hierarchy. Often enough for Claude to self-correct.",
+      "with_style_mcp": "When used alongside Style MCP, HPL runs last. The brand system shapes voice and intent; HPL edits for structural human-likeness. Some rules overlap, and this reinforces rather than conflicts.",
+      "full_traversal": "For a complete rewrite that surveys every rule in the data set, call humanizer_get_application_protocol first. It returns the ordered phase plan (pre-flight absolute rules, lexical, structural, sentiment, discourse, content-profile, psycholinguistic, anti-patterns, post-flight caveats) with the JSON rule_paths to consider at each phase. Walk the protocol in order; each rule visited need not be applied (uniform application is itself an AI signal), but every rule must be considered for the coverage guarantee to hold."
+}
+  },
+  "absolute_rules": {
+    "description": "Non-negotiable directives that override every other rule, example, or piece of guidance in this dataset. Apply these before any layer-specific rule. If any other rule, example, or 'human_example' string in this dataset appears to contradict an absolute rule, the absolute rule wins.",
+    "rules": [
+      {
+        "id": "AR-001",
+        "title": "Preserve the original meaning, intent, and content of the source text.",
+        "priority": "highest",
+        "directive": "This ruleset describes HOW to rewrite, not WHAT to write. When applying any humanization rule, you MUST NOT change the inherent goal, meaning, claims, facts, argument, structure of reasoning, named entities, numbers, dates, quotations, or stance of the source text. This is a linguistic, grammatical, and stylistic revision only. Substitute words, restructure sentences, vary punctuation, and reshape rhythm. Do not add information that was not present, do not delete information that was present, do not invert claims, do not soften firm positions, and do not invent specifics (names, statistics, anecdotes) to make text 'feel more human'. If a humanization rule cannot be applied to a given passage without altering meaning, skip that rule for that passage."
+      },
+      {
+        "id": "AR-002",
+        "title": "Never use em-dashes (—).",
+        "priority": "highest",
+        "directive": "The em-dash (Unicode U+2014, the long dash, also typed as '--' in some editors) has become one of the most reliable AI tells in current detector landscapes and informal human reading. Do not use em-dashes under any circumstance, including for parenthetical asides, pivots, emphasis, ranges, or attributions. For parenthetical asides, use commas, parentheses, or restructure into two sentences. For pivots between two independent clauses, use a period, semicolon, or colon, never a bare comma (a comma joining two independent clauses is a comma splice, AR-003). For ranges, use 'to' or an en-dash (–) where typographically appropriate. When revising source text that already contains em-dashes, replace every one with a valid substitute mark (period, comma, semicolon, colon, or parenthesis per AR-003); never delete the em-dash and leave the surrounding text unpunctuated. When the em-dash joined two independent clauses, substitute a period, semicolon, or colon rather than a comma, which would create a comma splice. This rule overrides any other guidance in this dataset that suggests, models, or demonstrates em-dash use. Historical examples elsewhere in this data that still contain em-dashes are bugs, not patterns to imitate."
+      },
+      {
+        "id": "AR-003",
+        "title": "Punctuation must be grammatically correct and complete.",
+        "priority": "highest",
+        "directive": "All punctuation in the output must conform to standard English usage. Every sentence ends with a terminal mark (period, question mark, or exclamation point). Commas separate clauses and items where required and do not produce comma splices. Semicolons join only independent clauses or separate complex list items. Colons introduce explanations, lists, or quotations. Parentheses and quotation marks are balanced. Do not drop required punctuation, do not stack marks (e.g. '.,' or ';.'), and do not introduce run-ons or accidental fragments while restructuring. Stylistic fragments for emphasis are allowed only when clearly intentional and terminated with a period. The 'punctuation drift' guidance elsewhere in this dataset (structural_patterns.punctuation_diversity rule on drift, psycholinguistic_texture.self_monitoring_traces) governs the CHOICE among valid options (Oxford comma on/off, semicolon vs. period to join related clauses, parentheses vs. commas for an aside), not the presence or correctness of marks. Drift is never license to omit required punctuation or to use a mark incorrectly. AR-002 em-dash replacement must always SUBSTITUTE a valid mark, never delete one."
+      }
+    ]
+  },
+  "enforcement": {
+    "description": "Two-tier enforcement model. Tier 1 prohibitions must be eliminated; Tier 2 stylistic moves are applied non-uniformly.",
+    "zero_tolerance": {
+      "description": "Tier-1 prohibitions. Must not appear in output. Non-uniformity does NOT apply to these.",
+      "members": [
+        "absolute_rules AR-002 (em-dash)",
+        "absolute_rules AR-003 (punctuation correctness)",
+        "banned_structures entries with gate=hard"
+      ]
+    },
+    "non_uniformity_scope": "The directive 'do not apply changes uniformly' (core_principle, application_protocol.uniformity_directive, caveats.uniform_application_paradox) governs Tier-2 stylistic moves ONLY: word substitution, hedging, burstiness, texture, and tone. It is never a license to leave a Tier-1 prohibition (em-dash or banned structure) in the text.",
+    "verification": "After revising, call humanizer_check_text with the candidate output. Resolve every hard_violation, rewrite or justify each must_clear item, and re-run until prohibitions_clear is true. This loop is mandatory, not optional polish; see primary_usage."
+  },
+  "primary_usage": {
+    "statement": "The write -> check -> fix loop is the primary, required path to adherence, not optional polish. Read the rules, draft, then call humanizer_check_text and resolve every finding, re-running until prohibitions_clear is true.",
+    "why": "Reading the rules is necessary but insufficient. In deterministic evaluation (see eval/FINDINGS.md, 2026-06-29), reading the full rule payload roughly halved house-style violations (-47% to -67% weighted findings per 1k words, across a strong and a weak writer), yet single-pass output still carried em-dashes, comma splices, and banned structures. The verification loop drove the remaining violations to zero. The effect was larger for the weaker writer, so the loop matters most for the 'any LLM' consumer.",
+    "evidence_scope": "Direction-finding only (small benchmark, Claude-family writers). The loop's value is established for ADHERENCE, not as a human-likeness improver: the eval's texture proxies are unvalidated against human judgment, and a 2026-06-29 re-scoring found the loop's lexical-diversity texture trends toward the AI side, not toward human, so no human-likeness gain is claimed. All rules are retained; this concerns how to use the MCP, not what it bans."
+  },
+  "core_principle": {
+    "statement": "Do not apply changes uniformly.",
+    "explanation": "The single most detectable property of AI-generated text is consistency: consistent sentence length, consistent transitions, consistent hedging, consistent tone. Human text is locally inconsistent while remaining globally coherent. Every rule in this system should be applied selectively and unevenly. If a rule says 'use contractions,' that means use them in some places and not others. If a rule says 'vary sentence length,' that means some paragraphs should vary dramatically and others barely at all. This non-uniformity applies to Tier 2 stylistic moves only; see enforcement.non_uniformity_scope. Tier 1 prohibitions (em-dashes, banned structures) are never subject to it.",
+    "research_basis": "Stylometric analysis confirms that LLM outputs cluster tightly and uniformly, while human texts form broader, more heterogeneous clusters reflecting diversity of individual expression. Uniform application of human-patterning rules is itself an AI signal."
+  },
+  "two_axes": {
+    "perplexity": {
+      "definition": "How predictable individual word choices are to a probabilistic language model.",
+      "low": "Every token is the most probable next token. Example: 'It is important to consider the various factors.'",
+      "high": "Contextually appropriate but statistically surprising. Example: 'The numbers don't lie, but they do omit.'",
+      "human_tendency": "Higher perplexity. Human writers draw on semantic memory, lived experience, and personal vocabulary, producing word choices that are locally motivated rather than globally optimized."
+    },
+    "burstiness": {
+      "definition": "How varied sentence structure, length, and complexity are across a passage.",
+      "low": "Five consecutive sentences of 14–18 words, all Subject-Verb-Object.",
+      "high": "A 6-word sentence, then a 34-word sentence with two embedded clauses, then a fragment.",
+      "human_tendency": "Higher burstiness. Human writers show wider sentence-length distributions with greater standard deviation, reflecting natural variation in cognitive load, emphasis, and rhetorical intent."
+    },
+    "summary": "Human writing trends toward higher perplexity and higher burstiness. AI-generated text trends toward uniformity in both. Rewriting is the process of introducing controlled irregularity along both axes without sacrificing clarity or intent."
+  },
+  "priority_hierarchy": [
+    {
+      "order": 1,
+      "layer": "lexical_patterns",
+      "action": "Remove AI-correlated vocabulary",
+      "impact": "highest",
+      "risk": "lowest"
+    },
+    {
+      "order": 2,
+      "layer": "structural_patterns",
+      "action": "Break structural uniformity",
+      "impact": "high",
+      "risk": "moderate"
+    },
+    {
+      "order": 3,
+      "layer": "sentiment_tone",
+      "action": "Adjust register, emotion, and stance",
+      "impact": "moderate",
+      "risk": "context-dependent"
+    },
+    {
+      "order": 4,
+      "layer": "discourse_cohesion",
+      "action": "Vary transitions and cohesive devices",
+      "impact": "moderate",
+      "risk": "low"
+    },
+    {
+      "order": 5,
+      "layer": "content_profile",
+      "action": "Apply content-type-specific adjustments",
+      "impact": "refinement",
+      "risk": "low"
+    },
+    {
+      "order": 6,
+      "layer": "psycholinguistic_texture",
+      "action": "Introduce cognitive load artifacts and human texture",
+      "impact": "subtle",
+      "risk": "lowest"
+    }
+  ],
+  "section_level_variation": {
+    "principle": "Human writing varies by section, not just globally. Different parts of a document should read differently.",
+    "profiles": {
+      "instructions_or_tutorials": {
+        "burstiness": "lower",
+        "perplexity": "lower",
+        "priority": "Clarity. Short, direct sentences. Uniform structure is acceptable here."
+      },
+      "narrative_or_creative": {
+        "burstiness": "higher",
+        "perplexity": "higher",
+        "priority": "Rhythm and surprise. Varied sentence length, unexpected word choices, fragments for emphasis."
+      },
+      "academic_or_technical": {
+        "burstiness": "moderate, clustered within sections",
+        "perplexity": "moderate to high",
+        "priority": "Domain-specific terminology used precisely. Burstiness appears through clustered jargon that relaxes elsewhere."
+      },
+      "opinion_or_argumentation": {
+        "burstiness": "moderate to high",
+        "perplexity": "moderate to high",
+        "priority": "Engagement and emphasis. Rhetorical questions, short emphatic sentences, deliberate repetition."
+      }
+    }
+  },
+  "application_protocol": {
+    "description": "Ordered traversal that visits every rule path in the data set. An LLM client that walks this protocol phase-by-phase, retrieves the payloads at the listed paths, and considers each rule in turn is guaranteed to have surveyed the complete rule set. 'Survey' is not 'apply uniformly'; see uniformity_directive below.",
+    "uniformity_directive": "Walking this protocol does NOT mean applying every rule. The single most detectable property of AI-generated text is consistency. For every rule visited, the LLM must decide whether the current passage warrants the intervention. Some passages should remain barely touched even when many rules technically apply. Some paragraphs should receive heavy intervention. The distribution of interventions across the document must itself be irregular. See caveats.uniform_application_paradox. NOTE: this directive governs Tier-2 stylistic moves only (see enforcement.non_uniformity_scope). It is never a reason to leave a Tier-1 prohibition in place.",
+    "coverage_invariant": "Completing every phase below, and considering each rule_path listed within, satisfies the coverage requirement for the rule set. New phases must be added here when new layer files land; new rule_paths must be added when new sub-objects are introduced inside existing layers.",
+    "phases": [
+      {
+        "phase": 0,
+        "name": "Pre-flight: absolute rules",
+        "purpose": "Apply non-negotiable directives. Veto-style: any violation must be resolved before later phases. Overrides every other rule, example, or piece of guidance in the data set.",
+        "tools": [{"name": "humanizer_get_foundation"}],
+        "rule_paths": [
+          "foundation.absolute_rules.rules[*]"
+        ],
+        "stop_condition": "Every absolute_rules entry is satisfied in the candidate text. Specifically: meaning preserved (AR-001), no em-dashes anywhere (AR-002), all punctuation grammatically correct and complete (AR-003)."
+      },
+      {
+        "phase": 1,
+        "name": "Lexical pass",
+        "purpose": "Substitute flagged words and phrases, denominalize, balance abstract/concrete, repair function-word distribution. Highest-impact single intervention.",
+        "tools": [{"name": "humanizer_get_lexical_patterns", "params": {"risk_level": "optional; filter by 'high'|'moderate'|'low'"}}],
+        "rule_paths": [
+          "lexical_patterns.flagged_verbs[*]",
+          "lexical_patterns.flagged_adjectives[*]",
+          "lexical_patterns.flagged_nouns[*]",
+          "lexical_patterns.flagged_transitions[*]",
+          "lexical_patterns.flagged_qualifiers.items[*]",
+          "lexical_patterns.adverb_patterns.flagged_ai_adverbs[*]",
+          "lexical_patterns.function_word_patterns",
+          "lexical_patterns.vocabulary_diversity",
+          "lexical_patterns.word_length_patterns",
+          "lexical_patterns.nominalization",
+          "lexical_patterns.abstract_concrete_balance",
+          "lexical_patterns.credibility_insistence"
+        ],
+        "stop_condition": "Every flagged term considered; substitutions applied contextually per lexical_patterns.meta.application_rule, NOT uniformly."
+      },
+      {
+        "phase": 2,
+        "name": "Structural pass",
+        "purpose": "Break structural uniformity in sentence length, syntactic construction, and punctuation. Addresses burstiness, the most measurable axis of human-likeness.",
+        "tools": [{"name": "humanizer_get_structural_patterns"}],
+        "rule_paths": [
+          "structural_patterns.sentence_length.rules[*]",
+          "structural_patterns.syntactic_variety.rules[*]",
+          "structural_patterns.punctuation_diversity.rules[*]",
+          "structural_patterns.pos_distribution_targets",
+          "structural_patterns.n_gram_patterns",
+          "structural_patterns.sentence_starter_diversity",
+          "structural_patterns.paragraph_dynamics",
+          "structural_patterns.enumeration_patterns",
+          "structural_patterns.cross_segment_variation"
+        ],
+        "stop_condition": "Sentence-length variance increased; syntactic variety introduced; punctuation choice varies across sections without being uniform; rules applied unevenly across sections; all output punctuation grammatically correct per AR-003 (every sentence has a terminal mark, no stacked marks, no comma splices)."
+      },
+      {
+        "phase": 3,
+        "name": "Sentiment / tone pass",
+        "purpose": "Adjust register, emotion, and stance. Context-dependent; tone changes risk altering meaning more than other layers. Apply only when the rewrite scope explicitly permits tone shifts.",
+        "tools": [{"name": "humanizer_get_sentiment_tone"}],
+        "rule_paths": [
+          "sentiment_tone.neutral_bias",
+          "sentiment_tone.emotional_layering",
+          "sentiment_tone.subjectivity_markers",
+          "sentiment_tone.sensing_and_experience_language"
+        ],
+        "stop_condition": "Tone shifts respect AR-001 (preserve meaning, intent, claims, stance)."
+      },
+      {
+        "phase": 4,
+        "name": "Discourse cohesion pass",
+        "purpose": "Vary transitions, discourse markers, and cohesive devices. Most common LLM tic this fights: paragraph-opening formulaic transitions.",
+        "tools": [{"name": "humanizer_get_discourse_cohesion"}],
+        "rule_paths": [
+          "discourse_cohesion.discourse_markers",
+          "discourse_cohesion.modal_epistemic_markers",
+          "discourse_cohesion.cohesive_devices",
+          "discourse_cohesion.transition_phrases",
+          "discourse_cohesion.repetition_patterns",
+          "discourse_cohesion.comparative_superlative_use",
+          "discourse_cohesion.explicit_antithesis_and_reused_shape"
+        ],
+        "stop_condition": "No formulaic transition repetition; modal/epistemic markers distributed unevenly; cohesive devices not pattern-matched."
+      },
+      {
+        "phase": 5,
+        "name": "Content-type adjustment",
+        "purpose": "Modulate the prior passes by the content type. Different content needs different perplexity/burstiness targets and different layer aggressiveness.",
+        "tools": [{"name": "humanizer_get_content_profile", "params": {"content_type": "academic|marketing|tech|prose|all"}}],
+        "rule_paths": [
+          "content_profiles.profiles.<resolved-type>.layer_adjustments",
+          "content_profiles.profiles.<resolved-type>.special_considerations[*]"
+        ],
+        "stop_condition": "Layer-aggressiveness from the resolved profile applied as a multiplier to earlier passes; special_considerations honored."
+      },
+      {
+        "phase": 6,
+        "name": "Psycholinguistic texture pass",
+        "purpose": "Subtlest layer. Allow human cognitive-process traces through rather than polishing them away. The right behavior here is restraint, not addition.",
+        "tools": [{"name": "humanizer_get_psycholinguistic_texture"}],
+        "rule_paths": [
+          "psycholinguistic_texture.cognitive_load_artifacts",
+          "psycholinguistic_texture.self_monitoring_traces",
+          "psycholinguistic_texture.lexical_retrieval_signatures",
+          "psycholinguistic_texture.discourse_planning_traces"
+        ],
+        "stop_condition": "No flattening of self-corrections; no over-balancing of clauses; lexical retrieval near-misses preserved where meaning survives."
+      },
+      {
+        "phase": 7,
+        "name": "Anti-patterns cross-check",
+        "purpose": "Concrete before/after rewrite templates. Catch passages where the layer-level rules left the LLM uncertain how to transform something.",
+        "tools": [{"name": "humanizer_get_anti_patterns", "params": {"category": "optional; lexical|structural|sentiment|discourse|psycholinguistic"}}],
+        "rule_paths": [
+          "anti_patterns.patterns[*]"
+        ],
+        "stop_condition": "Every anti-pattern whose 'before' matches a passage in the candidate text has been transformed toward the corresponding 'after'."
+      },
+      {
+        "phase": 8,
+        "name": "Post-flight: caveats sanity",
+        "purpose": "Verify no over-application; respect ethical guidance.",
+        "tools": [{"name": "humanizer_get_caveats"}],
+        "rule_paths": [
+          "caveats.core_caveats[*]",
+          "caveats.uniform_application_paradox",
+          "caveats.newer_model_convergence",
+          "caveats.ethical_considerations"
+        ],
+        "stop_condition": "Distribution of interventions is irregular across the document (no uniform pattern of 'one fragment per paragraph', 'one informal word per paragraph', etc.). Ethical_considerations honored."
+      },
+      {
+        "phase": 9,
+        "name": "Verification loop",
+        "purpose": "Close the loop on mechanical prohibitions and surface remaining misses. Deterministic; no judgment skipped silently.",
+        "tools": [{"name": "humanizer_check_text", "params": {"text": "the candidate output", "content_type": "academic|marketing|tech|prose"}}],
+        "rule_paths": [
+          "checker.hard_violations[*]",
+          "checker.must_clear[*]",
+          "checker.manual_review[*]"
+        ],
+        "stop_condition": "humanizer_check_text returns prohibitions_clear=true; every must_clear item has been rewritten or justified; manual_review items self-attested."
+      }
+    ]
+  },
+  "ecosystem_workflow": {
+    "pipeline_position": "layer_2",
+    "role": "Human texture. Edits for human-likeness after brand voice is applied.",
+    "call_order": "Call mcp-humanizer LAST, after mcp-writer-for-human has shaped the draft's voice and tone.",
+    "upstream": {
+      "server": "mcp-writer-for-human",
+      "url": "https://mcp-writer-for-human.forhuman.ca/mcp",
+      "role": "Brand voice: tone, word choice, audience, formatting.",
+      "relationship": "mcp-writer-for-human rules take precedence for brand voice decisions. mcp-humanizer never overrides brand tone; it only adjusts structural and psycholinguistic texture."
+    },
+    "overlap_policy": "Some rules appear in both servers (e.g., shared word avoidances). When overlap exists, both apply for their respective reasons. mcp-writer-for-human flags words for brand tone; mcp-humanizer flags them as AI detection signals."
+  }
+}

@@ -1,0 +1,5 @@
+If you've installed a Python package and had something break unexpectedly, you've already met the problem a virtual environment solves. When you install packages globally — straight onto your system's Python — every project shares the same pool of libraries. That works fine until two projects need different versions of the same library, or until you update something for one project and quietly break another.
+
+A virtual environment is a self-contained folder that holds its own copy of Python and its own set of installed packages, separate from everything else on your machine. You create one per project, activate it when you're working, and anything you install stays contained to that environment. When you're done, you deactivate it. Nothing bleeds over.
+
+This tutorial walks you through creating and activating a virtual environment using Python's built-in `venv` module. No additional tools needed — if you have Python 3.3 or later, you already have everything required.

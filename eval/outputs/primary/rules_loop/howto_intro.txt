@@ -1,0 +1,7 @@
+If you've been installing Python packages directly on your machine, you've probably already hit the problem: different projects want different versions of the same library, and they start stepping on each other. A virtual environment is the fix.
+
+The idea is simple. A virtual environment is a self-contained folder that holds its own copy of Python and its own installed packages, completely separate from everything else on your system. You activate it before you work on a project, and whatever you install stays inside that folder. Your global Python setup is untouched.
+
+Once you get used to it, you'll use one for every project automatically. It takes about two minutes to set up, and it saves the kind of debugging session where you can't figure out why something broke on Tuesday that worked fine on Monday.
+
+This tutorial walks you through creating and activating a virtual environment on Windows, macOS, and Linux. No prior experience needed.

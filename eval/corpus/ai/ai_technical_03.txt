@@ -1,0 +1,3 @@
+If you've spent any time administering a Linux system, you've run into systemd, whether you wanted to or not. It's the first thing that starts when the machine boots, and it's responsible for bringing nearly everything else to life. At the heart of it sits a single concept: the unit.
+
+A unit is just systemd's name for something it knows how to manage. That might be a background service, a mounted filesystem, a network socket, or a scheduled timer. Each one is described by a plain-text configuration file called a unit file, and once you can read and write those, systemd stops feeling like magic. This guide walks through what units are, the common types you'll meet, and how to write a unit file of your own.

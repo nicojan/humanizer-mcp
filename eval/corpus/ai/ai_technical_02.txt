@@ -1,0 +1,3 @@
+When you install a package in Python, it has to go somewhere, and by default it lands in a single shared location tied to your system's Python. That works fine until you're juggling two projects that need different versions of the same library. Suddenly one project breaks every time you set up the other, and you're left wondering what changed.
+
+Virtual environments solve this. A virtual environment is an isolated folder with its own copy of Python and its own private set of installed packages, walled off from everything else. In this tutorial, we'll look at how Python actually finds and loads the packages you import, why the default shared setup causes trouble, and how giving each project its own environment makes the whole problem disappear.

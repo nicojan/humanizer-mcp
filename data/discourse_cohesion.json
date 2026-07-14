@@ -1,0 +1,121 @@
+{
+  "meta": {
+    "layer": "discourse_cohesion",
+    "priority": 4,
+    "description": "Rules for varying transitions, discourse markers, and cohesive devices. AI text relies heavily on formulaic connective tissue and uses discourse markers less frequently and more repetitively than human text.",
+    "usage": "Fourth pass, after sentiment. Call humanizer_get_discourse_cohesion. The most common LLM tic this layer fights is paragraph-opening formulaic transitions ('Furthermore', 'Moreover', 'Additionally'); see flagged_transitions in lexical_patterns for the word-level list. Apply unevenly; do not replace every transition.",
+    "research_basis": "Terčon & Dobrovoljc (2025) survey reports discourse markers are less frequent in AI text and more repetitive. Herbold et al. (2023) found AI text contains fewer modal expressions and epistemic markers. Wu (2025) found AI relies heavily on cohesive devices and formulaic syntactic constructions. Simon et al. (2023) confirmed fewer comparative/superlative structures in AI text."
+  },
+  "discourse_markers": {
+    "ai_pattern": "AI text uses discourse markers less frequently than human text, and the ones it does use tend to be repetitive. The same transition phrases appear at regular intervals, creating a predictable rhythm.",
+    "human_pattern": "Human text uses discourse markers sporadically rather than systematically. Some transitions are explicit, some are abrupt, some are implied. The distribution is uneven across the document.",
+    "rules": [
+      {
+        "rule": "Remove some transitions entirely.",
+        "guidance": "Not every paragraph needs a transition from the previous one. Sometimes the best transition is no transition; the reader follows the logic without a bridge. AI over-signals connections."
+      },
+      {
+        "rule": "Replace formulaic transitions with implicit ones.",
+        "guidance": "Instead of 'Furthermore, the team discovered that...' try just starting the next point. 'The team also found...' or even just 'They found...' The connection is clear from context."
+      },
+      {
+        "rule": "Vary transition types across the document.",
+        "guidance": "If three paragraphs in a row start with conjunctive adverbs ('Moreover,' 'Additionally,' 'Furthermore,'), the pattern is detectable. Mix in sentence-level transitions ('This connects to...'), implicit transitions (just starting the new point), and conversational bridges ('Which brings up another problem.')."
+      },
+      {
+        "rule": "Use informal transitions.",
+        "guidance": "'So,' 'Now,' 'Here's the thing,' 'The catch is': these are human transition patterns that AI rarely produces. Use them where register allows."
+      }
+    ]
+  },
+  "modal_and_epistemic_markers": {
+    "ai_pattern": "AI text contains fewer modal expressions and epistemic markers than human text. It presents information with uniform confidence rather than signaling degrees of certainty.",
+    "human_pattern": "Human writers signal their certainty level. They use 'might,' 'could,' 'probably,' 'seems,' 'I think,' 'as far as I know', and they distribute these unevenly, being confident on some points and uncertain on others.",
+    "rules": [
+      {
+        "rule": "Introduce epistemic markers on uncertain claims.",
+        "guidance": "Where the evidence is genuinely uncertain, say so: 'This probably works, but I haven't tested it at scale.' Human writers naturally calibrate confidence."
+      },
+      {
+        "rule": "Be declarative on strong claims.",
+        "guidance": "The complement of hedging uncertain claims is being direct on certain ones. 'This is wrong.' not 'This may not be entirely accurate.' Human writers commit where they're confident."
+      },
+      {
+        "rule": "Vary confidence level across the passage.",
+        "guidance": "Some sentences should be firm declarations. Others should carry uncertainty markers. AI tends toward uniform confidence. Alternate deliberately."
+      }
+    ]
+  },
+  "cohesive_devices": {
+    "ai_pattern": "AI text often relies heavily on cohesive devices and formulaic syntactic constructions, such as repetitive use of 'this,' 'these,' 'such,' and explicit referencing that overconnects ideas. It also uses more phrasal coordination and present participial clauses.",
+    "human_pattern": "Human writers use cohesive devices unevenly. Some ideas are connected explicitly, others are left for the reader to connect. Pronoun reference is sometimes loose. This mild ambiguity is natural.",
+    "rules": [
+      {
+        "rule": "Reduce explicit referencing.",
+        "guidance": "Not every sentence needs to reference the previous one. AI writes 'This approach enables... This enables... This in turn enables...', with each sentence pointing back. Human writers let some sentences stand alone."
+      },
+      {
+        "rule": "Use pronouns with occasionally loose reference.",
+        "guidance": "Human text sometimes uses 'it' or 'this' where the referent is clear from context but not grammatically precise. This mild looseness is a human signal. Don't tighten every pronoun reference."
+      },
+      {
+        "rule": "Vary paragraph-opening structures.",
+        "guidance": "If every paragraph opens with a topic sentence that explicitly connects to the previous paragraph's conclusion, the text reads as AI-structured. Let some paragraphs start fresh: with an example, a question, or a claim that the reader connects to the previous section themselves."
+      },
+      {
+        "rule": "Use comparative and superlative forms.",
+        "guidance": "AI text contains fewer comparative and superlative structures. Human writers naturally say 'more common,' 'the worst part,' 'better than expected,' 'the clearest example.' Reintroduce these where they fit."
+      },
+      {
+        "rule": "Use second-person pronouns ('you', 'your') for direct reader engagement where register allows.",
+        "guidance": "AI defaults to third-person and passive constructions. 'Users should configure their settings' → 'Configure your settings' or 'You'll want to adjust your settings first.' Direct address signals a writer who is aware of and speaking to a reader. Use in tutorials, blog posts, and professional prose. Avoid in academic writing unless it's conventional in the field."
+      }
+    ]
+  },
+  "repetition_patterns": {
+    "ai_pattern": "Repetition is more common in AI text. LLMs repeat the same words, expressions, and even sentence patterns more frequently than human authors. AI also exhibits repetitive emoticon use in informal contexts.",
+    "human_pattern": "Human authors actively avoid repeating the same words and expressions. When they do repeat, it's for deliberate rhetorical effect (emphasis, rhythm, or callback), not from lack of alternatives.",
+    "rules": [
+      {
+        "rule": "Flag and reduce unintentional repetition.",
+        "guidance": "Scan for any content word that appears more than twice within five sentences. If the repetition isn't deliberate emphasis, replace at least one instance with a synonym or restructure."
+      },
+      {
+        "rule": "Use deliberate repetition strategically.",
+        "guidance": "Anaphora ('This is not about cost. This is about principle. This is about what we're willing to accept.') is a powerful rhetorical device. Cluster it in one section for emphasis, then abandon it. AI doesn't do strategic repetition; it just repeats."
+      }
+    ]
+  },
+  "subordination_vs_coordination": {
+    "description": "AI overuses coordinating conjunctions (and, or, but) and underuses subordinating conjunctions (because, although, when, if, while, since, unless). This produces flat, additive prose where ideas are merely stacked rather than related.",
+    "ai_pattern": "AI writes 'X and Y and Z' where a human would write 'X because Y, although Z.' The conjunctions 'and' and 'but' account for a disproportionate share of AI's clause-linking, creating a monotonous, list-like rhythm.",
+    "human_pattern": "Human writers use subordination to signal causal, temporal, conditional, and concessive relationships. 'Because the deadline moved, we cut scope' says more than 'The deadline moved and we cut scope.' Subordination reflects a writer who has thought about how ideas relate, not just that they co-occur.",
+    "rules": [
+      {
+        "rule": "Replace at least one 'and' per paragraph with a subordinating conjunction.",
+        "guidance": "Ask: is the relationship between these clauses causal ('because', 'since'), temporal ('when', 'after', 'once'), conditional ('if', 'unless'), or concessive ('although', 'even though')? If so, the subordinating conjunction is more precise than 'and'. Not every 'and' needs replacing, but three consecutive coordinated clauses is a pattern to break."
+      },
+      {
+        "rule": "Front-load subordinate clauses occasionally.",
+        "guidance": "'Although the data is noisy, the trend is clear' puts the qualification first, which is a human ordering pattern. AI tends to put the main clause first and append the qualification: 'The trend is clear, although the data is noisy.' Vary the order."
+      }
+    ],
+    "research_basis": "Muñoz-Ortiz et al. (2024) UPOS data shows SCONJ at 1.41% in human text vs. 1.37-1.85% in LLMs, while CCONJ is consistently higher in AI. The function_word_patterns section already notes this finding but buries it. This rule surfaces it."
+  },
+  "explicit_antithesis_and_reused_shape": {
+    "description": "LLMs over-rely on explicit negation-antithesis and on reusing the same rhetorical SHAPE across a document. The two-sentence copula flip is the single most characteristic rhetorical tell of AI prose.",
+    "ai_pattern": "AI reaches for explicit negation-antithesis ('It's not X; it's Y', 'X isn't A, it's B'), often split across two sentences ('... is not X. It is Y.'). It also reuses the same balanced contrast or antithesis several times in one document, so the FORM recurs as a cadence even when the words differ.",
+    "human_pattern": "Human writers usually make the positive claim and let it stand, or imply a contrast without naming the rejected alternative. When they do use antithesis, they use it once, for a genuine pivot, not as a recurring rhythm.",
+    "rules": [
+      {
+        "rule": "Replace the negation-flip antithesis with a direct claim.",
+        "guidance": "'The studio is not five machines. It is one path.' becomes 'The studio is really one path.' Do not negate an alternative first and flip to the real point. This is checked mechanically as banned_structures BS-013 (and the hedged variant BS-014 'is rarely X. It is Y'); see anti_patterns AP-029."
+      },
+      {
+        "rule": "Use a given rhetorical shape at most once per document.",
+        "guidance": "If the same antithesis or balanced 'A carries X; B carries Y' contrast appears three or four times, the repeated form reads as a tic. Keep one canonical statement and cut the restatements. The repetition_patterns rules and the checker catch repeated WORDS; repeated SHAPE is a judgment call left to you."
+      }
+    ],
+    "research_basis": "Dead Language Society rhetorical analysis (2025) names 'it's not X; it's Y' as 'the technique LLMs love the most'. Corroborated by an in-the-wild copy audit."
+  }
+}

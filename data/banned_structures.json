@@ -1,0 +1,312 @@
+{
+  "meta": {
+    "layer": "banned_structures",
+    "description": "Sentence-level AI tells consolidated from anti_patterns.json into matchable entries. Tier-1 enforcement. gate=hard entries are deterministically detected and block prohibitions_clear; gate=checklist entries are surfaced as located must-clear items the LLM must rewrite or justify. Non-uniformity (foundation.enforcement.non_uniformity_scope) does NOT apply to this layer.",
+    "usage": "Consumed by humanizer_check_text. Not a substitute for the prose guidance in structural_patterns.json."
+  },
+  "structures": [
+    {
+      "id": "BS-002",
+      "name": "didactic_disclaimer",
+      "description": "'It is important to note that...' style preamble that adds no information.",
+      "detection": {
+        "method": "phrase",
+        "phrases": [
+          "it is important to note that",
+          "it's important to note that",
+          "it is worth noting that",
+          "it's worth noting that",
+          "it is crucial to remember that"
+        ]
+      },
+      "gate": "hard",
+      "fix": "Cut the preamble and state the fact directly.",
+      "source_examples": ["AP-016"]
+    },
+    {
+      "id": "BS-003",
+      "name": "empty_opener",
+      "description": "Filler openers with no legitimate use.",
+      "detection": {
+        "method": "phrase",
+        "phrases": [
+          "in today's rapidly evolving",
+          "in today's fast-paced world",
+          "without further ado"
+        ]
+      },
+      "gate": "hard",
+      "fix": "Cut entirely. Be specific about what is changing and how.",
+      "source_examples": ["flagged_transitions"]
+    },
+    {
+      "id": "BS-005",
+      "name": "participle_tail",
+      "description": "Comma + present-participle tail that adds interpretation without new information.",
+      "detection": {
+        "method": "regex",
+        "pattern": ",\\s+(contributing|underscoring|highlighting|reflecting|setting|marking|emphasizing|showcasing|demonstrating|reinforcing|paving|ushering)\\b\\w*",
+        "confidence": "medium"
+      },
+      "gate": "checklist",
+      "fix": "Delete the dangling -ing clause, or commit to the interpretation in its own sentence.",
+      "source_examples": ["AP-008", "AP-009"]
+    },
+    {
+      "id": "BS-004",
+      "name": "significance_puffery",
+      "description": "Inflated framing of mundane facts as sweeping historical claims.",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\b(marking a (pivotal|crucial|defining|key) (moment|chapter)|setting the stage for|part of a broader (movement|trend|effort) to|underscores its enduring (significance|importance))\\b",
+        "confidence": "medium"
+      },
+      "gate": "checklist",
+      "fix": "Strip the editorializing and state what actually happened.",
+      "source_examples": ["AP-008"]
+    },
+    {
+      "id": "BS-006",
+      "name": "negative_parallelism",
+      "description": "'not just X, but also Y' / 'not only X but Y' contrast inflation.",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\bnot (just|only)\\b[^.?!]{0,60}?\\bbut\\b",
+        "confidence": "medium"
+      },
+      "gate": "checklist",
+      "fix": "State the point directly with a simple conjunction.",
+      "source_examples": ["AP-006", "AP-007"]
+    },
+    {
+      "id": "BS-007",
+      "name": "despite_faces_challenges",
+      "description": "'Despite its X, [subject] faces challenges...' hedge-praise formula.",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\bdespite\\b[^.?!]{0,80}?\\bfaces?\\b[^.?!]{0,40}?\\bchallenges?\\b",
+        "confidence": "medium"
+      },
+      "gate": "checklist",
+      "fix": "Replace with specific problems and specific responses; drop the framing formula.",
+      "source_examples": ["AP-013"]
+    },
+    {
+      "id": "BS-010",
+      "name": "that_clause_subject",
+      "description": "Sentence opening with a 'That ... is' clausal subject.",
+      "detection": {
+        "method": "regex",
+        "pattern": "(?:^|[.!?]\\s+)That\\s+(?:the|a|an|this|these|those|\\w+ing)\\b[^.?!]{0,100}?\\bis\\b",
+        "confidence": "low"
+      },
+      "gate": "checklist",
+      "fix": "Move the evidence/source to the front; let the claim follow.",
+      "source_examples": ["AP-019"]
+    },
+    {
+      "id": "BS-011",
+      "name": "x_not_y_contrastive",
+      "description": "'X, not Y' contrastive binary that reads constructed.",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\b\\w+,\\s+not\\s+\\w+",
+        "confidence": "low"
+      },
+      "gate": "checklist",
+      "fix": "Make the positive claim and let it stand, or use a separate sentence for the contrast.",
+      "source_examples": ["AP-005"]
+    },
+    {
+      "id": "BS-012",
+      "name": "stacked_nominalization",
+      "description": "Three or more 'X of' nominalizations in one sentence.",
+      "detection": { "method": "heuristic", "confidence": "medium" },
+      "gate": "checklist",
+      "fix": "Unpack the nouns back into verbs; name the agent.",
+      "source_examples": ["AP-018"]
+    },
+    {
+      "id": "BS-009",
+      "name": "this_chain",
+      "description": "Three or more consecutive sentences opening with This/These/It.",
+      "detection": { "method": "heuristic", "confidence": "medium" },
+      "gate": "checklist",
+      "fix": "Leave causal links implicit; vary sentence openings.",
+      "source_examples": ["AP-025"]
+    },
+    {
+      "id": "BS-013",
+      "name": "negation_flip_antithesis",
+      "description": "Two-sentence copula flip: 'X is not Y. It is Z.' The single most characteristic antithesis of LLM prose. A two-sentence relative of BS-006 ('not just X but Y') and BS-011 ('X, not Y'), which the single-sentence checks miss.",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\b(?:is|are|was|were)\\s+not\\s+(?:just|only|merely|simply|a|an|the|about|one|two|three|four|five|six|seven|eight|nine|ten|\\d+)\\s+[^.?!]{0,45}[.]\\s+(?:It|They|That|This)\\s+(?:is|are|was|were)\\b",
+        "confidence": "low"
+      },
+      "gate": "checklist",
+      "fix": "Make the positive claim and let it stand. Do not negate an alternative in one sentence and flip to the real point in the next.",
+      "source_examples": ["AP-005", "AP-006", "AP-007"],
+      "research_basis": "Named the LLM's single most-favored rhetorical move ('it's not X; it's Y') in the Dead Language Society rhetorical analysis (2025); corroborates proposed-rules #5."
+    },
+    {
+      "id": "BS-014",
+      "name": "rarely_flip_aphorism",
+      "description": "A disguised antithesis: a copula claim hedged with rarely/seldom/never, then flipped to the 'real' point in a second copula sentence. 'The interesting move is rarely the new automation. It is deciding what to leave alone.'",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\b(?:is|was|are|were)\\s+(?:rarely|seldom|never)\\b[^.?!]{0,60}[.]\\s+(?:It|They|That)\\s+(?:is|was|are|were)\\b",
+        "confidence": "low"
+      },
+      "gate": "checklist",
+      "fix": "Drop the 'is rarely X. It is Y' flip; state plainly what the point or the work actually was.",
+      "source_examples": ["AP-006", "AP-007"]
+    },
+    {
+      "id": "BS-015",
+      "name": "wh_cleft_pronouncement",
+      "description": "A pseudo-cleft fronted by a 'What ...' clause pivoting on a copula into a noun, used for portentous effect: 'What matters here is the design.' Sibling of the that-clause subject (BS-010).",
+      "detection": {
+        "method": "regex",
+        "pattern": "(?:^|[.!?]\\s+)(?:What|All that|The thing that)\\b(?!\\s+(?:I|we|you|he|she|they|it)\\b)[^.?!]{0,60}\\b(?:is|was|are|were)\\b[^.?!]{0,60}[.]",
+        "confidence": "low"
+      },
+      "gate": "checklist",
+      "fix": "Make the plain claim. Drop the 'What ... is ...' framing and lead with the thing itself.",
+      "source_examples": ["AP-019"],
+      "research_basis": "proposed-rules #1; scoped to declaratives (interrogatives end in '?' and do not match)."
+    },
+    {
+      "id": "BS-016",
+      "name": "meta_framing_opener",
+      "description": "Opening a passage by announcing its own thesis abstractly: 'The point of the redesign is ...', 'The key here is ...'. Over-signals structure before showing the concrete thing.",
+      "detection": {
+        "method": "regex",
+        "pattern": "(?:^|[.!?]\\s+)The\\s+(?:point|key|whole point|whole idea|main idea|real value|takeaway|crux)\\s+(?:of|here|is)\\b",
+        "confidence": "low"
+      },
+      "gate": "checklist",
+      "fix": "Lead with the concrete thing and let the reader infer the point. Cut the 'The point of X is' scaffolding.",
+      "source_examples": ["AP-019"],
+      "research_basis": "proposed-rules #6."
+    },
+    {
+      "id": "BS-017",
+      "name": "disclaimer_reversal",
+      "description": "A disclaiming sentence ('I won't claim/pretend/promise ...') immediately followed by a short emphatic 'But ...' reversal. Inter-sentential relative of BS-013; the single-sentence antithesis checks miss it.",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\b(?:will not|won't|cannot|can't|do not|don't)\\s+(?:claim|pretend|promise|say|argue)\\b[^.?!]*[.]\\s+But\\s+[^.?!]{0,45}[.]",
+        "confidence": "low"
+      },
+      "gate": "checklist",
+      "fix": "State what you can stand behind, plainly, in one move. Drop the disclaimer-then-flip rhythm.",
+      "source_examples": ["BS-013"],
+      "research_basis": "proposed-rules PR2-#2; in-the-wild audit 2026-06-28."
+    },
+    {
+      "id": "BS-018",
+      "name": "copula_maxim_closer",
+      "description": "A paragraph or section closes on a short abstract-subject copula maxim ('The craft is mostly restraint.'). Generalizes BS-014 beyond rarely/never aphorisms. Detected heuristically (src/checker/structures.py): paragraph-final, <=10 words, opens with The/My/Our, an abstract subject noun, a copula main verb, no proper noun or number.",
+      "detection": { "method": "heuristic", "confidence": "low" },
+      "gate": "checklist",
+      "fix": "End on the concrete thing, not a distilled lesson about it. If the maxim is earned, attach it to a specific action rather than floating it as a closer.",
+      "source_examples": ["BS-014"],
+      "research_basis": "proposed-rules PR2-#3; in-the-wild audit 2026-06-28."
+    },
+    {
+      "id": "BS-019",
+      "name": "locative_pseudocleft",
+      "description": "A pseudo-cleft pivoting on where/when/how rather than 'what' ('The gap between those two facts was where the work got lost.'). Sibling of BS-015. Scoped to an article-led noun-phrase subject so demonstrative/expletive forms ('This is how', 'Here is where', 'That was when') do not trip it.",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\b(?:the|a|an|its|their|his|her|our|my)\\s+[^.?!]{0,45}\\b(?:is|was|are|were)\\s+(?:where|when|how)\\s+[^.?!]{3,55}[.]",
+        "confidence": "low"
+      },
+      "gate": "checklist",
+      "fix": "Lead with the subject doing the thing: 'Work got lost in that gap.' Drop the 'X is where ...' frame.",
+      "source_examples": ["BS-015"],
+      "research_basis": "proposed-rules PR2-#5; in-the-wild audit 2026-06-28. Pattern tightened from the proposed bare 'is/was where' to an article-led subject to suppress 'This is how' / 'Here is where' false positives."
+    },
+    {
+      "id": "BS-020",
+      "name": "verb_antithesis_pair",
+      "description": "Two short sentences repeating a content verb with a polarity flip ('AI carries the busywork. It never carries the judgment.'). Verb-based relative of the copula antithesis BS-013. Detected heuristically (src/checker/structures.py): fires only when the negated verb is actually repeated, by form or stem, from the prior sentence, so ordinary narrative ('It never finished.') does not match.",
+      "detection": { "method": "heuristic", "confidence": "low" },
+      "gate": "checklist",
+      "fix": "Make the positive claim once. If the boundary matters, state it without mirroring the verb in the negative.",
+      "source_examples": ["BS-013"],
+      "research_basis": "proposed-rules PR2-#6; in-the-wild audit 2026-06-28. Implemented as a verb-repetition heuristic rather than the proposed bare 'It never <verb>' regex to avoid firing on unrelated negations."
+    },
+    {
+      "id": "BS-021",
+      "name": "noun_participle_fragment",
+      "description": "A verbless 'Noun, past-participle.' sentence: a determiner-led noun phrase, a comma, and a trailing past participle, ending there ('The same board, rebuilt.', 'The homepage, reimagined.'). Past-participle sibling of BS-005 (present-participle tail). Bounded to a sentence-initial determiner with the participle as the final token, so it fires only on the verbless fragment, never on full clauses ('He left the room, defeated.', 'The board, which we rebuilt, is live.').",
+      "detection": {
+        "method": "regex",
+        "pattern": "(?:^|[.!?]\\s+)(?:the|a|an|this|that|these|those|its|their|his|her|our|my|your)\\s+(?:[a-z]+\\s+){0,2}[a-z]+,\\s+(?:rebuilt|rewritten|remade|reborn|redone|rethought|undone|built|made|done|written|born|torn|worn|drawn|grown|known|shown|thrown|[a-z]{3,}ed)[.!?]",
+        "confidence": "low"
+      },
+      "gate": "checklist",
+      "fix": "Give it a subject and a finite verb ('We rebuilt the same board.'), or fold the participle into the neighboring sentence. Drop the noun-comma-participle fragment.",
+      "source_examples": ["AP-034"],
+      "research_basis": "In-the-wild reviewer feedback 2026-07-03 on prose that had passed the checker clean: 'The same board, rebuilt.' flagged as the 'Noun, past-participle.' construction. Scoped to a sentence-initial determiner-led NP with the participle as the terminal token to preserve the fragment guarantee and suppress false positives; the [a-z]{3,}ed floor excludes short -ed look-alikes (red/bed/shed), and the missing comma keeps fixed idioms ('Case closed.') quiet."
+    },
+    {
+      "id": "BS-022",
+      "name": "meta_label",
+      "description": "A standalone meta-label line or heading that names the artifact's own format or length instead of its subject ('In 200 words', 'In brief', 'At a high level', 'To put it simply'). The mechanizable slice of the performative-framing beat: a self-aware flourish that performs concision or structure rather than carrying content. Fires ONLY when the label IS the whole bounded line/sentence (optionally one terminal mark, then a line break or end), so embedded uses ('At a high level, the system does X.') never match. TL;DR is deliberately excluded (common and acceptable in casual writing). The judgment sub-forms — self-satisfied closers, first-person meta-commentary, paradox-substitution headlines — are the self_review 'performative framing beat' rubric item, not this detector.",
+      "detection": {
+        "method": "regex",
+        "pattern": "(?:^|\\n|[.!?]\\s+)(in\\s+\\d+\\s+words|in\\s+brief|in\\s+short|the\\s+short\\s+version|the\\s+short\\s+of\\s+it|the\\s+gist|a\\s+quick\\s+summary|at\\s+a\\s+high\\s+level|to\\s+put\\s+it\\s+simply)[ \\t]*[:.!?]?[ \\t]*(?=\\n|$)",
+        "confidence": "low"
+      },
+      "gate": "checklist",
+      "fix": "Replace the format/length/brevity label with a phrase about the content itself, or cut it and let the section's content name it. Do not announce structure; let the structure be the structure.",
+      "source_examples": ["AP-035"],
+      "research_basis": "In-the-wild reviewer feedback 2026-07-06 on prose run through the humanizer: meta labels ('in 200 words', 'the reading, in brief') survived as self-aware flourishes. Scoped to a standalone bounded label with a terminal-only trailing guard so the embedding-prone phrases ('at a high level', 'to put it simply') fire only as labels, never mid-sentence. Sibling of the closer detector BS-018; the judgment sub-forms live in the self_review rubric. Spec: docs/superpowers/specs/2026-07-06-performative-framing-beat-design.md."
+    },
+    {
+      "id": "BS-023",
+      "name": "validation_reassurance",
+      "description": "Unsolicited second-person reassurance in a fixed frame ('You're not alone.', 'You're not imagining it.', 'You're not broken.', 'It's not just you.'). The single most-cited NEW 2026 AI tell: the model switches into therapeutic validation that reads as bizarre in most content (business posts, docs, marketing). High-precision because it matches only the 'you're not <predicate>' / 'it's not just you' frames, so ordinary negations ('You're not sure yet.', 'You are not authorized.') never match. Legitimate in genuine supportive/empathetic writing, which is why it is checklist (rewrite or justify), never hard.",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\byou(?:['’]re| are) not\\s+(?:alone|broken|crazy|failing|imagining|overreacting|weak|the only one)\\b|\\bit(?:['’]s| is) not just you\\b",
+        "confidence": "medium"
+      },
+      "gate": "checklist",
+      "fix": "Cut the reassurance, or replace it with the specific thing you actually want to say. If the piece genuinely calls for empathy, make it concrete rather than a canned 'you're not X' formula.",
+      "source_examples": ["AP-036"],
+      "research_basis": "Forbes, 'The 15 New Giveaway Signs Of AI-Generated Content' (2026-02-03): AI switching into unsolicited validation ('You're not imagining it', 'You're not alone', 'You're not broken') flagged as the standout new tell, incongruous in business/productivity content. Frame-scoped to keep false positives near zero."
+    },
+    {
+      "id": "BS-024",
+      "name": "vague_authority_attribution",
+      "description": "An appeal to an unnamed authority as evidence ('Researchers say...', 'Studies show...', 'Experts agree...', 'It is widely believed...', 'Many argue...'). A content-level AI tell distinct from credibility_insistence (which flags reality-assertion words like real/actual): here the sentence borrows authority it never names. The verb list is scoped to epistemic-claim frames, so a named or specific reference with a concrete action ('The researchers at MIT published their data') does not match. Checklist because attributed uses are legitimate — the fix is to name the source or cut the appeal.",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\b(?:(?:researchers|scientists|experts|scholars|analysts|observers|critics|historians|economists)\\s+(?:say|says|said|argue|argues|note|notes|noted|agree|agrees|believe|believes|suggest|suggests|contend|contends|claim|claims|have\\s+(?:found|noted|shown|argued|suggested|observed|concluded))|(?:studies|research)\\s+(?:show|shows|shown|suggest|suggests|indicate|indicates|reveal|reveals|demonstrate|demonstrates|have\\s+shown|has\\s+shown)|it\\s+is\\s+widely\\s+(?:believed|known|accepted|understood|recognized|regarded)|(?:many|some)\\s+(?:argue|argues|believe|believes|contend|contends|say|says))\\b",
+        "confidence": "medium"
+      },
+      "gate": "checklist",
+      "fix": "Name who: cite the specific study, person, or body, and link or reference it. If you cannot name a source, drop the claim or state it as your own view.",
+      "source_examples": ["AP-037"],
+      "research_basis": "Wikipedia 'Signs of AI writing' (2026): 'vague attributions' — attributing claims to undefined authorities ('researchers', 'observers', 'scholarship') without naming them — listed as a core content tell. Scoped to unnamed-agent + epistemic-verb frames so named/specific references pass."
+    },
+    {
+      "id": "BS-025",
+      "name": "question_fragment_cadence",
+      "description": "The 'The best part? It's this.' rhetorical tic: a sentence-initial determiner-led noun-phrase fragment ending in '?', immediately answered by a short sentence ('The result? A total win.', 'My advice? Take the job.'). Named repeatedly as a 2026 ChatGPT fingerprint (the 'contrasting question with a short answer' pattern). Scoped to a determiner-led NP of up to three words so WH-questions ('What is the best part?') and mid-sentence questions ('Did you see the result?') never match — the determiner must sit at a sentence boundary.",
+      "detection": {
+        "method": "regex",
+        "pattern": "(?:^|[.!?]\\s+|\\n)(?:the|my|our|his|her|its|their)\\s+(?:[a-z]+\\s+){0,2}[a-z]+\\?\\s+[^\\s?!][^?!]{0,80}[.!?]",
+        "confidence": "low"
+      },
+      "gate": "checklist",
+      "fix": "State the point as a declarative sentence. If the setup-and-payoff is earned, use it once; repeated question-fragment beats read as a tic.",
+      "source_examples": ["AP-038"],
+      "research_basis": "Walter Writes / PlusAI 'most overused ChatGPT patterns' (2026) and in-the-wild reports: 'contrasting questions with short answers' ('The best part? It's this. The kicker? It's that.') as a durable 2026 structural fingerprint. NP-fragment + boundary scoping keeps genuine questions clear."
+    }
+  ]
+}

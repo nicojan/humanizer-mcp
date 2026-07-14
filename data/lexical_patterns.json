@@ -1,0 +1,1044 @@
+{
+  "meta": {
+    "layer": "lexical_patterns",
+    "priority": 1,
+    "description": "Words, phrases, and constructions that statistical detectors and human readers associate with machine generation. Removing or replacing them is the highest-impact single intervention.",
+    "application_rule": "Replace contextually; the substitute depends on what the sentence actually means. Do not replace every instance; leave some formal words standing where they genuinely fit. Uniform replacement is itself a signal. This contextual, leave-some-standing rule is Tier 2 and applies to flagged words/phrases only. It never applies to Tier 1 prohibitions (em-dashes, banned structures); see foundation.enforcement.",
+    "usage": "First pass of the application protocol. Call humanizer_get_lexical_patterns(risk_level=...) to filter by severity. Apply the application_rule above for every substitution decision: contextual, non-uniform, leaving some formal words standing.",
+    "research_basis": "Drawn from Przystalski et al. (2024) SHAP analysis, Grammarly common AI words corpus, Terčon & Dobrovoljc (2025) survey of 44 studies, and Wikipedia AI writing guidelines."
+  },
+  "flagged_verbs": [
+    {
+      "ai_word": "delve",
+      "alternatives": [
+        "look at",
+        "dig into",
+        "examine",
+        "get into",
+        "explore",
+        "pick apart"
+      ],
+      "severity": "high",
+      "notes": "One of the most-cited AI tells. Almost never used in natural human prose."
+    },
+    {
+      "ai_word": "leverage",
+      "alternatives": [
+        "use",
+        "rely on",
+        "take advantage of",
+        "build on",
+        "tap"
+      ],
+      "severity": "high"
+    },
+    {
+      "ai_word": "utilize",
+      "alternatives": [
+        "use"
+      ],
+      "severity": "high",
+      "notes": "Almost always replaceable with 'use' with no loss of meaning."
+    },
+    {
+      "ai_word": "facilitate",
+      "alternatives": [
+        "help",
+        "enable",
+        "make possible",
+        "support",
+        "ease"
+      ],
+      "severity": "high",
+      "style_mcp_overlap": true
+    },
+    {
+      "ai_word": "navigate",
+      "alternatives": [
+        "work through",
+        "deal with",
+        "handle",
+        "figure out",
+        "manage"
+      ],
+      "severity": "moderate"
+    },
+    {
+      "ai_word": "streamline",
+      "alternatives": [
+        "simplify",
+        "speed up",
+        "clean up",
+        "tighten",
+        "cut down"
+      ],
+      "severity": "moderate"
+    },
+    {
+      "ai_word": "bolster",
+      "alternatives": [
+        "strengthen",
+        "support",
+        "back up",
+        "reinforce"
+      ],
+      "severity": "high",
+      "notes": "Statistically overrepresented in post-2022 text."
+    },
+    {
+      "ai_word": "showcase",
+      "alternatives": [
+        "show",
+        "display",
+        "demonstrate",
+        "present"
+      ],
+      "severity": "high",
+      "notes": "Especially 'showcasing' as a dangling participle."
+    },
+    {
+      "ai_word": "garner",
+      "alternatives": [
+        "get",
+        "earn",
+        "attract",
+        "win",
+        "collect"
+      ],
+      "severity": "high",
+      "notes": "Rare in natural prose."
+    },
+    {
+      "ai_word": "foster",
+      "alternatives": [
+        "encourage",
+        "build",
+        "support",
+        "grow",
+        "develop"
+      ],
+      "severity": "high",
+      "notes": "Especially 'fostering' as a participle."
+    },
+    {
+      "ai_word": "enhance",
+      "alternatives": [
+        "improve",
+        "strengthen",
+        "boost",
+        "add to"
+      ],
+      "severity": "high",
+      "notes": "Mid-2024 onward AI vocabulary."
+    },
+    {
+      "ai_word": "endeavor",
+      "alternatives": [
+        "try",
+        "attempt",
+        "work to",
+        "aim to"
+      ],
+      "severity": "moderate"
+    },
+    {
+      "ai_word": "elucidate",
+      "alternatives": [
+        "explain",
+        "clarify",
+        "spell out",
+        "make clear"
+      ],
+      "severity": "high"
+    },
+    {
+      "ai_word": "optimize",
+      "alternatives": [
+        "improve",
+        "fine-tune",
+        "adjust",
+        "refine"
+      ],
+      "severity": "moderate"
+    },
+    {
+      "ai_word": "revolutionize",
+      "alternatives": [
+        "change",
+        "reshape",
+        "transform",
+        "overhaul"
+      ],
+      "severity": "high"
+    },
+    {
+      "ai_word": "spearhead",
+      "alternatives": [
+        "lead",
+        "drive",
+        "launch",
+        "push",
+        "champion"
+      ],
+      "severity": "moderate"
+    },
+    {
+      "ai_word": "catalyze",
+      "alternatives": [
+        "trigger",
+        "spark",
+        "set off",
+        "accelerate",
+        "kick off"
+      ],
+      "severity": "moderate"
+    },
+    {
+      "ai_word": "synergize",
+      "alternatives": [
+        "combine",
+        "work together",
+        "align",
+        "coordinate"
+      ],
+      "severity": "high"
+    },
+    {
+      "ai_word": "incentivize",
+      "alternatives": [
+        "encourage",
+        "motivate",
+        "reward",
+        "push"
+      ],
+      "severity": "moderate"
+    },
+    {
+      "ai_word": "operationalize",
+      "alternatives": [
+        "put into practice",
+        "implement",
+        "roll out",
+        "execute"
+      ],
+      "severity": "moderate"
+    },
+    {
+      "ai_word": "conceptualize",
+      "alternatives": [
+        "think through",
+        "imagine",
+        "frame",
+        "design",
+        "envision"
+      ],
+      "severity": "moderate"
+    },
+    {
+      "ai_word": "harness",
+      "alternatives": [
+        "use",
+        "tap",
+        "draw on",
+        "put to work"
+      ],
+      "severity": "moderate"
+    },
+    {
+      "ai_word": "illuminate",
+      "alternatives": [
+        "explain",
+        "clarify",
+        "show",
+        "shed light on"
+      ],
+      "severity": "moderate"
+    },
+    {
+      "ai_word": "differentiate",
+      "alternatives": [
+        "distinguish",
+        "tell apart",
+        "separate",
+        "set apart"
+      ],
+      "severity": "low"
+    },
+    {
+      "ai_word": "refine",
+      "alternatives": [
+        "improve",
+        "adjust",
+        "tweak",
+        "polish"
+      ],
+      "severity": "low"
+    },
+    {
+      "ai_word": "underscore",
+      "alternatives": [
+        "shows",
+        "points to",
+        "means",
+        "is why",
+        "drives home"
+      ],
+      "severity": "high",
+      "notes": "One of the strongest single-word AI tells in the post-ChatGPT scientific corpus. The bare verb is distinct from the flagged transition 'This underscores the importance of'.",
+      "research_basis": "Kobak et al., Science Advances 2025 (doi:10.1126/sciadv.adt3813): excess frequency ratio r=13.8. Juzek & Ward, COLING 2025: +904% in PubMed abstracts 2020-2024."
+    },
+    {
+      "ai_word": "surpass",
+      "alternatives": [
+        "beat",
+        "exceed",
+        "go past",
+        "do better than"
+      ],
+      "severity": "moderate",
+      "research_basis": "Juzek & Ward, COLING 2025 (arXiv:2412.11385): 'surpassing' +667% in PubMed abstracts 2020-2024."
+    },
+    {
+      "ai_word": "boast",
+      "alternatives": [
+        "has",
+        "offers",
+        "includes",
+        "comes with"
+      ],
+      "severity": "moderate",
+      "notes": "Inflated copula substitute (the 'serves as / features / boasts' family). Use plain 'has' or 'is'. See AP-010.",
+      "research_basis": "Long-cited AI copula-inflation tell; named in the project's own AP-010 audit example."
+    }
+  ],
+  "flagged_adjectives": [
+    {
+      "ai_word": "comprehensive",
+      "alternatives": [
+        "full",
+        "thorough",
+        "complete",
+        "detailed",
+        "in-depth",
+        "broad"
+      ],
+      "severity": "moderate"
+    },
+    {
+      "ai_word": "robust",
+      "alternatives": [
+        "strong",
+        "solid",
+        "reliable",
+        "durable",
+        "resilient"
+      ],
+      "severity": "high"
+    },
+    {
+      "ai_word": "cutting-edge",
+      "alternatives": [
+        "new",
+        "advanced",
+        "latest",
+        "leading",
+        "current",
+        "or cut entirely"
+      ],
+      "severity": "high"
+    },
+    {
+      "ai_word": "innovative",
+      "alternatives": [
+        "new",
+        "original",
+        "creative",
+        "fresh",
+        "novel",
+        "or cut entirely"
+      ],
+      "severity": "high"
+    },
+    {
+      "ai_word": "seamless",
+      "alternatives": [
+        "smooth",
+        "easy",
+        "effortless",
+        "clean",
+        "invisible"
+      ],
+      "severity": "high"
+    },
+    {
+      "ai_word": "pivotal",
+      "alternatives": [
+        "key",
+        "critical",
+        "central",
+        "important",
+        "decisive"
+      ],
+      "severity": "high"
+    },
+    {
+      "ai_word": "multifaceted",
+      "alternatives": [
+        "complex",
+        "varied",
+        "layered",
+        "nuanced"
+      ],
+      "severity": "moderate"
+    },
+    {
+      "ai_word": "holistic",
+      "alternatives": [
+        "complete",
+        "whole",
+        "integrated",
+        "broad",
+        "full-picture"
+      ],
+      "severity": "high",
+      "style_mcp_overlap": true
+    },
+    {
+      "ai_word": "transformative",
+      "alternatives": [
+        "significant",
+        "major",
+        "powerful",
+        "dramatic",
+        "or cut entirely"
+      ],
+      "severity": "high"
+    },
+    {
+      "ai_word": "game-changing",
+      "alternatives": [
+        "significant",
+        "important",
+        "or cut entirely"
+      ],
+      "severity": "high"
+    },
+    {
+      "ai_word": "crucial",
+      "alternatives": [
+        "important",
+        "essential",
+        "critical",
+        "necessary"
+      ],
+      "severity": "high",
+      "notes": "One of the most statistically overrepresented AI adjectives."
+    },
+    {
+      "ai_word": "groundbreaking",
+      "alternatives": [
+        "new",
+        "first",
+        "original",
+        "unprecedented",
+        "or describe why specifically"
+      ],
+      "severity": "high"
+    },
+    {
+      "ai_word": "unparalleled",
+      "alternatives": [
+        "rare",
+        "unusual",
+        "exceptional",
+        "or cut entirely"
+      ],
+      "severity": "high",
+      "style_mcp_overlap": true
+    },
+    {
+      "ai_word": "noteworthy",
+      "alternatives": [
+        "worth noting",
+        "interesting",
+        "important",
+        "significant"
+      ],
+      "severity": "moderate"
+    },
+    {
+      "ai_word": "meticulous",
+      "alternatives": [
+        "careful",
+        "detailed",
+        "thorough",
+        "precise"
+      ],
+      "severity": "moderate"
+    },
+    {
+      "ai_word": "intricate",
+      "alternatives": [
+        "complex",
+        "detailed",
+        "involved",
+        "complicated"
+      ],
+      "severity": "moderate"
+    },
+    {
+      "ai_word": "commendable",
+      "alternatives": [
+        "impressive",
+        "good",
+        "strong",
+        "solid"
+      ],
+      "severity": "moderate"
+    },
+    {
+      "ai_word": "paramount",
+      "alternatives": [
+        "essential",
+        "critical",
+        "most important",
+        "top priority"
+      ],
+      "severity": "moderate"
+    },
+    {
+      "ai_word": "bustling",
+      "alternatives": [
+        "busy",
+        "lively",
+        "crowded",
+        "active"
+      ],
+      "severity": "moderate",
+      "notes": "Travel-guide/promotional register ('a bustling hub'). Nearly always inflated."
+    },
+    {
+      "ai_word": "breathtaking",
+      "alternatives": [
+        "stunning",
+        "striking",
+        "or cut entirely"
+      ],
+      "severity": "moderate",
+      "notes": "Promotional-brochure adjective; overused in AI travel and marketing copy."
+    }
+  ],
+  "flagged_nouns": [
+    {
+      "ai_word": "realm",
+      "alternatives": [
+        "area",
+        "field",
+        "domain",
+        "space",
+        "world"
+      ],
+      "severity": "high"
+    },
+    {
+      "ai_word": "tapestry",
+      "alternatives": [
+        "mix",
+        "blend",
+        "combination",
+        "range",
+        "collection"
+      ],
+      "severity": "high",
+      "notes": "Especially 'rich tapestry', nearly exclusive to AI text."
+    },
+    {
+      "ai_word": "landscape",
+      "alternatives": [
+        "field",
+        "scene",
+        "market",
+        "space",
+        "situation"
+      ],
+      "severity": "moderate",
+      "notes": "Flagged when used metaphorically. Literal geographic use is fine."
+    },
+    {
+      "ai_word": "synergy",
+      "alternatives": [
+        "cooperation",
+        "collaboration",
+        "combined effect"
+      ],
+      "severity": "high",
+      "style_mcp_overlap": true
+    },
+    {
+      "ai_word": "paradigm",
+      "alternatives": [
+        "model",
+        "framework",
+        "approach",
+        "way of thinking"
+      ],
+      "severity": "high",
+      "style_mcp_overlap": true
+    },
+    {
+      "ai_word": "cornerstone",
+      "alternatives": [
+        "foundation",
+        "basis",
+        "core",
+        "key part"
+      ],
+      "severity": "moderate"
+    },
+    {
+      "ai_word": "linchpin",
+      "alternatives": [
+        "key",
+        "central piece",
+        "crucial part",
+        "anchor"
+      ],
+      "severity": "moderate"
+    },
+    {
+      "ai_word": "testament",
+      "alternatives": [
+        "proof",
+        "evidence",
+        "sign",
+        "example"
+      ],
+      "severity": "moderate",
+      "notes": "Flagged in 'a testament to' construction."
+    },
+    {
+      "ai_word": "hidden gem",
+      "alternatives": [
+        "find",
+        "lesser-known spot",
+        "overlooked option"
+      ],
+      "severity": "moderate",
+      "notes": "Promotional cliché ('a hidden gem'). Multi-word, matched verbatim."
+    }
+  ],
+  "flagged_transitions": [
+    {
+      "ai_phrase": "That being said",
+      "alternatives": [
+        "However",
+        "Even so",
+        "But",
+        "Still"
+      ],
+      "severity": "high"
+    },
+    {
+      "ai_phrase": "At its core",
+      "alternatives": [
+        "Fundamentally",
+        "Essentially",
+        "At bottom",
+        "Really"
+      ],
+      "severity": "high"
+    },
+    {
+      "ai_phrase": "To put it simply",
+      "alternatives": [
+        "Simply put",
+        "In short",
+        "Basically",
+        "or just state it simply without the preamble"
+      ],
+      "severity": "moderate"
+    },
+    {
+      "ai_phrase": "This underscores the importance of",
+      "alternatives": [
+        "This highlights the need for",
+        "This reinforces the value of",
+        "This shows why"
+      ],
+      "severity": "high"
+    },
+    {
+      "ai_phrase": "A key takeaway is",
+      "alternatives": [
+        "The main point is",
+        "One important lesson is",
+        "What matters here is"
+      ],
+      "severity": "moderate"
+    },
+    {
+      "ai_phrase": "From a broader perspective",
+      "alternatives": [
+        "When you zoom out",
+        "On a larger scale",
+        "Looking at the bigger picture"
+      ],
+      "severity": "moderate"
+    },
+    {
+      "ai_phrase": "It's worth noting that",
+      "alternatives": [
+        "Also",
+        "Note that",
+        "One thing to flag:",
+        "or just state the thing directly"
+      ],
+      "severity": "moderate"
+    },
+    {
+      "ai_phrase": "In today's rapidly evolving",
+      "alternatives": [
+        "Cut entirely. Be specific about what is changing and how."
+      ],
+      "severity": "high"
+    },
+    {
+      "ai_phrase": "In the realm of",
+      "alternatives": [
+        "In",
+        "Within",
+        "For",
+        "or cut entirely"
+      ],
+      "severity": "high"
+    },
+    {
+      "ai_phrase": "It is important to note that",
+      "alternatives": [
+        "Cut the preamble. State the thing."
+      ],
+      "severity": "high"
+    },
+    {
+      "ai_phrase": "Moreover",
+      "alternatives": [
+        "Also",
+        "And",
+        "On top of that",
+        "What's more"
+      ],
+      "severity": "moderate",
+      "notes": "Not wrong, but AI overuses it. Use sparingly."
+    },
+    {
+      "ai_phrase": "Furthermore",
+      "alternatives": [
+        "Also",
+        "And",
+        "Beyond that",
+        "Plus"
+      ],
+      "severity": "moderate"
+    },
+    {
+      "ai_phrase": "In conclusion",
+      "alternatives": [
+        "So",
+        "All told",
+        "What this means is",
+        "or just conclude without announcing it"
+      ],
+      "severity": "moderate"
+    },
+    {
+      "ai_phrase": "In summary",
+      "alternatives": [
+        "So",
+        "To sum up",
+        "The short version:",
+        "or just summarize without announcing it"
+      ],
+      "severity": "moderate"
+    },
+    {
+      "ai_phrase": "Let's delve into",
+      "alternatives": [
+        "Let's look at",
+        "Here's how",
+        "Consider",
+        "or just start the section"
+      ],
+      "severity": "high"
+    },
+    {
+      "ai_phrase": "Without further ado",
+      "alternatives": [
+        "Cut entirely."
+      ],
+      "severity": "high"
+    },
+    {
+      "ai_phrase": "Additionally",
+      "alternatives": [
+        "Also",
+        "And",
+        "On top of that",
+        "Plus"
+      ],
+      "severity": "moderate",
+      "notes": "AI-overused sentence opener, in the same family as Moreover/Furthermore. Use sparingly."
+    },
+    {
+      "ai_phrase": "Consequently",
+      "alternatives": [
+        "So",
+        "As a result",
+        "Because of that",
+        "That's why"
+      ],
+      "severity": "moderate",
+      "notes": "AI-overused logical-connector opener."
+    },
+    {
+      "ai_phrase": "Notably",
+      "alternatives": [
+        "Worth flagging:",
+        "One standout:",
+        "or just state the point"
+      ],
+      "severity": "low",
+      "notes": "AI-overused emphasis opener; usually deletable."
+    },
+    {
+      "ai_phrase": "Importantly",
+      "alternatives": [
+        "What matters:",
+        "The key point:",
+        "or just state the point"
+      ],
+      "severity": "low",
+      "notes": "AI-overused emphasis opener; usually deletable."
+    }
+  ],
+  "flagged_qualifiers": {
+    "description": "AI-generated writing plays it safe by using hedging phrases that soften statements. While some hedging is natural, AI overuses it uniformly. Human writers hedge selectively: firmly on some points, cautiously on others.",
+    "items": [
+      {
+        "ai_phrase": "Generally speaking",
+        "alternatives": [
+          "In most cases",
+          "As a rule",
+          "Usually"
+        ],
+        "severity": "low"
+      },
+      {
+        "ai_phrase": "Typically",
+        "alternatives": [
+          "Usually",
+          "Most often",
+          "Normally"
+        ],
+        "severity": "low"
+      },
+      {
+        "ai_phrase": "Tends to",
+        "alternatives": [
+          "Is often",
+          "Has a habit of",
+          "Usually"
+        ],
+        "severity": "low"
+      },
+      {
+        "ai_phrase": "Arguably",
+        "alternatives": [
+          "Some say",
+          "Many believe",
+          "By most accounts",
+          "or make a direct claim"
+        ],
+        "severity": "moderate"
+      },
+      {
+        "ai_phrase": "To some extent",
+        "alternatives": [
+          "Partly",
+          "In part",
+          "Somewhat"
+        ],
+        "severity": "low"
+      },
+      {
+        "ai_phrase": "Broadly speaking",
+        "alternatives": [
+          "In general",
+          "Overall",
+          "Roughly"
+        ],
+        "severity": "low"
+      }
+    ],
+    "rule": "The problem is not individual hedges but uniform hedging. Human writers commit firmly to some claims and hedge others. If every paragraph contains a qualifier, the text reads as AI-generated. Remove qualifiers from at least half the sentences that have them."
+  },
+  "function_word_patterns": {
+    "description": "AI text shows distinctive function word distribution patterns compared to human text. These are subtler signals but contribute to stylometric detection.",
+    "ai_tendencies": {
+      "overused_in_ai": [
+        "can",
+        "and",
+        "by",
+        "with",
+        "for",
+        "their"
+      ],
+      "underused_in_ai": [
+        "however",
+        "but",
+        "although",
+        "because",
+        "if",
+        "that",
+        "or",
+        "when",
+        "as",
+        "I",
+        "they",
+        "my",
+        "it",
+        "us",
+        "will",
+        "would",
+        "might",
+        "could",
+        "up",
+        "out"
+      ],
+      "notes": "AI text uses fewer personal pronouns (especially first-person), fewer subordinating conjunctions, and fewer modal verbs expressing uncertainty. Human text distributes these unevenly across paragraphs."
+    },
+    "rewriting_guidance": [
+      "Vary function word density by paragraph. Some paragraphs should lean heavily on conjunctions; others should be mostly declarative.",
+      "Reintroduce first-person pronouns where context allows, especially 'I', 'we', 'my', 'our'.",
+      "Use subordinating conjunctions ('because', 'although', 'when', 'if') more than coordinating ones ('and').",
+      "Mix modal verbs: 'could', 'might', 'would' add uncertainty that AI tends to smooth away."
+    ]
+  },
+  "vocabulary_diversity": {
+    "description": "AI-generated text is consistently less lexically diverse than human writing. It uses a smaller active vocabulary, repeats the same words and expressions, and favors high-frequency tokens over context-specific alternatives.",
+    "metrics": {
+      "ttr": "Type-Token Ratio. Human text scores higher. AI text clusters around lower values with narrower distribution.",
+      "hapax_legomenon_rate": "Proportion of words used only once. Higher in human text, reflecting creative, context-specific word use.",
+      "unique_word_count": "Human writing features considerably more unique words per passage."
+    },
+    "rewriting_guidance": [
+      "Avoid repeating the same content word within three sentences unless for deliberate emphasis.",
+      "Replace generic nouns with specific ones: 'factors' → name the factors; 'things' → name the things.",
+      "Use synonyms naturally but unevenly; not every instance needs replacing, which would itself be a pattern.",
+      "Introduce at least one low-frequency word per paragraph that is contextually precise but not common.",
+      "Humans prefer shorter words when context is predictable. Mix in plain, short words alongside longer ones."
+    ]
+  },
+  "word_length_patterns": {
+    "description": "AI text tends to use longer tokens and does not shorten words when context makes meaning predictable, a tendency humans naturally exhibit.",
+    "rewriting_guidance": [
+      "In casual or conversational passages, prefer shorter words over longer synonyms.",
+      "Mix word lengths within sentences. A sentence of all long words reads as AI; a sentence of all short words reads as choppy. Vary.",
+      "Use contractions selectively: not uniformly, not never. Some sentences with, some without."
+    ]
+  },
+  "nominalization": {
+    "description": "AI text systematically converts verbs into noun forms, producing heavier, more abstract phrasing. This nominalization pattern is a distinct structural-lexical signal beyond individual word substitution.",
+    "ai_pattern": "AI favors noun-form constructions over direct verb forms: 'the implementation of X' instead of 'we implemented X', 'the utilization of resources' instead of 'using resources'. This creates a dense, bureaucratic tone that distances the reader from the action.",
+    "human_pattern": "Human writers default to verb-driven sentences. They say 'we decided' not 'a decision was made', 'this shows' not 'this serves as a demonstration of'. Nominalizations appear in human text but are balanced by active, verb-led constructions.",
+    "common_nominalizations": [
+      { "nominal": "implementation of", "verbal": "implemented / set up / built" },
+      { "nominal": "utilization of", "verbal": "used / relied on" },
+      { "nominal": "optimization of", "verbal": "improved / tuned" },
+      { "nominal": "establishment of", "verbal": "set up / created / started" },
+      { "nominal": "facilitation of", "verbal": "helped with / enabled" },
+      { "nominal": "the introduction of", "verbal": "introduced / added / brought in" },
+      { "nominal": "the development of", "verbal": "developed / built" },
+      { "nominal": "the provision of", "verbal": "provided / gave / offered" },
+      { "nominal": "a demonstration of", "verbal": "demonstrated / showed" },
+      { "nominal": "the achievement of", "verbal": "achieved / reached / hit" }
+    ],
+    "rules": [
+      {
+        "rule": "Convert nominalizations back to verbs when the agent is known.",
+        "guidance": "'The implementation of the new policy by the committee' → 'The committee implemented the new policy.' If the agent is unknown, the nominalization may be the better choice, but ask whether the agent is genuinely unknown or just being hidden."
+      },
+      {
+        "rule": "Watch for 'the [noun] of' chains.",
+        "guidance": "Two or more 'the X of Y' phrases in a single sentence is a strong AI signal. 'The optimization of the utilization of resources' should become 'optimizing how we use resources' or simply 'using resources better.'"
+      },
+      {
+        "rule": "Apply unevenly; some nominalizations are natural.",
+        "guidance": "Technical writing legitimately uses nominalizations as established terms ('risk assessment', 'load balancing'). The problem is density: three nominalizations in two sentences reads as AI. One per paragraph is fine."
+      }
+    ],
+    "research_basis": "Herbold et al. (2023) and Reinhart et al. (2024) both find higher nominalization rates in AI text. This overlaps with the existing POS finding that AI overuses nouns relative to verbs."
+  },
+  "abstract_concrete_balance": {
+    "description": "AI defaults to abstract, intangible nouns while human writers ground claims in concrete, observable specifics.",
+    "ai_pattern": "AI gravitates toward words like 'framework', 'methodology', 'paradigm', 'dynamic', 'landscape', 'ecosystem': nouns that name categories rather than things you can point at.",
+    "human_pattern": "Human writers anchor abstract ideas in tangible language. Instead of 'the educational landscape', a human says 'classrooms and lecture halls'. Instead of 'stakeholder engagement', a human says 'meetings with the people who use the product'.",
+    "rules": [
+      {
+        "rule": "For every abstract noun, ask: can I name the concrete thing it refers to?",
+        "guidance": "'Factors' → name them. 'Challenges' → describe one. 'Stakeholders' → say who. 'Resources' → specify which. If the concrete version is available and no shorter than the abstract one, prefer it."
+      },
+      {
+        "rule": "Use sensory and spatial nouns where appropriate.",
+        "guidance": "Concrete nouns that invoke a mental image ('spreadsheet', 'parking lot', 'whiteboard', 'inbox') anchor the reader's attention more than abstract containers ('tool', 'space', 'platform', 'system')."
+      }
+    ],
+    "research_basis": "Opara (2025) identifies AbstractNounCount as a discriminating stylometric feature in the StyloAI framework, linked to higher-level cognitive functions in human writing."
+  },
+  "adverb_patterns": {
+    "description": "AI text consistently underuses adverbs, particularly manner and degree adverbs. Reintroducing them adds the texture of a writer making fine-grained judgments.",
+    "ai_pattern": "AI rarely uses adverbs that modify degree (barely, almost, roughly, somewhat, entirely) or manner (quickly, reluctantly, quietly, carefully). When it does use adverbs, they tend to be generic intensifiers (significantly, effectively, particularly).",
+    "human_pattern": "Human writers use adverbs to calibrate precision. 'It mostly works' says something different from 'it works', and the choice between them reflects a real judgment call.",
+    "flagged_ai_adverbs": [
+      { "ai_adverb": "significantly", "alternatives": ["meaningfully", "noticeably", "by a wide margin", "or quantify it"], "severity": "moderate" },
+      { "ai_adverb": "effectively", "alternatives": ["well", "reliably", "in practice", "or describe what 'effective' looks like"], "severity": "moderate" },
+      { "ai_adverb": "particularly", "alternatives": ["especially", "mainly", "above all"], "severity": "low" },
+      { "ai_adverb": "subsequently", "alternatives": ["then", "after that", "next", "later"], "severity": "moderate" }
+    ],
+    "human_adverbs_to_reintroduce": [
+      "barely", "almost", "roughly", "somewhat", "entirely",
+      "quickly", "reluctantly", "quietly", "carefully", "deliberately",
+      "honestly", "frankly", "actually", "apparently", "supposedly",
+      "gradually", "suddenly", "consistently", "rarely", "occasionally"
+    ],
+    "rules": [
+      {
+        "rule": "Include degree adverbs to calibrate claims.",
+        "guidance": "'The system handles edge cases' → 'The system mostly handles edge cases' or 'The system barely handles edge cases.' The adverb carries the writer's actual assessment. Without it, the sentence is AI-neutral."
+      },
+      {
+        "rule": "Use manner adverbs to reveal how something happened, not just that it did.",
+        "guidance": "'The team responded' → 'The team responded quickly' or 'The team reluctantly responded.' Manner tells the reader something about the human behind the action."
+      },
+      {
+        "rule": "Distribute adverbs unevenly.",
+        "guidance": "Some paragraphs should be adverb-dense (reflecting careful qualification), others adverb-sparse (reflecting confident directness). Uniform adverb use is its own pattern."
+      }
+    ],
+    "research_basis": "Muñoz-Ortiz et al. (2024) UPOS frequency data shows ADV at 3.26% in human text vs. 2.61% in Falcon and 3.41-3.68% in LLaMA. Ardeshirifar (2025) confirms human text uses adverbs and adverbial modifiers more frequently."
+  },
+  "credibility_insistence": {
+    "description": "AI-assisted writing often vouches for the authenticity of its own account by repeatedly insisting it is real, actual, genuine, or true. A human rarely needs to insist their own work is real; the insistence is a defensive credibility hedge, and the DENSITY of the token set across a document is the tell, not any single use.",
+    "ai_pattern": "The same reality-asserting lemma recurs throughout a piece ('a real engagement', 'the real one', 'the design is real', 'the real flow'). Each use passes any single-token check, but the repetition reads as a writer arguing for their own credibility.",
+    "human_pattern": "Human writers let the specifics carry credibility. They name the client, the constraint, the date, the artifact, and almost never label their own account 'real'. When they do, it is once, for a genuine contrast.",
+    "tokens": ["real", "really", "actual", "actually", "genuine", "genuinely", "truly", "authentic", "authentically"],
+    "same_token_min": 3,
+    "rate_per_words": 0.005,
+    "exclusions": ["real-time", "real estate", "real number", "real-world", "in real terms", "really? (interrogative)", "one sentence-initial 'actually' as a discourse marker", "anything inside quotation marks"],
+    "rewriting_guidance": [
+      "If one of these tokens appears three or more times, cut all but at most one. The narrative detail should establish that the work is real; you should not have to say so.",
+      "Replace the assertion with the specific that justified it: not 'a real engagement' but 'a live, mid-build engagement'; not 'the real flow' but 'the flow the operators actually follow'.",
+      "Keep a single use only where it draws a genuine contrast (e.g. real versus hypothetical), and make that contrast explicit."
+    ],
+    "research_basis": "In-the-wild audit of a portfolio case-study page (2026-06-28), where seven uses of 'real' in ~1,500 words passed the checker clean."
+  }
+}

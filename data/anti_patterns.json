@@ -1,0 +1,277 @@
+{
+  "meta": {
+    "layer": "anti_patterns",
+    "priority": "cross-cutting",
+    "description": "Concrete before/after examples showing AI patterns and their human-patterned alternatives. Each entry has a uniform schema: id, category, before, after, explanation. Use as a lookup table during editing. Match the pattern category to the text being reviewed, then apply the transformation shown.",
+    "usage": "Call humanizer_get_anti_patterns(category=...) after lexical/structural/discourse passes to find concrete rewrite templates for the cases where the layer-level rules left you uncertain how to transform a passage. The 'after' fields are exemplar humanized prose and conform to absolute_rules (notably AR-002: no em-dashes); 'before' fields intentionally retain anti-patterns including em-dashes when they are the thing being demonstrated. The explanation often references specific rules from other layers; follow those references when present.",
+    "schema": {
+      "id": "Unique identifier in the form AP-NNN.",
+      "category": "One of: lexical, structural, sentiment, discourse, psycholinguistic.",
+      "before": "The AI-typical version. May intentionally contain anti-patterns (including em-dashes) as the thing being demonstrated.",
+      "after": "The humanized version. MUST conform to absolute_rules in foundation.json (notably AR-002: no em-dashes).",
+      "explanation": "What changed and why. May reference specific rule IDs from other layers."
+    },
+    "absolute_rule_compliance": "Every 'after' string in this file is held to the absolute_rules in foundation.json. In particular, no 'after' may contain an em-dash. The only place em-dashes appear in this file is inside 'before' fields, where they are part of the anti-pattern being illustrated, and inside AR-002 / AP-002 explanations that literally name the character."
+  },
+  "patterns": [
+    {
+      "id": "AP-001",
+      "category": "sentiment",
+      "before": "The Organisation operates on a trust basis and does not require documentation for individual cancellations. However, the Organisation reserves the right to review patterns of repeated same-day cancellations and, at its discretion, reclassify them under the standard cancellation policy.",
+      "after": "We operate on a trust basis and don't require documentation for individual cancellations. That said, we reserve the right to review patterns of repeated same-day cancellations and, at our discretion, reclassify them under the standard cancellation policy.",
+      "explanation": "Service agreements for small organisations should use 'we' and 'you' instead of 'the Organisation' and 'the Guardian'. It's warmer without losing legal clarity. Contractions ('don't') and conversational transitions ('That said') replace stiff constructions ('However') to match a brand that speaks like a thoughtful teacher, not a corporate legal department. The operative content is identical; only the voice changed."
+    },
+    {
+      "id": "AP-002",
+      "category": "structural",
+      "before": "The project — which started as a side experiment — became the main product. The team was exhausted — but proud. It was a strange outcome — nobody had predicted it.",
+      "after": "The project, which started as a side experiment, became the main product. The team was exhausted, but proud. It was a strange outcome; nobody had predicted it.",
+      "explanation": "Never use em-dashes (—). This is absolute_rules AR-002. Em-dashes have become a strong AI tell, and any presence of them in revised output is a red flag regardless of how naturally they read. Replace em-dash parentheticals with subordinate clauses, commas, or parentheses. Replace em-dash pivots with a comma, semicolon, or period. The meaning of the source text is preserved exactly; only punctuation changes."
+    },
+    {
+      "id": "AP-003",
+      "category": "lexical",
+      "before": "This methodology leverages a comprehensive framework to facilitate optimal outcomes.",
+      "after": "This approach uses a clear framework to get better results.",
+      "explanation": "Replaced 'methodology' with 'approach', 'leverages' with 'uses', 'comprehensive' with 'clear', 'facilitate optimal outcomes' with 'get better results'. All common AI-inflated vocabulary swapped for plain English equivalents. Meaning is preserved; register drops."
+    },
+    {
+      "id": "AP-005",
+      "category": "structural",
+      "before": "The brush-stroke wordmark comes from paint on paper, not the polished apps she gave up on.",
+      "after": "The wordmark is a brush stroke on paper. It looks handmade because it is.",
+      "explanation": "The 'x, not y' contrastive construction is an AI-characteristic rhetorical pattern. It creates a neat binary opposition that reads as constructed rather than conversational. Human writers are more likely to make the positive claim and let it stand on its own, or use a separate sentence for the contrast. Replace with a direct assertion followed by a short, confident close."
+    },
+    {
+      "id": "AP-006",
+      "category": "structural",
+      "before": "This approach is not just efficient, but also scalable across teams.",
+      "after": "This approach is efficient and scales well across teams.",
+      "explanation": "Negative parallelism ('not just X, but also Y') is an AI-typical rhetorical flourish that overweights contrast. Replace with a simple conjunction."
+    },
+    {
+      "id": "AP-007",
+      "category": "structural",
+      "before": "It's not the tooling that's the problem, but the approval workflow.",
+      "after": "The real bottleneck is the approval workflow.",
+      "explanation": "Negative parallelism ('not X, but Y') creates artificial drama. State the point directly instead of negating an alternative first."
+    },
+    {
+      "id": "AP-008",
+      "category": "structural",
+      "before": "The institute was founded in 1989, marking a pivotal moment in the evolution of regional statistics. This initiative was part of a broader movement to decentralize administrative functions, setting the stage for enhanced regional governance.",
+      "after": "The institute was founded in 1989 to give the region its own statistical system, separate from the national one.",
+      "explanation": "AI-typical significance puffery: phrases like 'marking a pivotal moment', 'broader movement', 'setting the stage for' inflate mundane facts into sweeping historical claims. Strip the editorializing and state what actually happened."
+    },
+    {
+      "id": "AP-009",
+      "category": "structural",
+      "before": "The establishment of road networks connecting Kumba to other parts of the Southwest Region helped solidify its role as a regional hub, contributing to the socio-economic development of the area and underscoring its enduring significance.",
+      "after": "The road networks linking Kumba to Mamfe and Buea made it an important trade centre for the region.",
+      "explanation": "AI appends present-participle tails ('contributing to...', 'underscoring...') that add superficial analysis without new information. Cut the dangling -ing clauses and let the fact speak for itself."
+    },
+    {
+      "id": "AP-010",
+      "category": "lexical",
+      "before": "Gallery 825 on La Cienega Boulevard serves as LAAA's exhibition space for contemporary art. The gallery features four separate spaces dedicated to showcasing diverse artistic expressions.",
+      "after": "Gallery 825 on La Cienega Boulevard is LAAA's exhibition space for contemporary art. It has four separate galleries.",
+      "explanation": "AI avoids simple copulatives ('is', 'has') in favour of inflated alternatives ('serves as', 'features', 'boasts', 'offers'). Use plain 'is' and 'has' where they fit. Also cut the trailing puffery ('dedicated to showcasing diverse artistic expressions')."
+    },
+    {
+      "id": "AP-011",
+      "category": "structural",
+      "before": "The conference brings together global SEO professionals, marketing experts, and growth hackers to discuss the latest trends in digital marketing. The event features keynote sessions, panel discussions, and networking opportunities.",
+      "after": "The conference covers SEO trends and growth strategies, with talks and networking sessions.",
+      "explanation": "AI overuses the 'rule of three' (three-item lists in parallel structure). Vary list lengths: sometimes two items, sometimes four, sometimes embedded in prose rather than listed. Two consecutive rule-of-three constructions is a strong AI tell."
+    },
+    {
+      "id": "AP-012",
+      "category": "lexical",
+      "before": "Vierny committed to supporting artists resisting the constraints of socialist realism. Recognizing the immense talent and the struggle these artists endured, she played a pivotal role in aiding their artistic aspirations. The non-conformist artists found a space where their creativity could flourish, contributing to the rich tapestry of artistic expression in the vibrant cultural landscape of Paris.",
+      "after": "Vierny supported artists resisting socialist realism. She discovered Yankilevsky in the early 1970s and helped him and other artists exhibit in Paris. Her gallery on Saint-Germain-des-Prés hosted the 1973 show 'Russian Avant-Garde, Moscow 1973'.",
+      "explanation": "AI rotates synonyms for the same concept to avoid repetition ('artists' becomes 'these artists', 'non-conformist artists', 'their creativity', 'artistic expression'). This 'elegant variation' reads as evasive. Repeat the plain noun when clarity demands it, and cut the synonym treadmill."
+    },
+    {
+      "id": "AP-013",
+      "category": "structural",
+      "before": "Despite its success, the Panama Canal faces challenges, including water management and increasing vessel sizes. Despite these challenges, the canal remains a vital artery of global trade. Future investments in technology could enhance its efficiency and maintain its relevance.",
+      "after": "The canal's main problems are drought years that lower Gatun Lake and growing ship sizes that push lock capacity. A widening project finished in 2016 helped with the second issue but not the first.",
+      "explanation": "The 'Despite its [positive], [subject] faces challenges...' formula is one of the strongest AI structural tells. It pairs a hedge-praise opening with a vague list of problems, then closes with optimistic speculation. Replace with specific problems and specific responses, no framing formula needed."
+    },
+    {
+      "id": "AP-014",
+      "category": "sentiment",
+      "before": "Due to its unique characteristics, the river is of interest to researchers and conservationists. Efforts are ongoing to monitor its ecological health, which is part of a larger initiative to protect the region's ecosystems.",
+      "after": "The river's ecology hasn't been formally assessed, though local records mention seasonal fish migration.",
+      "explanation": "AI invents vague authorities ('researchers and conservationists', 'efforts are ongoing', 'a larger initiative') to lend weight to unsupported claims. If you can't name the researchers or the initiative, don't assert their existence. Say what's actually known. Note: this rewrite changes a claim about who is studying the river to a claim about what is and isn't known. Only apply this transformation when you have evidence the original AI claim was confabulated; do not invert factual claims that may actually be true."
+    },
+    {
+      "id": "AP-015",
+      "category": "lexical",
+      "before": "The inscriptions offer valuable insights into the construction of the mosque. They highlight the collaborative nature of construction and underscore the contributions of skilled artisans, showcasing the intricate interplay between craftsmanship and religious devotion.",
+      "after": "The inscriptions record the names of two craftsmen: Ahmad b. Muhammad, a mason also known as Haddad, and Hajji Muhammad, a tile-cutter from Tabriz.",
+      "explanation": "AI vocabulary clustering: when 'valuable insights', 'highlight', 'underscore', 'showcasing', 'intricate', and 'interplay' appear together, the text is almost certainly AI-generated. Replace the cluster with the specific facts that supposedly inspired those adjectives. Only apply this transformation when the specific facts are actually known and present elsewhere in the source material; do not invent names or details."
+    },
+    {
+      "id": "AP-016",
+      "category": "discourse",
+      "before": "However, it's important to note that these caucuses operate outside the formal ANC structure and their influence on policy decisions may vary.",
+      "after": "These informal groups work outside the formal ANC structure, and their actual influence varies.",
+      "explanation": "Didactic disclaimers ('it's important to note', 'it's worth noting', 'it's crucial to remember') are a strong AI tell from earlier models (2023-2024). They add no information. Cut the preamble and state the fact directly."
+    },
+    {
+      "id": "AP-017",
+      "category": "sentiment",
+      "before": "Nestled within the breathtaking region of Gonder in Ethiopia, Alamata stands as a vibrant town with a rich cultural heritage and a significant place within the Amhara region, offering visitors a fascinating glimpse into the diverse tapestry of Ethiopia.",
+      "after": "Alamata is a town in the Amhara region of northern Ethiopia, near Gonder.",
+      "explanation": "AI travel-brochure puffery: 'nestled', 'vibrant', 'rich cultural heritage', 'tapestry', 'breathtaking', 'fascinating glimpse' are all AI sentiment tells. For encyclopedic or informational prose, state the geography and move on. Adjectives should describe observable specifics, not atmosphere."
+    },
+    {
+      "id": "AP-018",
+      "category": "lexical",
+      "before": "The implementation of the optimization of resource allocation led to the enhancement of operational efficiency across the organisation.",
+      "after": "We tuned how resources were allocated, and operations ran more efficiently as a result.",
+      "explanation": "AI stacks nominalizations ('implementation of', 'optimization of', 'enhancement of'), each burying a verb inside a noun phrase. Unpack the nouns back into verbs. Three nominalizations in one sentence is a strong AI tell. The human version uses active verbs ('tuned', 'allocated', 'ran') and names the agent ('we'). Note: the rewrite deliberately avoids 'optimized' as the unpack-target — although it is the literal verb hiding inside 'optimization of', it is itself a flagged AI word (see flagged_verbs.optimize in lexical_patterns). Substitute with a denominalization that does not retain the flag."
+    },
+    {
+      "id": "AP-019",
+      "category": "structural",
+      "before": "That the new framework enables more efficient processing of heterogeneous data is evident from the benchmark results.",
+      "after": "The benchmark results are clear: the new framework handles mixed data faster.",
+      "explanation": "That-clause subjects ('That X is Y') are rare in natural human prose and common in AI text. Move the evidence or source to the front of the sentence, and let the claim follow. Human writers rarely ask the reader to hold a full subordinate clause in memory before reaching the main verb."
+    },
+    {
+      "id": "AP-020",
+      "category": "structural",
+      "before": "The platform provides data analytics, real-time reporting, and automated alerts. It supports integration with CRM systems, email platforms, and project management tools. Users benefit from customizable dashboards, exportable reports, and role-based access controls.",
+      "after": "The platform's core strength is its analytics; the reporting updates in real time, which is useful for teams that need to react fast. It plugs into most CRM systems and email platforms. The dashboards are customizable, though the role-based access setup takes some patience.",
+      "explanation": "Three consecutive three-item parallel lists is a strong AI structural tell. Human writers vary list length, embed items in flowing sentences, and add evaluative commentary between items rather than stacking feature lists. The human version has lists of different sizes and adds judgment ('useful for teams', 'takes some patience'). Note: evaluative judgments like 'takes some patience' should only be added if grounded in the source material or known facts about the product; do not invent product opinions."
+    },
+    {
+      "id": "AP-021",
+      "category": "structural",
+      "before": "Machine learning models analyze large datasets to identify patterns. These patterns help businesses make better decisions. The technology continues to improve with more data. Companies across industries are adopting these tools. The results have been consistently impressive across sectors.",
+      "after": "Machine learning works by chewing through enormous datasets, far more than any team could review manually. The patterns it finds? Sometimes obvious in retrospect. Sometimes genuinely surprising. What's changed recently isn't the technology itself but the sheer volume of companies betting on it. Whether the results justify the hype depends on who you ask.",
+      "explanation": "All sentences in the AI version are 15-20 words with the same Subject-Verb-Object structure. The rewrite varies length from 3 words to 30+, uses a fragment for emphasis ('Sometimes genuinely surprising.'), introduces a rhetorical question, swaps in informal vocabulary ('chewing through', 'the hype'), and adds an evaluative stance ('whether the results justify the hype'). The factual claim (ML uses large datasets and adoption is growing) is preserved."
+    },
+    {
+      "id": "AP-022",
+      "category": "lexical",
+      "before": "Our innovative platform leverages cutting-edge AI technology to deliver seamless, transformative solutions that revolutionize how businesses streamline their operations.",
+      "after": "The platform uses GPT-4 to sort incoming support tickets by urgency and route them to the right team. That used to take two full-time coordinators.",
+      "explanation": "Removed seven flagged words (innovative, leverages, cutting-edge, seamless, transformative, revolutionize, streamline) and replaced them with a specific claim about what the tool actually does. Added concrete detail (GPT-4, support tickets, two full-time coordinators). Note: the rewrite assumes the specifics (GPT-4 / ticket routing / two coordinators) are present in the source material; do not invent product details to ground vague claims."
+    },
+    {
+      "id": "AP-023",
+      "category": "discourse",
+      "before": "Furthermore, the study found that employee satisfaction increased. Additionally, productivity metrics showed improvement. Moreover, the company reported lower turnover rates. It is also worth noting that customer satisfaction scores rose during the same period.",
+      "after": "Employee satisfaction went up, which was no surprise given the changes. Productivity followed. The real shock was turnover: it dropped 23% in six months. Customer satisfaction climbed too, though whether that's cause or coincidence is harder to say.",
+      "explanation": "Removed four formulaic transitions (Furthermore, Additionally, Moreover, It is also worth noting). Replaced them with a conversational opener, a two-word sentence ('Productivity followed.'), a colon-led emphasis, and an honest qualification at the end. Sentence length now varies from 3 to 20+ words. Note: the '23% in six months' figure must come from the source study; do not fabricate statistics."
+    },
+    {
+      "id": "AP-024",
+      "category": "sentiment",
+      "before": "While there are certain challenges associated with remote work, there are also numerous benefits. The key is finding the right balance between flexibility and collaboration. Each organization must evaluate its unique circumstances to determine the most effective approach.",
+      "after": "Remote work has real problems: isolation, blurred boundaries, the slow erosion of team culture that nobody notices until it's too late. But going back to five days in the office isn't the answer either. Most companies I've worked with land somewhere messy in the middle, and that's probably fine.",
+      "explanation": "Neutral framing replaced with specific negative emotions (isolation, erosion). First-person experience introduced ('Most companies I've worked with'). Honest, slightly resigned stance ('that's probably fine'). Concrete detail replaces abstractions. Colon used in place of an em-dash. Note: the first-person 'I've worked with' should only be used when the source text is genuinely first-person; otherwise restructure with 'Most companies seem to land...' so you don't invent a narrator."
+    },
+    {
+      "id": "AP-025",
+      "category": "discourse",
+      "before": "The team implemented a new testing framework. This framework enabled faster detection of bugs. This faster detection led to shorter release cycles. These shorter cycles improved overall product quality. This improvement was reflected in customer satisfaction scores.",
+      "after": "The new testing framework caught bugs earlier, sometimes within hours of a commit. Release cycles shrank. Customers noticed. Satisfaction scores hit their highest point in two years, and the team finally stopped dreading deploy day.",
+      "explanation": "Explicit 'this' chains removed. Causal connections left implicit (the reader follows the logic). Specific details added ('within hours of a commit', 'two years', 'deploy day'). Human emotion introduced ('finally stopped dreading'). Short sentences for pace. Note: '2 years' and 'within hours of a commit' should reflect the source; do not invent metrics."
+    },
+    {
+      "id": "AP-026",
+      "category": "structural",
+      "before": "Data security is a critical concern for modern businesses. With the increasing frequency of cyber attacks, companies must prioritize protecting their sensitive information. Implementing robust security measures can help mitigate these risks. Organizations that invest in security are better positioned for long-term success.\n\nEmployee training is another important aspect of data security. Many security breaches occur due to human error, making education essential. Regular training sessions can help employees identify potential threats. A well-trained workforce serves as the first line of defense against cyber attacks.",
+      "after": "Most data breaches start with a person, not a system. Someone clicks a link. Someone reuses a password. Someone plugs in a USB they found in the parking lot.\n\nCompanies pour money into firewalls and encryption, and they should. But the weakest link is almost always human. The fix isn't more technology. It's better habits, and those take time to build.\n\nTraining helps. Not the annual compliance slideshow that everyone clicks through during lunch. Real training: phishing simulations, tabletop exercises, the kind of practice that makes people actually pause before clicking.",
+      "explanation": "Paragraph structure breaks the AI mold of topic-supporting-supporting-concluding. Paragraph lengths vary; one paragraph is mostly fragments for emphasis. Specific examples replace abstractions (USB in parking lot, compliance slideshow during lunch). Evaluative language throughout ('weakest link', 'Not the annual compliance slideshow'). Punctuation: commas, periods, and a colon replace the em-dashes that an earlier version of this example used."
+    },
+    {
+      "id": "AP-027",
+      "category": "psycholinguistic",
+      "before": "The project was completed on schedule. The team utilized agile methodology to manage their workflow effectively. Key milestones were met consistently throughout the development process. Stakeholder feedback was incorporated at each stage. The final deliverable exceeded expectations in terms of both quality and scope.",
+      "after": "Somehow, we shipped on time. I still don't fully understand how. The first two sprints were a mess, and we lost a week to that authentication bug that kept coming back. But the team figured it out. Sarah's idea to run daily standups on the blocker board (instead of the usual status updates that nobody listens to) probably saved us. The client's happy. We're exhausted.",
+      "explanation": "First-person perspective introduced. Specific details (authentication bug, Sarah, blocker board) replace abstract claims. Honest admission of difficulty ('I still don't fully understand how'). Emotional texture ('We're exhausted'). Parenthetical aside with opinion ('nobody listens to'). Uneven development: more space for the key insight, less for the outcome. Em-dash from an earlier version replaced with a period. Note: this rewrite injects significant specifics (Sarah, the authentication bug); apply only when those specifics are present in source notes, otherwise keep the rewrite vaguer."
+    },
+    {
+      "id": "AP-028",
+      "category": "lexical",
+      "before": "Generally speaking, renewable energy tends to be more cost-effective than fossil fuels in most cases. Solar power arguably offers the most potential for widespread adoption. To some extent, wind energy can also contribute to a more sustainable energy mix. Broadly speaking, the transition to renewables appears to be accelerating.",
+      "after": "Renewables are cheaper than fossil fuels in most markets now. That's not a projection; it's what the numbers show. Solar leads the pack, with costs down 90% since 2010. Wind has a role too, though it's more geography-dependent. The transition is happening faster than most predictions from even five years ago anticipated.",
+      "explanation": "Removed four formulaic hedges (Generally speaking, arguably, To some extent, Broadly speaking). Direct claims replace hedged ones. Specific data added (90% since 2010, five years ago) where source material supports it. One genuine hedge kept ('though it's more geography-dependent') because it's specific, not formulaic. Semicolon used in place of an em-dash. Note: the '90% since 2010' figure is a well-known IRENA/IEA-reported statistic, but you should still verify it against the source before publishing."
+    },
+    {
+      "id": "AP-029",
+      "category": "structural",
+      "before": "They were drawn as five separate machines, and the studio is not five machines. It is one studio that a student moves through.",
+      "after": "They were drawn as five separate machines, but a studio is really one thing: a single path a student moves along.",
+      "explanation": "The two-sentence copula flip ('X is not Y. It is Z.') is the single most characteristic antithesis of LLM prose (banned_structures BS-013). It is the same overweighted contrast as the 'not just X, but Y' of AP-006/AP-007, split across two sentences so the single-sentence checks miss it. Make the positive claim and let it stand; do not negate an alternative first."
+    },
+    {
+      "id": "AP-030",
+      "category": "structural",
+      "before": "What changed was the team's entire approach to shipping software.",
+      "after": "The team changed how it shipped software.",
+      "explanation": "Wh-cleft pseudo-clefts ('What changed was X', 'What matters here is X') front an abstraction as the grammatical subject for portentous effect (banned_structures BS-015). They are a sibling of the that-clause subject (AP-019). Make the plain claim with a concrete subject and an active verb."
+    },
+    {
+      "id": "AP-031",
+      "category": "structural",
+      "before": "The point of the redesign is the difference between these two shapes. On the left, the old one.",
+      "after": "On the left, the old shape; on the right, the new one. That difference is the redesign.",
+      "explanation": "Meta-framing openers ('The point of X is...', 'The key here is...') announce a passage's thesis abstractly before showing the concrete thing (banned_structures BS-016). LLMs over-signal structure this way; human writers more often lead with the concrete thing and let the reader infer the point. Delete the framing sentence and let the contrast lead."
+    },
+    {
+      "id": "AP-032",
+      "category": "lexical",
+      "before": "This is a real engagement, and it is mid-build, so I will not claim numbers I have not measured. But the design is real.",
+      "after": "The engagement is live and mid-build, so I will not report outcomes I have not measured. The design work itself, though, is done.",
+      "explanation": "Reality-assertion / credibility insistence: a writer who repeatedly labels their own account 'real' (or actual/genuine/true) is making a defensive credibility hedge that reads as machine-flavored. The density is the tell, not any single use; the checker surfaces it as credibility_insistence (lexical_patterns.credibility_insistence) once a token recurs. Cut the assertions and let the specifics ('live and mid-build', 'the design work is done') carry the credibility. Keep at most one, and only for a genuine contrast. This rewrite also removes the disclaimer-then-'But' reversal (BS-017)."
+    },
+    {
+      "id": "AP-033",
+      "category": "structural",
+      "before": "The order mattered as much as the rule.",
+      "after": "I had to get the order right, not just the rule.",
+      "explanation": "Abstraction-as-agent: an abstract noun ('the order') is the subject of an agentive verb ('mattered'), so the sentence sounds fluent but no person or concrete thing is doing anything. This is hard to detect mechanically, so the checker surfaces it only as a manual_review line. Give the action a human or concrete subject ('I had to get the order right'). Apply only where a real agent exists in the source; do not invent one."
+    },
+    {
+      "id": "AP-034",
+      "category": "structural",
+      "before": "The same board, rebuilt.",
+      "after": "We rebuilt the same board.",
+      "explanation": "Noun-comma-past-participle fragment: a determiner-led noun phrase, a comma, and a trailing past participle, with no finite verb ('The same board, rebuilt.'). It reads as AI copy — a verbless flourish standing in for a sentence. Give it a subject and a finite verb, or fold the participle into the neighboring sentence. Detected deterministically as BS-021."
+    },
+    {
+      "id": "AP-035",
+      "category": "structural",
+      "before": "in 200 words",
+      "after": "the direction problem",
+      "explanation": "Meta label: a heading or standalone line that names the artifact's own format or length ('in 200 words', 'in brief', 'the short version', 'at a high level', 'to put it simply') instead of its subject. A self-aware flourish that performs concision rather than saying one more specific thing, and topic-agnostic — the same label could head almost any piece. Replace it with a phrase about the content, or cut it and let the content name the section. The standalone-label form is detected deterministically as BS-022; the judgment forms (self-satisfied closers, first-person meta-commentary, paradox-substitution headlines) are a self_review rubric item."
+    },
+    {
+      "id": "AP-036",
+      "category": "sentiment_tone",
+      "before": "You're not imagining it. You're not alone.",
+      "after": "Plenty of teams hit this same wall in month two.",
+      "explanation": "Unsolicited validation: the model drops into therapeutic second-person reassurance ('You're not alone', 'You're not imagining it', 'You're not broken') that performs empathy instead of adding information, and reads as bizarre in most content. Cut it or replace it with something concrete. Detected deterministically (in its fixed frame) as BS-023; genuine supportive writing can justify it, so it is checklist, never hard."
+    },
+    {
+      "id": "AP-037",
+      "category": "sentiment_tone",
+      "before": "Studies show that remote work boosts productivity.",
+      "after": "A 2024 Stanford study of 16,000 workers found remote work raised output 13% (Bloom et al.).",
+      "explanation": "Vague authority attribution: the sentence leans on an unnamed authority ('studies show', 'researchers say', 'experts agree', 'it is widely believed') to borrow credibility it never earns. Name the specific study, person, or body — or drop the claim. Detected as BS-024; scoped so named/specific references ('The researchers at MIT published...') are not flagged."
+    },
+    {
+      "id": "AP-038",
+      "category": "structural",
+      "before": "The best part? It's completely free.",
+      "after": "It's completely free.",
+      "explanation": "Question-fragment cadence: a short determiner-led noun-phrase question used as a setup, then answered in the next breath ('The best part? ...', 'The kicker? ...', 'The result? ...'). A 2026 ChatGPT rhetorical fingerprint. State the point as a declarative; if the setup-payoff is earned, use it once, not as a repeated beat. Detected as BS-025."
+    }
+  ]
+}

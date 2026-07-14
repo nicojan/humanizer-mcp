@@ -1,0 +1,88 @@
+{
+  "meta": {
+    "layer": "caveats",
+    "priority": "cross-cutting",
+    "description": "Important limitations and context-sensitivity of human-patterned language rules. These caveats should be surfaced alongside any rules to prevent misapplication.",
+    "usage": "Call humanizer_get_caveats during any rewrite to verify the layer-level rules don't get over-applied. The single most important caveat is uniform_application_paradox: applying human-patterning rules uniformly is itself an AI signal, so the LLM should deliberately leave some paragraphs barely-edited even when rules would technically apply. The ethical_considerations block additionally constrains the legitimate use cases for the whole tool."
+  },
+  "core_caveats": [
+    {
+      "id": "probabilistic_not_deterministic",
+      "statement": "Human-likeness is a probabilistic judgment, not an authorship determination.",
+      "explanation": "These rules describe statistical tendencies, not absolute markers. Text that follows every rule may still be flagged by some detectors. Text that breaks many rules may still read as human. The goal is to shift the probability distribution, not to guarantee a particular outcome."
+    },
+    {
+      "id": "perplexity_is_not_quality",
+      "statement": "High perplexity does not imply creativity or quality.",
+      "explanation": "Unusual word choices can signal human authorship or they can signal confused, unclear writing. The goal is contextually appropriate unpredictability (surprising choices that still fit), not randomness."
+    },
+    {
+      "id": "burstiness_is_not_authenticity",
+      "statement": "High burstiness does not imply authenticity or originality.",
+      "explanation": "Structural variation signals human writing patterns, but mechanical variation (randomly alternating long and short sentences) is itself detectable. The variation should feel motivated by the content, not imposed as a pattern."
+    },
+    {
+      "id": "esl_sensitivity",
+      "statement": "ESL writing may align with AI patterns without being AI-generated.",
+      "explanation": "Writers whose first language is not English may produce text that follows instruction-driven structure, uses formulaic transitions taught in language courses, shows lower lexical diversity in English, and exhibits other patterns that overlap with AI-generated text. Aggressive application of HPL rules to ESL text risks erasing the writer's voice or overcorrecting natural L2 patterns. Apply rules with awareness that what looks like an AI pattern may be a learner pattern."
+    },
+    {
+      "id": "professionally_edited_prose",
+      "statement": "Professionally edited prose may reduce human markers.",
+      "explanation": "Professional editing naturally smooths out some cognitive load artifacts, self-monitoring traces, and punctuation drift. A heavily edited human text may share some statistical properties with AI text. The goal of HPL is not to undo professional editing but to ensure that editing didn't remove all human texture."
+    },
+    {
+      "id": "detector_brittleness",
+      "statement": "Detection features are context-sensitive, degrade under domain shift, and are affected by revision.",
+      "explanation": "A rule that reliably distinguishes AI text in news articles may not work for academic papers or social media posts. Rules should be applied through the content_profiles layer, which adjusts aggressiveness by content type. Detectors trained on one LLM may not generalize to others. Ardeshirifar (2025) quantifies this risk: F1 scores dropped 34.67 percentage points when a hand-crafted feature classifier trained on one dataset (HC3) was tested on text from a different model generation (GPT-2). This is not a marginal effect; rules tuned for blog posts may actively misfire on academic text, and vice versa. Always apply rules through the content_profiles layer, and treat cross-domain results with appropriate skepticism."
+    },
+    {
+      "id": "model_evolution",
+      "statement": "As language models evolve, detection patterns shift.",
+      "explanation": "The specific flagged words and patterns in this system reflect tendencies observed in models through 2025 (GPT-3.5, GPT-4, LLaMA, Falcon, Mistral). Newer models may adopt different patterns. The structural and psycholinguistic rules are more durable than the lexical ones, which may need periodic updating."
+    },
+    {
+      "id": "over_regularization_caveat",
+      "statement": "Lexical over-regularization and common discourse scaffolding are frequently weighted as machine-correlated features despite their prevalence in academic and journalistic norms.",
+      "explanation": "Some patterns flagged as AI-correlated (formulaic transitions, standardized grammar, neutral tone) are conventional in certain human writing contexts. The rules account for this through content_profiles, but users should exercise judgment when the detected pattern is actually genre-appropriate."
+    },
+    {
+      "id": "uniform_application_paradox",
+      "statement": "Applying human-patterning rules uniformly is itself an AI signal.",
+      "explanation": "This is the most important caveat. If every paragraph has exactly one fragment, one parenthetical aside, one informal word, and one rhetorical question, the uniformity of the 'human' interventions becomes detectable. Apply rules unevenly: some paragraphs get heavy editing, others barely change. The distribution of interventions should itself be irregular. (Note: em-dashes are never a valid human intervention; see absolute_rules AR-002.) This is a Tier 2 principle: it applies to stylistic moves (word choice, hedging, burstiness, texture). It does not apply to Tier 1 prohibitions (em-dashes and banned structures), which must always be eliminated. See foundation.enforcement.non_uniformity_scope."
+    },
+    {
+      "id": "newer_model_convergence",
+      "statement": "Newer, larger models are converging on human-like lexical distributions while retaining detectability through structural and psycholinguistic uniformity.",
+      "explanation": "O'Sullivan (2025) shows GPT-4 clusters more tightly than GPT-3.5 in stylometric analysis. Przystalski et al. (2024) confirm that more complex models are harder to differentiate from human text at the lexical level. Kobak et al. (Science Advances 2025) and Kuznetsov et al. (arXiv:2501.19301, 2025) extend this through 2024-2025. This means lexical rules (flagged words, vocabulary diversity) become less reliable over time, while structural rules (burstiness, sentence variation), discourse rules (transition patterns), and psycholinguistic texture (cognitive load artifacts, self-monitoring traces) become relatively more important. When prioritizing edits, weight structural and psycholinguistic layers higher than lexical substitution for text that may have been generated by frontier models."
+    },
+    {
+      "id": "flow_over_surface_features",
+      "statement": "The durable human/AI distinction lives in local flow and section-to-section variation, not in word-order-independent surface statistics.",
+      "explanation": "Modern LLMs already match human text on word-order-independent features (POS-tag distributions, stopword distributions, readability scores), showing no observable statistical difference. The features that still diverge are those capturing the continuous flow of text, specifically token-level perplexity and content change through the text, plus cross-segment style variation: humans modulate their fingerprint between a document's intro, body, and conclusion while LLMs hold one flat fingerprint throughout (Kuznetsov et al., arXiv:2501.19301, 2025). The arms race confirms where the signal lives: paraphrasing evades most detectors (Krishna et al., NeurIPS 2023), yet AI 'generation patterns' survive paraphrasing even as semantics drift (arXiv:2511.00416, 2025), and only detector-guided adversarial paraphrase reliably evades (arXiv:2506.07001, NeurIPS 2025) precisely by destroying those flow features. Implication: surface word substitution (the lexical layer) is necessary hygiene with a low ceiling. For text that may be from a frontier model, weight the structural, discourse, and non-uniformity layers higher, especially section-to-section variation (see the segment_uniformity finding in humanizer_check_text)."
+    },
+    {
+      "id": "sentence_length_mean_not_a_signal",
+      "statement": "Average sentence length does not distinguish AI from human text; only the variance does.",
+      "explanation": "Studies disagree on the direction of mean sentence length, and it fails as a discriminator under scrutiny. The reliable structural signal is low VARIANCE in sentence length (low burstiness), not a particular average. The burstiness check (foundation.two_axes.burstiness; humanizer_check_text metrics.length_stdev) targets the standard deviation, not the mean, and should stay that way. Do not push sentences toward a target average length; widen the distribution instead, mixing very short and long sentences."
+    },
+    {
+      "id": "performative_framing",
+      "statement": "A self-aware flourish (a neat closer, a meta label, a paradox headline) is a low-ceiling tell, and the device is legitimate in moderation — flag it as judgment, not prohibition.",
+      "explanation": "Generated prose reaches for a satisfying beat — a closer, a frame, a reveal — because it optimizes for surface polish over saying one more true, specific thing, and these beats are topic-agnostic (the same closer could end almost any essay). But a single strong aphorism or a genuine paradox title can be entirely human. The rule targets repetition and substitution for content, not the device itself, so it is surfaced as a self_review judgment item rather than a hard prohibition. Consistent with flow_over_surface_features: content and flow beat surface flourish. The one mechanizable slice — a standalone meta label that names the artifact's own format or length ('in 200 words', 'in brief', 'at a high level') instead of its subject — is detected deterministically as BS-022 (checklist, never hard), scoped to bounded standalone labels so embedded uses are not flagged."
+    },
+    {
+      "id": "em_dash_model_specific",
+      "statement": "Em-dash frequency is a model-specific signal, not a universal statistical AI tell, but the AR-002 ban still stands.",
+      "explanation": "Em-dash production varies enormously by model, from roughly 0.0 per 1,000 words (Llama 3.1/3.3) up to about 9-10 per 1,000 words (GPT-4.1), and reporting concludes the 'ChatGPT hyphen' is not a reliable detector on its own (Washington Post 2025; Indiana Capital Chronicle 2025); the mechanism is plausibly markdown training leaking into prose. This does NOT relax absolute_rules AR-002. The em-dash ban is justified by how the writing reads to a human and by this project's own history, not by statistical detectability, so the new data does not undercut it. Two practical consequences: (1) keep eliminating em-dashes regardless; (2) do not treat the ABSENCE of em-dashes as evidence a text is human, and do not over-index on em-dashes alone, which produces false positives."
+    }
+  ],
+  "ethical_considerations": {
+    "statement": "This system is designed to improve the quality and readability of AI-assisted writing, not to disguise AI authorship where disclosure is required.",
+    "guidance": [
+      "Where institutional or legal requirements mandate disclosure of AI involvement in content creation, this system should be used alongside (not instead of) appropriate disclosure.",
+      "The goal is better writing, not deception. Human-patterned text is more readable, more engaging, and more effective regardless of its authorship.",
+      "When human oversight is applied during editing, the resulting text is human-edited, which is a legitimate description of the process."
+    ]
+  }
+}

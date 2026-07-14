@@ -1,0 +1,9 @@
+If you've installed Python but your projects keep bumping into each other — one needing version 2.7 of a library, another needing version 3.1 — a virtual environment is the fix.
+
+The idea is simple: instead of installing every Python package globally (where they can conflict), you create a small, isolated folder for each project. That folder gets its own copy of Python, its own installed packages, nothing more. When you work on project A, you "activate" its environment. When you switch to project B, you activate a different one. They never touch each other.
+
+This tutorial walks through creating your first one. You don't need to understand the internals; you just need a terminal and Python 3.3 or later, which ships with the tool we'll use built in.
+
+By the end, you'll know how to create an environment, activate it, install a package inside it, and deactivate it when you're done. The whole thing takes about five minutes the first time. After that, it's four commands you'll type without thinking.
+
+Ready? Open a terminal and let's go.

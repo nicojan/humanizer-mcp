@@ -1,0 +1,193 @@
+{
+  "meta": {
+    "layer": "structural_patterns",
+    "priority": 2,
+    "description": "Rules for breaking structural uniformity in sentence length, syntactic construction, and punctuation. These address burstiness, the most measurable axis of human-likeness.",
+    "usage": "Second pass of the application protocol, after lexical. Call humanizer_get_structural_patterns to retrieve. Apply the rules non-uniformly across sections; uniform application is itself an AI signal (see caveats.uniform_application_paradox).",
+    "research_basis": "Ardeshirifar (2025) showed human texts have wider sentence-length distributions with higher standard deviation. Muñoz-Ortiz et al. (2024) documented POS distribution differences across six LLMs. Terčon & Dobrovoljc (2025) survey synthesized 44 studies on syntactic complexity, sentence length, and structural patterns."
+  },
+  "sentence_length": {
+    "ai_pattern": "AI text concentrates around shorter, more uniform sentence lengths. The standard deviation of sentence length is consistently lower in AI text than in human text.",
+    "human_pattern": "Human writers demonstrate greater variability: wider distribution, higher standard deviation. Sentences range from fragments to long multi-clause constructions within the same passage.",
+    "rules": [
+      {
+        "rule": "Vary sentence length deliberately within each paragraph.",
+        "guidance": "Aim for a mix that includes at least one sentence under 8 words and one over 25 words per paragraph. Not every paragraph needs to vary; some can be uniform for pacing."
+      },
+      {
+        "rule": "Use fragments for emphasis.",
+        "guidance": "A sentence fragment ('Not always.' or 'Exactly the point.') after a long sentence creates burstiness. Use sparingly, one per section at most."
+      },
+      {
+        "rule": "Allow long sentences when the thought demands it.",
+        "guidance": "AI tends to break complex thoughts into multiple short sentences. Sometimes a single long sentence with embedded clauses, parenthetical asides, or subordinate constructions reads more naturally than three short ones. Do not use em-dashes to extend sentences (see absolute_rules AR-002); use commas, semicolons, parentheses, or restructured subordinate clauses."
+      },
+      {
+        "rule": "Vary paragraph length.",
+        "guidance": "Paragraphs should range from one sentence to five or six. AI text tends to produce paragraphs of uniform length. Let some paragraphs be just a single punchy sentence."
+      },
+      {
+        "rule": "Target the VARIANCE of sentence length, not a particular average.",
+        "guidance": "Mean sentence length does not distinguish AI from human text and studies disagree on its direction; the reliable signal is a wide distribution (high standard deviation). Do not aim for a target average length. Widen the spread instead: a 4-word sentence next to a 30-word one. The checker measures stdev, not mean (see caveats.sentence_length_mean_not_a_signal)."
+      }
+    ]
+  },
+  "syntactic_variety": {
+    "ai_pattern": "AI text shows more rigid, repetitive sentence structure. It favors Subject-Verb-Object order, overuses auxiliary verbs and copula constructions, and produces more subordinate clauses and verb phrases relative to human text. Syntactic depth remains stable across sentences.",
+    "human_pattern": "Human writers demonstrate flexibility, tailoring sentence structure based on communicative goals such as clarity, emphasis, or engagement. Syntactic depth fluctuates across adjacent sentences.",
+    "rules": [
+      {
+        "rule": "Alternate between simple declaratives and complex constructions.",
+        "guidance": "Follow a complex sentence ('While the data suggests one thing, the experience on the ground, which few researchers have examined closely, points in another direction') with a simple one ('The gap matters.')."
+      },
+      {
+        "rule": "Front-load modifiers occasionally.",
+        "guidance": "Instead of always 'The system processes data efficiently,' sometimes write 'Efficiently, and with almost no latency, the system processes data.' Vary which elements get emphasis through position."
+      },
+      {
+        "rule": "Use passive voice selectively.",
+        "guidance": "AI text uses passive voice at a steady rate. Human writers use it unevenly: active in most places, passive when the object is more important than the actor. Cluster passive constructions in one section, then abandon them."
+      },
+      {
+        "rule": "Start some sentences with conjunctions.",
+        "guidance": "'And' or 'But' at the start of a sentence is a strong human signal. It breaks the formality that AI defaults to. Use it where the rhythm calls for it."
+      },
+      {
+        "rule": "Use rhetorical questions occasionally.",
+        "guidance": "AI text rarely uses questions. Inserting a rhetorical question ('But does this actually hold up?') breaks the declarative monotone and signals engagement."
+      },
+      {
+        "rule": "Vary clause ordering to shift emphasis.",
+        "guidance": "Human writers reorder clauses to put emphasis where they want it. 'Despite the cost, they went ahead' vs. 'They went ahead, despite the cost': same information, different emphasis. AI tends to use one ordering pattern consistently."
+      },
+      {
+        "rule": "Prefer verb-led constructions over noun-chain constructions.",
+        "guidance": "AI builds sentences around noun phrases: 'The analysis of the data revealed...' Humans build them around verbs: 'We analyzed the data and found...' When you see 'the [noun] of [noun]' twice in one sentence, restructure around the verb. See lexical_patterns.nominalization for the full list."
+      },
+      {
+        "rule": "Reduce that-clause subjects.",
+        "guidance": "AI produces sentences like 'That the system performed well is noteworthy' or 'That climate change affects agriculture is well documented.' Human writers almost never start sentences this way. Restructure: 'The system performed well, which is worth noting' or 'Climate change clearly affects agriculture.' Move the that-clause to the end or eliminate it."
+      },
+      {
+        "rule": "Cut trailing present participial clauses.",
+        "guidance": "AI appends '-ing' tails that add interpretation without new information: 'The policy was updated in March, reflecting a shift in organizational priorities and underscoring the need for ongoing adaptation.' Human writers either commit to the interpretation in a separate sentence or drop it. If the participial clause can be deleted without losing a fact, delete it."
+      },
+      {
+        "rule": "Replace periphrastic verb constructions with direct verbs.",
+        "guidance": "AI favors multi-word verb phrases over single direct verbs. 'is able to process' → 'processes'. 'has been shown to improve' → 'improves'. 'can be used to generate' → 'generates'. 'is designed to facilitate' → 'helps'. Audit sentences for auxiliary verb chains (is/are/was/were/has/have/can/could + past participle or infinitive) and ask if a single verb would work."
+      },
+      {
+        "rule": "Reduce copula constructions ('is', 'are', 'was') when a stronger verb is available.",
+        "guidance": "AI defaults to 'X is a Y that Z' structure. 'The platform is a tool that enables collaboration' → 'The platform lets teams collaborate.' 'This is a significant development' → 'This matters.' Not every copula should be replaced, but if three sentences in a row use 'is/are/was' as the main verb, at least one needs restructuring."
+      }
+    ]
+  },
+  "punctuation_diversity": {
+    "ai_pattern": "AI text uses a less varied set of punctuation marks, with commas and periods accounting for most cases. Historically, AI used fewer question marks, parentheses, semicolons, and colons compared to human text. It uses more periods and single quotes. Note: em-dashes are NOT a human signal in current detector landscapes; see AR-002 in absolute_rules.",
+    "human_pattern": "Human writers use a wider variety of punctuation marks. Parentheses, semicolons, colons, and question marks appear more frequently and unevenly throughout the text.",
+    "rules": [
+      {
+        "rule": "Absolute: never use em-dashes (—). See absolute_rules AR-002 for the full directive.",
+        "guidance": "Em-dashes are one of the most reliable AI tells in current reader and detector environments. For parenthetical asides, use commas ('The project, which started as a side experiment, became the main product'), parentheses ('The project (originally a side experiment) became the main product'), or restructure into two sentences. For pivots and emphasis, use a comma, semicolon, colon, or period. Semicolons work for connecting independent clauses that share a thought. When revising source text that already contains em-dashes, replace every one without changing the meaning."
+      },
+      {
+        "rule": "Use semicolons to connect related independent clauses.",
+        "guidance": "Semicolons signal a writer who has considered the relationship between ideas; they're a marker of deliberate prose. AI almost never uses them."
+      },
+      {
+        "rule": "Use colons to introduce explanations or lists within sentences.",
+        "guidance": "A colon before an elaboration ('There's one problem: nobody asked') is a human construction that AI underuses."
+      },
+      {
+        "rule": "Use parentheses for asides.",
+        "guidance": "Parenthetical asides (like this one) are a strong human signal. They indicate a writer interrupting their own thought to add context, something AI does not do naturally. Use parentheses or commas for the aside; never em-dashes (see AR-002)."
+      },
+      {
+        "rule": "Drift punctuation use across the document.",
+        "guidance": "Human writers are inconsistent in the CHOICE of punctuation. They may use Oxford commas in one paragraph and drop them in another. They may use semicolons heavily in one section and parentheses elsewhere. This drift is a feature, not a bug; do not standardize it. Drift applies only where multiple valid options exist (Oxford comma on/off, semicolon vs. period to join related clauses, parens vs. commas for an aside). It is never license to drop required punctuation, omit terminal marks, or use a mark incorrectly; punctuation must always be grammatically correct (see absolute_rules AR-003). The other exception is em-dashes (see AR-002): never use them, regardless of section."
+      },
+      {
+        "rule": "Use ellipses very sparingly.",
+        "guidance": "An occasional ellipsis (' ... ') can indicate trailing thought, but overuse is its own AI signal in some models. One per document maximum in professional prose."
+      }
+    ]
+  },
+  "pos_distribution_targets": {
+    "description": "Part-of-speech distribution differences between human and AI text, based on quantitative analysis across multiple LLMs.",
+    "human_tendencies": {
+      "more_in_human_text": ["nouns", "adjectives", "punctuation marks", "proper nouns"],
+      "more_in_ai_text": ["auxiliary verbs", "symbols", "numbers", "pronouns (especially third-person)", "determiners", "coordinating conjunctions"],
+      "notes": "Human text uses more content-rich parts of speech (nouns, adjectives, proper nouns) while AI text relies more on structural/functional parts (auxiliaries, determiners). Humans also use punctuation more frequently, which connects to longer, more complex sentences."
+    },
+    "rewriting_guidance": [
+      "Replace some auxiliary verb constructions with direct verbs. 'The system is able to process' → 'The system processes'.",
+      "Reduce determiner chains. 'The implementation of the new version of the system' → 'The new system implementation' or rephrase entirely.",
+      "Add specific proper nouns where context allows: place names, company names, people's names. AI tends to refer to 'researchers' or 'others' vaguely.",
+      "Include more adjectives, but specific and descriptive ones, not the flagged buzzwords. 'A narrow two-lane road' rather than 'an innovative road'.",
+      "Use fewer numbers and symbols than AI would default to. When AI adds statistics for credibility, ask whether the number actually serves the reader."
+    ]
+  },
+  "n_gram_patterns": {
+    "ai_pattern": "AI text shows higher frequencies for word n-grams of order 3+, meaning it repeats the same multi-word phrases more than human writers. LLMs also repeat longer part-of-speech sequences more frequently. For n-grams of order 6+, LLMs produce more novel combinations than humans, while for shorter n-grams they produce fewer novel combinations.",
+    "rewriting_guidance": [
+      "Check for repeated 3–4 word phrases across the document. If the same phrase appears more than twice, rephrase at least one instance.",
+      "Avoid formulaic sentence openings. If three sentences start with 'This [noun]...' or 'The [noun]...', rewrite at least one with a different construction.",
+      "Human text contains more idiomatic expressions. Where appropriate, replace literal phrasing with idioms or colloquialisms."
+    ]
+  },
+  "enumeration_patterns": {
+    "ai_pattern": "AI over-relies on parallel list structures within prose. Three-item lists in parallel form ('X, Y, and Z') appear at a much higher rate than in human text. AI also produces more phrasal coordination and stacks multiple coordinate structures in the same sentence.",
+    "human_pattern": "Human writers embed items in flowing prose rather than listing them. When they do list, the items are often different lengths, and they vary between two-item, three-item, and four-item constructions. They also use subordination rather than coordination to relate ideas.",
+    "rules": [
+      {
+        "rule": "Vary list lengths. Do not default to three items.",
+        "guidance": "If three consecutive sentences or paragraphs contain three-item lists, rewrite at least one. Sometimes two items is enough. Sometimes four is better. Sometimes the 'list' should just be a sentence: 'The main benefit is speed, though reliability matters too.'"
+      },
+      {
+        "rule": "Embed items in prose rather than enumerating them.",
+        "guidance": "'The platform offers analytics, reporting, and dashboards' → 'The platform's main draw is its analytics; the reporting fills in the gaps, and the dashboards are mostly for client presentations.' Items gain texture when they're described, not listed."
+      },
+      {
+        "rule": "Replace coordination with subordination where one item matters more.",
+        "guidance": "'The team designed, developed, and deployed the system' → 'The team designed and deployed the system; developing it took most of the time.' Subordination signals that the writer has judged the relative importance of items, which AI rarely does."
+      }
+    ],
+    "research_basis": "Strübbe et al. (2025) and Wu (2025) both find higher coordination and enumeration in AI text. Anti-pattern AP-011 addresses the 'rule of three' specifically; this rule generalizes the principle."
+  },
+  "dependency_proximity": {
+    "description": "Human languages naturally minimize the distance between syntactically related words due to working memory constraints. LLMs do this less effectively than humans, producing word orders where modifiers, objects, and their governors are farther apart than a human writer would place them.",
+    "ai_pattern": "AI may produce sentences where the subject and verb are separated by long modifying phrases, or where relative pronouns are distant from their antecedents. The sentence is grammatical but feels slightly harder to parse than it should.",
+    "human_pattern": "Human writers intuitively keep related words close together. When a sentence gets long, they restructure to bring the verb closer to its subject or break the sentence into two.",
+    "rules": [
+      {
+        "rule": "Keep subjects and their verbs close together.",
+        "guidance": "'The report, which was commissioned by the board in response to stakeholder concerns about environmental impact and prepared by an external consulting firm, recommends...' → 'The report recommends...' (move the modifying clause after the main clause or into a separate sentence)."
+      },
+      {
+        "rule": "Move heavy modifiers to the end of the sentence.",
+        "guidance": "In English, end-weighting is natural: put short elements before long ones. 'She gave the recently hired junior analyst who started last Monday the files' → 'She gave the files to the junior analyst who started last Monday.'"
+      },
+      {
+        "rule": "If a sentence feels hard to parse despite being grammatical, dependency distance is likely the problem.",
+        "guidance": "Re-read the sentence and ask: how far is the verb from its subject? How far is the relative pronoun from what it refers to? If the answer is more than 8-10 words, restructure."
+      }
+    ],
+    "research_basis": "Muñoz-Ortiz et al. (2024) Section 4.1.6 demonstrates that all tested LLMs optimize dependency lengths to a lesser extent than humans. This aligns with the established DLM (Dependency Length Minimization) principle observed across human languages (Futrell et al. 2015)."
+  },
+  "cross_segment_variation": {
+    "description": "The most durable structural distinction between human and AI text: humans modulate their stylistic fingerprint between a document's sections (intro, body, conclusion), while LLMs hold one flat fingerprint throughout. This is a document-level property that sentence-level variety alone does not capture.",
+    "ai_pattern": "An LLM writes every section in the same register, with the same average sentence length, the same rhythm, and the same syntactic habits from first paragraph to last. Even when individual sentences vary, the per-section statistics barely move across the document.",
+    "human_pattern": "Human writers shift gears between sections. An opening might be terse and punchy; a middle section dense and clause-heavy; a close short and reflective. The variation across segments is itself a signal of a writer adapting to the work of each part.",
+    "rules": [
+      {
+        "rule": "Make sections read differently from one another, not just sentences within a section.",
+        "guidance": "Deliberately give one section a different texture: shorter sentences, a more conversational register, a fragment or a question it does not use elsewhere. If you applied a 'vary sentence length' rule uniformly to every paragraph, you have re-created the AI fingerprint at a higher level. The checker flags this as segment_uniformity when ≥3 sections read alike."
+      },
+      {
+        "rule": "Do not end every section on the same kind of beat.",
+        "guidance": "A common LLM tic is closing each section on a short, abstract copula maxim ('They are the product.', 'The second draft is the real one.'). Each is fine alone; as a per-section habit it reads as a machine landing every passage on a profound one-liner. Vary how sections end: some on a concrete detail, some mid-thought, some on a question."
+      }
+    ],
+    "research_basis": "Kuznetsov et al. (arXiv:2501.19301, EMNLP 2025): humans exhibit more variation across text segments than LLMs, which maintain a consistent stylistic fingerprint throughout. This is the structural complement to foundation.section_level_variation and is enforced by the segment_uniformity check in humanizer_check_text."
+  }
+}
