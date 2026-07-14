@@ -1,0 +1,1240 @@
+{
+  "hard_phrases": [
+    "it is important to note that",
+    "it's important to note that",
+    "it is worth noting that",
+    "it's worth noting that",
+    "it is crucial to remember that",
+    "in today's rapidly evolving",
+    "in today's fast-paced world",
+    "without further ado"
+  ],
+  "regex_structures": [
+    {
+      "id": "BS-005",
+      "name": "participle_tail",
+      "description": "Comma + present-participle tail that adds interpretation without new information.",
+      "detection": {
+        "method": "regex",
+        "pattern": ",\\s+(contributing|underscoring|highlighting|reflecting|setting|marking|emphasizing|showcasing|demonstrating|reinforcing|paving|ushering)\\b\\w*",
+        "confidence": "medium"
+      },
+      "gate": "checklist",
+      "fix": "Delete the dangling -ing clause, or commit to the interpretation in its own sentence.",
+      "source_examples": [
+        "AP-008",
+        "AP-009"
+      ]
+    },
+    {
+      "id": "BS-004",
+      "name": "significance_puffery",
+      "description": "Inflated framing of mundane facts as sweeping historical claims.",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\b(marking a (pivotal|crucial|defining|key) (moment|chapter)|setting the stage for|part of a broader (movement|trend|effort) to|underscores its enduring (significance|importance))\\b",
+        "confidence": "medium"
+      },
+      "gate": "checklist",
+      "fix": "Strip the editorializing and state what actually happened.",
+      "source_examples": [
+        "AP-008"
+      ]
+    },
+    {
+      "id": "BS-006",
+      "name": "negative_parallelism",
+      "description": "'not just X, but also Y' / 'not only X but Y' contrast inflation.",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\bnot (just|only)\\b[^.?!]{0,60}?\\bbut\\b",
+        "confidence": "medium"
+      },
+      "gate": "checklist",
+      "fix": "State the point directly with a simple conjunction.",
+      "source_examples": [
+        "AP-006",
+        "AP-007"
+      ]
+    },
+    {
+      "id": "BS-007",
+      "name": "despite_faces_challenges",
+      "description": "'Despite its X, [subject] faces challenges...' hedge-praise formula.",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\bdespite\\b[^.?!]{0,80}?\\bfaces?\\b[^.?!]{0,40}?\\bchallenges?\\b",
+        "confidence": "medium"
+      },
+      "gate": "checklist",
+      "fix": "Replace with specific problems and specific responses; drop the framing formula.",
+      "source_examples": [
+        "AP-013"
+      ]
+    },
+    {
+      "id": "BS-010",
+      "name": "that_clause_subject",
+      "description": "Sentence opening with a 'That ... is' clausal subject.",
+      "detection": {
+        "method": "regex",
+        "pattern": "(?:^|[.!?]\\s+)That\\s+(?:the|a|an|this|these|those|\\w+ing)\\b[^.?!]{0,100}?\\bis\\b",
+        "confidence": "low"
+      },
+      "gate": "checklist",
+      "fix": "Move the evidence/source to the front; let the claim follow.",
+      "source_examples": [
+        "AP-019"
+      ]
+    },
+    {
+      "id": "BS-011",
+      "name": "x_not_y_contrastive",
+      "description": "'X, not Y' contrastive binary that reads constructed.",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\b\\w+,\\s+not\\s+\\w+",
+        "confidence": "low"
+      },
+      "gate": "checklist",
+      "fix": "Make the positive claim and let it stand, or use a separate sentence for the contrast.",
+      "source_examples": [
+        "AP-005"
+      ]
+    },
+    {
+      "id": "BS-013",
+      "name": "negation_flip_antithesis",
+      "description": "Two-sentence copula flip: 'X is not Y. It is Z.' The single most characteristic antithesis of LLM prose. A two-sentence relative of BS-006 ('not just X but Y') and BS-011 ('X, not Y'), which the single-sentence checks miss.",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\b(?:is|are|was|were)\\s+not\\s+(?:just|only|merely|simply|a|an|the|about|one|two|three|four|five|six|seven|eight|nine|ten|\\d+)\\s+[^.?!]{0,45}[.]\\s+(?:It|They|That|This)\\s+(?:is|are|was|were)\\b",
+        "confidence": "low"
+      },
+      "gate": "checklist",
+      "fix": "Make the positive claim and let it stand. Do not negate an alternative in one sentence and flip to the real point in the next.",
+      "source_examples": [
+        "AP-005",
+        "AP-006",
+        "AP-007"
+      ],
+      "research_basis": "Named the LLM's single most-favored rhetorical move ('it's not X; it's Y') in the Dead Language Society rhetorical analysis (2025); corroborates proposed-rules #5."
+    },
+    {
+      "id": "BS-014",
+      "name": "rarely_flip_aphorism",
+      "description": "A disguised antithesis: a copula claim hedged with rarely/seldom/never, then flipped to the 'real' point in a second copula sentence. 'The interesting move is rarely the new automation. It is deciding what to leave alone.'",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\b(?:is|was|are|were)\\s+(?:rarely|seldom|never)\\b[^.?!]{0,60}[.]\\s+(?:It|They|That)\\s+(?:is|was|are|were)\\b",
+        "confidence": "low"
+      },
+      "gate": "checklist",
+      "fix": "Drop the 'is rarely X. It is Y' flip; state plainly what the point or the work actually was.",
+      "source_examples": [
+        "AP-006",
+        "AP-007"
+      ]
+    },
+    {
+      "id": "BS-015",
+      "name": "wh_cleft_pronouncement",
+      "description": "A pseudo-cleft fronted by a 'What ...' clause pivoting on a copula into a noun, used for portentous effect: 'What matters here is the design.' Sibling of the that-clause subject (BS-010).",
+      "detection": {
+        "method": "regex",
+        "pattern": "(?:^|[.!?]\\s+)(?:What|All that|The thing that)\\b(?!\\s+(?:I|we|you|he|she|they|it)\\b)[^.?!]{0,60}\\b(?:is|was|are|were)\\b[^.?!]{0,60}[.]",
+        "confidence": "low"
+      },
+      "gate": "checklist",
+      "fix": "Make the plain claim. Drop the 'What ... is ...' framing and lead with the thing itself.",
+      "source_examples": [
+        "AP-019"
+      ],
+      "research_basis": "proposed-rules #1; scoped to declaratives (interrogatives end in '?' and do not match)."
+    },
+    {
+      "id": "BS-016",
+      "name": "meta_framing_opener",
+      "description": "Opening a passage by announcing its own thesis abstractly: 'The point of the redesign is ...', 'The key here is ...'. Over-signals structure before showing the concrete thing.",
+      "detection": {
+        "method": "regex",
+        "pattern": "(?:^|[.!?]\\s+)The\\s+(?:point|key|whole point|whole idea|main idea|real value|takeaway|crux)\\s+(?:of|here|is)\\b",
+        "confidence": "low"
+      },
+      "gate": "checklist",
+      "fix": "Lead with the concrete thing and let the reader infer the point. Cut the 'The point of X is' scaffolding.",
+      "source_examples": [
+        "AP-019"
+      ],
+      "research_basis": "proposed-rules #6."
+    },
+    {
+      "id": "BS-017",
+      "name": "disclaimer_reversal",
+      "description": "A disclaiming sentence ('I won't claim/pretend/promise ...') immediately followed by a short emphatic 'But ...' reversal. Inter-sentential relative of BS-013; the single-sentence antithesis checks miss it.",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\b(?:will not|won't|cannot|can't|do not|don't)\\s+(?:claim|pretend|promise|say|argue)\\b[^.?!]*[.]\\s+But\\s+[^.?!]{0,45}[.]",
+        "confidence": "low"
+      },
+      "gate": "checklist",
+      "fix": "State what you can stand behind, plainly, in one move. Drop the disclaimer-then-flip rhythm.",
+      "source_examples": [
+        "BS-013"
+      ],
+      "research_basis": "proposed-rules PR2-#2; in-the-wild audit 2026-06-28."
+    },
+    {
+      "id": "BS-019",
+      "name": "locative_pseudocleft",
+      "description": "A pseudo-cleft pivoting on where/when/how rather than 'what' ('The gap between those two facts was where the work got lost.'). Sibling of BS-015. Scoped to an article-led noun-phrase subject so demonstrative/expletive forms ('This is how', 'Here is where', 'That was when') do not trip it.",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\b(?:the|a|an|its|their|his|her|our|my)\\s+[^.?!]{0,45}\\b(?:is|was|are|were)\\s+(?:where|when|how)\\s+[^.?!]{3,55}[.]",
+        "confidence": "low"
+      },
+      "gate": "checklist",
+      "fix": "Lead with the subject doing the thing: 'Work got lost in that gap.' Drop the 'X is where ...' frame.",
+      "source_examples": [
+        "BS-015"
+      ],
+      "research_basis": "proposed-rules PR2-#5; in-the-wild audit 2026-06-28. Pattern tightened from the proposed bare 'is/was where' to an article-led subject to suppress 'This is how' / 'Here is where' false positives."
+    },
+    {
+      "id": "BS-021",
+      "name": "noun_participle_fragment",
+      "description": "A verbless 'Noun, past-participle.' sentence: a determiner-led noun phrase, a comma, and a trailing past participle, ending there ('The same board, rebuilt.', 'The homepage, reimagined.'). Past-participle sibling of BS-005 (present-participle tail). Bounded to a sentence-initial determiner with the participle as the final token, so it fires only on the verbless fragment, never on full clauses ('He left the room, defeated.', 'The board, which we rebuilt, is live.').",
+      "detection": {
+        "method": "regex",
+        "pattern": "(?:^|[.!?]\\s+)(?:the|a|an|this|that|these|those|its|their|his|her|our|my|your)\\s+(?:[a-z]+\\s+){0,2}[a-z]+,\\s+(?:rebuilt|rewritten|remade|reborn|redone|rethought|undone|built|made|done|written|born|torn|worn|drawn|grown|known|shown|thrown|[a-z]{3,}ed)[.!?]",
+        "confidence": "low"
+      },
+      "gate": "checklist",
+      "fix": "Give it a subject and a finite verb ('We rebuilt the same board.'), or fold the participle into the neighboring sentence. Drop the noun-comma-participle fragment.",
+      "source_examples": [
+        "AP-034"
+      ],
+      "research_basis": "In-the-wild reviewer feedback 2026-07-03 on prose that had passed the checker clean: 'The same board, rebuilt.' flagged as the 'Noun, past-participle.' construction. Scoped to a sentence-initial determiner-led NP with the participle as the terminal token to preserve the fragment guarantee and suppress false positives; the [a-z]{3,}ed floor excludes short -ed look-alikes (red/bed/shed), and the missing comma keeps fixed idioms ('Case closed.') quiet."
+    },
+    {
+      "id": "BS-022",
+      "name": "meta_label",
+      "description": "A standalone meta-label line or heading that names the artifact's own format or length instead of its subject ('In 200 words', 'In brief', 'At a high level', 'To put it simply'). The mechanizable slice of the performative-framing beat: a self-aware flourish that performs concision or structure rather than carrying content. Fires ONLY when the label IS the whole bounded line/sentence (optionally one terminal mark, then a line break or end), so embedded uses ('At a high level, the system does X.') never match. TL;DR is deliberately excluded (common and acceptable in casual writing). The judgment sub-forms — self-satisfied closers, first-person meta-commentary, paradox-substitution headlines — are the self_review 'performative framing beat' rubric item, not this detector.",
+      "detection": {
+        "method": "regex",
+        "pattern": "(?:^|\\n|[.!?]\\s+)(in\\s+\\d+\\s+words|in\\s+brief|in\\s+short|the\\s+short\\s+version|the\\s+short\\s+of\\s+it|the\\s+gist|a\\s+quick\\s+summary|at\\s+a\\s+high\\s+level|to\\s+put\\s+it\\s+simply)[ \\t]*[:.!?]?[ \\t]*(?=\\n|$)",
+        "confidence": "low"
+      },
+      "gate": "checklist",
+      "fix": "Replace the format/length/brevity label with a phrase about the content itself, or cut it and let the section's content name it. Do not announce structure; let the structure be the structure.",
+      "source_examples": [
+        "AP-035"
+      ],
+      "research_basis": "In-the-wild reviewer feedback 2026-07-06 on prose run through the humanizer: meta labels ('in 200 words', 'the reading, in brief') survived as self-aware flourishes. Scoped to a standalone bounded label with a terminal-only trailing guard so the embedding-prone phrases ('at a high level', 'to put it simply') fire only as labels, never mid-sentence. Sibling of the closer detector BS-018; the judgment sub-forms live in the self_review rubric. Spec: docs/superpowers/specs/2026-07-06-performative-framing-beat-design.md."
+    },
+    {
+      "id": "BS-023",
+      "name": "validation_reassurance",
+      "description": "Unsolicited second-person reassurance in a fixed frame ('You're not alone.', 'You're not imagining it.', 'You're not broken.', 'It's not just you.'). The single most-cited NEW 2026 AI tell: the model switches into therapeutic validation that reads as bizarre in most content (business posts, docs, marketing). High-precision because it matches only the 'you're not <predicate>' / 'it's not just you' frames, so ordinary negations ('You're not sure yet.', 'You are not authorized.') never match. Legitimate in genuine supportive/empathetic writing, which is why it is checklist (rewrite or justify), never hard.",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\byou(?:['’]re| are) not\\s+(?:alone|broken|crazy|failing|imagining|overreacting|weak|the only one)\\b|\\bit(?:['’]s| is) not just you\\b",
+        "confidence": "medium"
+      },
+      "gate": "checklist",
+      "fix": "Cut the reassurance, or replace it with the specific thing you actually want to say. If the piece genuinely calls for empathy, make it concrete rather than a canned 'you're not X' formula.",
+      "source_examples": [
+        "AP-036"
+      ],
+      "research_basis": "Forbes, 'The 15 New Giveaway Signs Of AI-Generated Content' (2026-02-03): AI switching into unsolicited validation ('You're not imagining it', 'You're not alone', 'You're not broken') flagged as the standout new tell, incongruous in business/productivity content. Frame-scoped to keep false positives near zero."
+    },
+    {
+      "id": "BS-024",
+      "name": "vague_authority_attribution",
+      "description": "An appeal to an unnamed authority as evidence ('Researchers say...', 'Studies show...', 'Experts agree...', 'It is widely believed...', 'Many argue...'). A content-level AI tell distinct from credibility_insistence (which flags reality-assertion words like real/actual): here the sentence borrows authority it never names. The verb list is scoped to epistemic-claim frames, so a named or specific reference with a concrete action ('The researchers at MIT published their data') does not match. Checklist because attributed uses are legitimate — the fix is to name the source or cut the appeal.",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\b(?:(?:researchers|scientists|experts|scholars|analysts|observers|critics|historians|economists)\\s+(?:say|says|said|argue|argues|note|notes|noted|agree|agrees|believe|believes|suggest|suggests|contend|contends|claim|claims|have\\s+(?:found|noted|shown|argued|suggested|observed|concluded))|(?:studies|research)\\s+(?:show|shows|shown|suggest|suggests|indicate|indicates|reveal|reveals|demonstrate|demonstrates|have\\s+shown|has\\s+shown)|it\\s+is\\s+widely\\s+(?:believed|known|accepted|understood|recognized|regarded)|(?:many|some)\\s+(?:argue|argues|believe|believes|contend|contends|say|says))\\b",
+        "confidence": "medium"
+      },
+      "gate": "checklist",
+      "fix": "Name who: cite the specific study, person, or body, and link or reference it. If you cannot name a source, drop the claim or state it as your own view.",
+      "source_examples": [
+        "AP-037"
+      ],
+      "research_basis": "Wikipedia 'Signs of AI writing' (2026): 'vague attributions' — attributing claims to undefined authorities ('researchers', 'observers', 'scholarship') without naming them — listed as a core content tell. Scoped to unnamed-agent + epistemic-verb frames so named/specific references pass."
+    },
+    {
+      "id": "BS-025",
+      "name": "question_fragment_cadence",
+      "description": "The 'The best part? It's this.' rhetorical tic: a sentence-initial determiner-led noun-phrase fragment ending in '?', immediately answered by a short sentence ('The result? A total win.', 'My advice? Take the job.'). Named repeatedly as a 2026 ChatGPT fingerprint (the 'contrasting question with a short answer' pattern). Scoped to a determiner-led NP of up to three words so WH-questions ('What is the best part?') and mid-sentence questions ('Did you see the result?') never match — the determiner must sit at a sentence boundary.",
+      "detection": {
+        "method": "regex",
+        "pattern": "(?:^|[.!?]\\s+|\\n)(?:the|my|our|his|her|its|their)\\s+(?:[a-z]+\\s+){0,2}[a-z]+\\?\\s+[^\\s?!][^?!]{0,80}[.!?]",
+        "confidence": "low"
+      },
+      "gate": "checklist",
+      "fix": "State the point as a declarative sentence. If the setup-and-payoff is earned, use it once; repeated question-fragment beats read as a tic.",
+      "source_examples": [
+        "AP-038"
+      ],
+      "research_basis": "Walter Writes / PlusAI 'most overused ChatGPT patterns' (2026) and in-the-wild reports: 'contrasting questions with short answers' ('The best part? It's this. The kicker? It's that.') as a durable 2026 structural fingerprint. NP-fragment + boundary scoping keeps genuine questions clear."
+    }
+  ],
+  "flagged_terms": [
+    {
+      "term": "delve",
+      "severity": "high",
+      "alternatives": [
+        "look at",
+        "dig into",
+        "examine",
+        "get into",
+        "explore",
+        "pick apart"
+      ]
+    },
+    {
+      "term": "leverage",
+      "severity": "high",
+      "alternatives": [
+        "use",
+        "rely on",
+        "take advantage of",
+        "build on",
+        "tap"
+      ]
+    },
+    {
+      "term": "utilize",
+      "severity": "high",
+      "alternatives": [
+        "use"
+      ]
+    },
+    {
+      "term": "facilitate",
+      "severity": "high",
+      "alternatives": [
+        "help",
+        "enable",
+        "make possible",
+        "support",
+        "ease"
+      ]
+    },
+    {
+      "term": "navigate",
+      "severity": "moderate",
+      "alternatives": [
+        "work through",
+        "deal with",
+        "handle",
+        "figure out",
+        "manage"
+      ]
+    },
+    {
+      "term": "streamline",
+      "severity": "moderate",
+      "alternatives": [
+        "simplify",
+        "speed up",
+        "clean up",
+        "tighten",
+        "cut down"
+      ]
+    },
+    {
+      "term": "bolster",
+      "severity": "high",
+      "alternatives": [
+        "strengthen",
+        "support",
+        "back up",
+        "reinforce"
+      ]
+    },
+    {
+      "term": "showcase",
+      "severity": "high",
+      "alternatives": [
+        "show",
+        "display",
+        "demonstrate",
+        "present"
+      ]
+    },
+    {
+      "term": "garner",
+      "severity": "high",
+      "alternatives": [
+        "get",
+        "earn",
+        "attract",
+        "win",
+        "collect"
+      ]
+    },
+    {
+      "term": "foster",
+      "severity": "high",
+      "alternatives": [
+        "encourage",
+        "build",
+        "support",
+        "grow",
+        "develop"
+      ]
+    },
+    {
+      "term": "enhance",
+      "severity": "high",
+      "alternatives": [
+        "improve",
+        "strengthen",
+        "boost",
+        "add to"
+      ]
+    },
+    {
+      "term": "endeavor",
+      "severity": "moderate",
+      "alternatives": [
+        "try",
+        "attempt",
+        "work to",
+        "aim to"
+      ]
+    },
+    {
+      "term": "elucidate",
+      "severity": "high",
+      "alternatives": [
+        "explain",
+        "clarify",
+        "spell out",
+        "make clear"
+      ]
+    },
+    {
+      "term": "optimize",
+      "severity": "moderate",
+      "alternatives": [
+        "improve",
+        "fine-tune",
+        "adjust",
+        "refine"
+      ]
+    },
+    {
+      "term": "revolutionize",
+      "severity": "high",
+      "alternatives": [
+        "change",
+        "reshape",
+        "transform",
+        "overhaul"
+      ]
+    },
+    {
+      "term": "spearhead",
+      "severity": "moderate",
+      "alternatives": [
+        "lead",
+        "drive",
+        "launch",
+        "push",
+        "champion"
+      ]
+    },
+    {
+      "term": "catalyze",
+      "severity": "moderate",
+      "alternatives": [
+        "trigger",
+        "spark",
+        "set off",
+        "accelerate",
+        "kick off"
+      ]
+    },
+    {
+      "term": "synergize",
+      "severity": "high",
+      "alternatives": [
+        "combine",
+        "work together",
+        "align",
+        "coordinate"
+      ]
+    },
+    {
+      "term": "incentivize",
+      "severity": "moderate",
+      "alternatives": [
+        "encourage",
+        "motivate",
+        "reward",
+        "push"
+      ]
+    },
+    {
+      "term": "operationalize",
+      "severity": "moderate",
+      "alternatives": [
+        "put into practice",
+        "implement",
+        "roll out",
+        "execute"
+      ]
+    },
+    {
+      "term": "conceptualize",
+      "severity": "moderate",
+      "alternatives": [
+        "think through",
+        "imagine",
+        "frame",
+        "design",
+        "envision"
+      ]
+    },
+    {
+      "term": "harness",
+      "severity": "moderate",
+      "alternatives": [
+        "use",
+        "tap",
+        "draw on",
+        "put to work"
+      ]
+    },
+    {
+      "term": "illuminate",
+      "severity": "moderate",
+      "alternatives": [
+        "explain",
+        "clarify",
+        "show",
+        "shed light on"
+      ]
+    },
+    {
+      "term": "differentiate",
+      "severity": "low",
+      "alternatives": [
+        "distinguish",
+        "tell apart",
+        "separate",
+        "set apart"
+      ]
+    },
+    {
+      "term": "refine",
+      "severity": "low",
+      "alternatives": [
+        "improve",
+        "adjust",
+        "tweak",
+        "polish"
+      ]
+    },
+    {
+      "term": "underscore",
+      "severity": "high",
+      "alternatives": [
+        "shows",
+        "points to",
+        "means",
+        "is why",
+        "drives home"
+      ]
+    },
+    {
+      "term": "surpass",
+      "severity": "moderate",
+      "alternatives": [
+        "beat",
+        "exceed",
+        "go past",
+        "do better than"
+      ]
+    },
+    {
+      "term": "boast",
+      "severity": "moderate",
+      "alternatives": [
+        "has",
+        "offers",
+        "includes",
+        "comes with"
+      ]
+    },
+    {
+      "term": "comprehensive",
+      "severity": "moderate",
+      "alternatives": [
+        "full",
+        "thorough",
+        "complete",
+        "detailed",
+        "in-depth",
+        "broad"
+      ]
+    },
+    {
+      "term": "robust",
+      "severity": "high",
+      "alternatives": [
+        "strong",
+        "solid",
+        "reliable",
+        "durable",
+        "resilient"
+      ]
+    },
+    {
+      "term": "cutting-edge",
+      "severity": "high",
+      "alternatives": [
+        "new",
+        "advanced",
+        "latest",
+        "leading",
+        "current",
+        "or cut entirely"
+      ]
+    },
+    {
+      "term": "innovative",
+      "severity": "high",
+      "alternatives": [
+        "new",
+        "original",
+        "creative",
+        "fresh",
+        "novel",
+        "or cut entirely"
+      ]
+    },
+    {
+      "term": "seamless",
+      "severity": "high",
+      "alternatives": [
+        "smooth",
+        "easy",
+        "effortless",
+        "clean",
+        "invisible"
+      ]
+    },
+    {
+      "term": "pivotal",
+      "severity": "high",
+      "alternatives": [
+        "key",
+        "critical",
+        "central",
+        "important",
+        "decisive"
+      ]
+    },
+    {
+      "term": "multifaceted",
+      "severity": "moderate",
+      "alternatives": [
+        "complex",
+        "varied",
+        "layered",
+        "nuanced"
+      ]
+    },
+    {
+      "term": "holistic",
+      "severity": "high",
+      "alternatives": [
+        "complete",
+        "whole",
+        "integrated",
+        "broad",
+        "full-picture"
+      ]
+    },
+    {
+      "term": "transformative",
+      "severity": "high",
+      "alternatives": [
+        "significant",
+        "major",
+        "powerful",
+        "dramatic",
+        "or cut entirely"
+      ]
+    },
+    {
+      "term": "game-changing",
+      "severity": "high",
+      "alternatives": [
+        "significant",
+        "important",
+        "or cut entirely"
+      ]
+    },
+    {
+      "term": "crucial",
+      "severity": "high",
+      "alternatives": [
+        "important",
+        "essential",
+        "critical",
+        "necessary"
+      ]
+    },
+    {
+      "term": "groundbreaking",
+      "severity": "high",
+      "alternatives": [
+        "new",
+        "first",
+        "original",
+        "unprecedented",
+        "or describe why specifically"
+      ]
+    },
+    {
+      "term": "unparalleled",
+      "severity": "high",
+      "alternatives": [
+        "rare",
+        "unusual",
+        "exceptional",
+        "or cut entirely"
+      ]
+    },
+    {
+      "term": "noteworthy",
+      "severity": "moderate",
+      "alternatives": [
+        "worth noting",
+        "interesting",
+        "important",
+        "significant"
+      ]
+    },
+    {
+      "term": "meticulous",
+      "severity": "moderate",
+      "alternatives": [
+        "careful",
+        "detailed",
+        "thorough",
+        "precise"
+      ]
+    },
+    {
+      "term": "intricate",
+      "severity": "moderate",
+      "alternatives": [
+        "complex",
+        "detailed",
+        "involved",
+        "complicated"
+      ]
+    },
+    {
+      "term": "commendable",
+      "severity": "moderate",
+      "alternatives": [
+        "impressive",
+        "good",
+        "strong",
+        "solid"
+      ]
+    },
+    {
+      "term": "paramount",
+      "severity": "moderate",
+      "alternatives": [
+        "essential",
+        "critical",
+        "most important",
+        "top priority"
+      ]
+    },
+    {
+      "term": "bustling",
+      "severity": "moderate",
+      "alternatives": [
+        "busy",
+        "lively",
+        "crowded",
+        "active"
+      ]
+    },
+    {
+      "term": "breathtaking",
+      "severity": "moderate",
+      "alternatives": [
+        "stunning",
+        "striking",
+        "or cut entirely"
+      ]
+    },
+    {
+      "term": "realm",
+      "severity": "high",
+      "alternatives": [
+        "area",
+        "field",
+        "domain",
+        "space",
+        "world"
+      ]
+    },
+    {
+      "term": "tapestry",
+      "severity": "high",
+      "alternatives": [
+        "mix",
+        "blend",
+        "combination",
+        "range",
+        "collection"
+      ]
+    },
+    {
+      "term": "landscape",
+      "severity": "moderate",
+      "alternatives": [
+        "field",
+        "scene",
+        "market",
+        "space",
+        "situation"
+      ]
+    },
+    {
+      "term": "synergy",
+      "severity": "high",
+      "alternatives": [
+        "cooperation",
+        "collaboration",
+        "combined effect"
+      ]
+    },
+    {
+      "term": "paradigm",
+      "severity": "high",
+      "alternatives": [
+        "model",
+        "framework",
+        "approach",
+        "way of thinking"
+      ]
+    },
+    {
+      "term": "cornerstone",
+      "severity": "moderate",
+      "alternatives": [
+        "foundation",
+        "basis",
+        "core",
+        "key part"
+      ]
+    },
+    {
+      "term": "linchpin",
+      "severity": "moderate",
+      "alternatives": [
+        "key",
+        "central piece",
+        "crucial part",
+        "anchor"
+      ]
+    },
+    {
+      "term": "testament",
+      "severity": "moderate",
+      "alternatives": [
+        "proof",
+        "evidence",
+        "sign",
+        "example"
+      ]
+    },
+    {
+      "term": "hidden gem",
+      "severity": "moderate",
+      "alternatives": [
+        "find",
+        "lesser-known spot",
+        "overlooked option"
+      ]
+    },
+    {
+      "term": "That being said",
+      "severity": "high",
+      "alternatives": [
+        "However",
+        "Even so",
+        "But",
+        "Still"
+      ]
+    },
+    {
+      "term": "At its core",
+      "severity": "high",
+      "alternatives": [
+        "Fundamentally",
+        "Essentially",
+        "At bottom",
+        "Really"
+      ]
+    },
+    {
+      "term": "To put it simply",
+      "severity": "moderate",
+      "alternatives": [
+        "Simply put",
+        "In short",
+        "Basically",
+        "or just state it simply without the preamble"
+      ]
+    },
+    {
+      "term": "This underscores the importance of",
+      "severity": "high",
+      "alternatives": [
+        "This highlights the need for",
+        "This reinforces the value of",
+        "This shows why"
+      ]
+    },
+    {
+      "term": "A key takeaway is",
+      "severity": "moderate",
+      "alternatives": [
+        "The main point is",
+        "One important lesson is",
+        "What matters here is"
+      ]
+    },
+    {
+      "term": "From a broader perspective",
+      "severity": "moderate",
+      "alternatives": [
+        "When you zoom out",
+        "On a larger scale",
+        "Looking at the bigger picture"
+      ]
+    },
+    {
+      "term": "In the realm of",
+      "severity": "high",
+      "alternatives": [
+        "In",
+        "Within",
+        "For",
+        "or cut entirely"
+      ]
+    },
+    {
+      "term": "Moreover",
+      "severity": "moderate",
+      "alternatives": [
+        "Also",
+        "And",
+        "On top of that",
+        "What's more"
+      ]
+    },
+    {
+      "term": "Furthermore",
+      "severity": "moderate",
+      "alternatives": [
+        "Also",
+        "And",
+        "Beyond that",
+        "Plus"
+      ]
+    },
+    {
+      "term": "In conclusion",
+      "severity": "moderate",
+      "alternatives": [
+        "So",
+        "All told",
+        "What this means is",
+        "or just conclude without announcing it"
+      ]
+    },
+    {
+      "term": "In summary",
+      "severity": "moderate",
+      "alternatives": [
+        "So",
+        "To sum up",
+        "The short version:",
+        "or just summarize without announcing it"
+      ]
+    },
+    {
+      "term": "Let's delve into",
+      "severity": "high",
+      "alternatives": [
+        "Let's look at",
+        "Here's how",
+        "Consider",
+        "or just start the section"
+      ]
+    },
+    {
+      "term": "Additionally",
+      "severity": "moderate",
+      "alternatives": [
+        "Also",
+        "And",
+        "On top of that",
+        "Plus"
+      ]
+    },
+    {
+      "term": "Consequently",
+      "severity": "moderate",
+      "alternatives": [
+        "So",
+        "As a result",
+        "Because of that",
+        "That's why"
+      ]
+    },
+    {
+      "term": "Notably",
+      "severity": "low",
+      "alternatives": [
+        "Worth flagging:",
+        "One standout:",
+        "or just state the point"
+      ]
+    },
+    {
+      "term": "Importantly",
+      "severity": "low",
+      "alternatives": [
+        "What matters:",
+        "The key point:",
+        "or just state the point"
+      ]
+    },
+    {
+      "term": "Generally speaking",
+      "severity": "low",
+      "alternatives": [
+        "In most cases",
+        "As a rule",
+        "Usually"
+      ]
+    },
+    {
+      "term": "Typically",
+      "severity": "low",
+      "alternatives": [
+        "Usually",
+        "Most often",
+        "Normally"
+      ]
+    },
+    {
+      "term": "Tends to",
+      "severity": "low",
+      "alternatives": [
+        "Is often",
+        "Has a habit of",
+        "Usually"
+      ]
+    },
+    {
+      "term": "Arguably",
+      "severity": "moderate",
+      "alternatives": [
+        "Some say",
+        "Many believe",
+        "By most accounts",
+        "or make a direct claim"
+      ]
+    },
+    {
+      "term": "To some extent",
+      "severity": "low",
+      "alternatives": [
+        "Partly",
+        "In part",
+        "Somewhat"
+      ]
+    },
+    {
+      "term": "Broadly speaking",
+      "severity": "low",
+      "alternatives": [
+        "In general",
+        "Overall",
+        "Roughly"
+      ]
+    },
+    {
+      "term": "significantly",
+      "severity": "moderate",
+      "alternatives": [
+        "meaningfully",
+        "noticeably",
+        "by a wide margin",
+        "or quantify it"
+      ]
+    },
+    {
+      "term": "effectively",
+      "severity": "moderate",
+      "alternatives": [
+        "well",
+        "reliably",
+        "in practice",
+        "or describe what 'effective' looks like"
+      ]
+    },
+    {
+      "term": "particularly",
+      "severity": "low",
+      "alternatives": [
+        "especially",
+        "mainly",
+        "above all"
+      ]
+    },
+    {
+      "term": "subsequently",
+      "severity": "moderate",
+      "alternatives": [
+        "then",
+        "after that",
+        "next",
+        "later"
+      ]
+    },
+    {
+      "term": "implementation of",
+      "severity": "moderate",
+      "alternatives": [
+        "implemented / set up / built"
+      ]
+    },
+    {
+      "term": "utilization of",
+      "severity": "moderate",
+      "alternatives": [
+        "used / relied on"
+      ]
+    },
+    {
+      "term": "optimization of",
+      "severity": "moderate",
+      "alternatives": [
+        "improved / tuned"
+      ]
+    },
+    {
+      "term": "establishment of",
+      "severity": "moderate",
+      "alternatives": [
+        "set up / created / started"
+      ]
+    },
+    {
+      "term": "facilitation of",
+      "severity": "moderate",
+      "alternatives": [
+        "helped with / enabled"
+      ]
+    },
+    {
+      "term": "the introduction of",
+      "severity": "moderate",
+      "alternatives": [
+        "introduced / added / brought in"
+      ]
+    },
+    {
+      "term": "the development of",
+      "severity": "moderate",
+      "alternatives": [
+        "developed / built"
+      ]
+    },
+    {
+      "term": "the provision of",
+      "severity": "moderate",
+      "alternatives": [
+        "provided / gave / offered"
+      ]
+    },
+    {
+      "term": "a demonstration of",
+      "severity": "moderate",
+      "alternatives": [
+        "demonstrated / showed"
+      ]
+    },
+    {
+      "term": "the achievement of",
+      "severity": "moderate",
+      "alternatives": [
+        "achieved / reached / hit"
+      ]
+    }
+  ],
+  "credibility": {
+    "description": "AI-assisted writing often vouches for the authenticity of its own account by repeatedly insisting it is real, actual, genuine, or true. A human rarely needs to insist their own work is real; the insistence is a defensive credibility hedge, and the DENSITY of the token set across a document is the tell, not any single use.",
+    "ai_pattern": "The same reality-asserting lemma recurs throughout a piece ('a real engagement', 'the real one', 'the design is real', 'the real flow'). Each use passes any single-token check, but the repetition reads as a writer arguing for their own credibility.",
+    "human_pattern": "Human writers let the specifics carry credibility. They name the client, the constraint, the date, the artifact, and almost never label their own account 'real'. When they do, it is once, for a genuine contrast.",
+    "tokens": [
+      "real",
+      "really",
+      "actual",
+      "actually",
+      "genuine",
+      "genuinely",
+      "truly",
+      "authentic",
+      "authentically"
+    ],
+    "same_token_min": 3,
+    "rate_per_words": 0.005,
+    "exclusions": [
+      "real-time",
+      "real estate",
+      "real number",
+      "real-world",
+      "in real terms",
+      "really? (interrogative)",
+      "one sentence-initial 'actually' as a discourse marker",
+      "anything inside quotation marks"
+    ],
+    "rewriting_guidance": [
+      "If one of these tokens appears three or more times, cut all but at most one. The narrative detail should establish that the work is real; you should not have to say so.",
+      "Replace the assertion with the specific that justified it: not 'a real engagement' but 'a live, mid-build engagement'; not 'the real flow' but 'the flow the operators actually follow'.",
+      "Keep a single use only where it draws a genuine contrast (e.g. real versus hypothetical), and make that contrast explicit."
+    ],
+    "research_basis": "In-the-wild audit of a portfolio case-study page (2026-06-28), where seven uses of 'real' in ~1,500 words passed the checker clean."
+  },
+  "self_review": [
+    "AR-001 — meaning preserved: confirm claims, numbers, names, and stance are unchanged from the source, and the tone the user asked for is intact.",
+    "Rhythm: read the draft in your head — do sentence lengths and shapes vary, or march at one cadence? Break up runs of same-length sentences; add a short fragment or a longer multi-clause sentence. (Burstiness is auto-measured; this is the qualitative read.)",
+    "Reused rhetorical shape: the same construction — an antithesis ('not X, but Y'), a copula maxim, a rule-of-three — restated across the piece reads as a tic even when the words differ. Vary the constructions, not just the vocabulary.",
+    "Section-to-section variation: does the style shift between sections, or hold one flat fingerprint throughout? Humans modulate; LLMs stay even. Make one section terse and another more flowing. (Cross-section uniformity is auto-detected; this is the qualitative read.)",
+    "Generic competence and stance: could this have been written about almost any topic, by almost anyone? Cut smooth-but-empty phrasing, reflexive hedges, and motivational closers. Commit to a real point of view and at least one concrete, specific, checkable detail.",
+    "Abstraction-as-agent: an abstract noun ('the gap', 'the work', 'the craft', 'the order') used as the subject of an agentive or experiential verb (mattered, decided, kept, taught) reads fluent but no one is actually doing anything. Prefer a human or concrete subject (server cannot verify reliably; see AP-033).",
+    "Performative framing beat: a sentence or label whose real job is to perform insight, closure, or self-awareness rather than carry content. Three forms — (a) a self-satisfied closer: a neat aphorism ending a section that adds no new fact, name, or number, often crediting the author or pivoting on a tidy antithesis ('The data set is public; the reading of it is mine.'); (b) first-person meta-commentary on the work itself ('my take', 'the reading of it is mine', 'as I see it') in a piece meant to be evidence-led; (c) a clever paradox headline used to sound sharp where a plain statement of the point would do. Delete the beat and end on the last substantive point. Keep at most one aphoristic or paradox construction per piece, and only where it does analytical work — the device is human in moderation; the tell is repetition and substitution for content. The standalone meta-label form ('in 200 words', 'in brief') is auto-detected as BS-022; the closer overlaps BS-018; see AP-035, AP-033.",
+    "Excessive coherence and tidiness: does every point line up too neatly — each example fitting perfectly, every thread resolved, no loose ends or tension left? Real human writing has friction: a caveat that complicates the thesis, a digression, an example that only mostly fits, a point left partly open. Seamless, frictionless argument is itself a tell. Add back the messiness the topic actually has.",
+    "Durable signal: local word-level unpredictability and section-to-section variation are the most human signals and are not measured server-side. Surface word swaps are necessary but not sufficient — do not stop at vocabulary."
+  ]
+}

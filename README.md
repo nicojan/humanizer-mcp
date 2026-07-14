@@ -11,6 +11,8 @@ MCP server providing psycholinguistic, lexical, structural, and discourse-level 
 
 Real output from `humanizer_check_text` on a stock piece of marketing copy. Two hard blocks, seven findings to clear, each with a fix. The server flags and suggests; it never rewrites the text.
 
+**[Try it live in your browser →](https://nicojan.github.io/humanizer-mcp/)** The checker is ported to TypeScript and runs entirely client-side, with no server and no network. It is verified to produce the same findings as the Python engine (see [`web/`](web/)).
+
 ## What It Does
 
 The reference Claude consults when writing or revising content that needs to read as human-authored. It supplies rules, patterns, substitutions, and before/after examples. It does **not** rewrite text itself.

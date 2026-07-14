@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='%231a5c97'/%3E%3C/svg%3E">
+<title>humanizer-mcp — live checker</title>
+<style>
+/*__FONTS__*/
+
+:root {
+  --paper:#f7f8f9; --ink:#16191d; --muted:#6b7280; --faint:#99a0ab;
+  --line:#e5e8ec; --rule:#cfd5dc; --field:#ffffff; --accent:#1a5c97;
+  --sev-block:#ff3b30; --sev-high:#ff9500; --sev-mod:#d19a00; --sev-low:#8e8e93; --ok:#23806a;
+  --serif:"IBM Plex Serif",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root{
+  --paper:#15181c; --ink:#edeef1; --muted:#9aa1ab; --faint:#6b727c;
+  --line:#262b31; --rule:#333a42; --field:#1b1f25; --accent:#74a9db;
+  --sev-block:#ff453a; --sev-high:#ff9f0a; --sev-mod:#ffd60a; --sev-low:#98989f; --ok:#57b699;
+}}
+:root[data-theme="light"]{--paper:#f7f8f9;--ink:#16191d;--muted:#6b7280;--faint:#99a0ab;--line:#e5e8ec;--rule:#cfd5dc;--field:#ffffff;--accent:#1a5c97;--sev-block:#ff3b30;--sev-high:#ff9500;--sev-mod:#d19a00;--sev-low:#8e8e93;--ok:#23806a;}
+:root[data-theme="dark"]{--paper:#15181c;--ink:#edeef1;--muted:#9aa1ab;--faint:#6b727c;--line:#262b31;--rule:#333a42;--field:#1b1f25;--accent:#74a9db;--sev-block:#ff453a;--sev-high:#ff9f0a;--sev-mod:#ffd60a;--sev-low:#98989f;--ok:#57b699;}
+
+*{box-sizing:border-box;}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:18px;line-height:1.6;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
+.wrap{max-width:980px;margin:0 auto;padding:0 clamp(20px,5vw,56px);}
+.mono{font-family:var(--mono);}
+.label{font-family:var(--mono);font-size:11px;letter-spacing:0.11em;text-transform:uppercase;color:var(--muted);}
+
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:18px 0 16px;border-bottom:1px solid var(--line);}
+.topbar .r{color:var(--faint);}
+
+.hero{padding:48px 0 26px;}
+.eyebrow{margin:0 0 20px;}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(32px,5vw,54px);line-height:1.07;letter-spacing:-0.022em;text-wrap:balance;margin:0 0 22px;}
+h1 em{font-style:italic;color:var(--accent);}
+.lede{font-size:clamp(16px,2vw,19px);line-height:1.6;color:var(--muted);max-width:64ch;margin:0;}
+.lede em{font-style:italic;color:var(--ink);}
+
+.section-head{display:flex;align-items:baseline;gap:14px;margin:0 0 20px;padding-top:24px;border-top:1px dotted var(--rule);}
+.section-head .no{color:var(--accent);}
+.section-head .ttl{color:var(--muted);}
+
+.controls{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin:0 0 16px;}
+.controls label{color:var(--faint);}
+select,button{font-family:var(--mono);font-size:12px;color:var(--ink);background:var(--field);border:1px solid var(--rule);border-radius:2px;padding:5px 8px;cursor:pointer;}
+button:hover,select:hover{border-color:var(--accent);}
+button:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+
+.io{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start;}
+@media (max-width:760px){.io{grid-template-columns:1fr;gap:22px;}}
+.pane-label{margin:0 0 10px;}
+textarea{width:100%;min-height:300px;resize:vertical;font-family:var(--serif);font-size:18px;line-height:1.85;color:var(--ink);background:var(--field);border:1px solid var(--line);border-radius:3px;padding:16px 18px;}
+.rendered{min-height:300px;font-size:18px;line-height:1.85;white-space:pre-wrap;word-wrap:break-word;padding:16px 18px;border:1px solid transparent;}
+.rendered .empty{color:var(--faint);font-style:italic;}
+
+mark{background:none;color:inherit;padding-bottom:1px;}
+mark.block{border-bottom:1.5px solid var(--sev-block);}
+mark.high{border-bottom:1.5px solid var(--sev-high);}
+mark.mod{border-bottom:1.5px solid var(--sev-mod);}
+mark.low{border-bottom:1.5px dotted var(--sev-low);}
+.ref{font-family:var(--mono);font-size:0.62em;font-style:normal;vertical-align:super;line-height:0;margin-left:1px;}
+.ref.block{color:var(--sev-block);}.ref.high{color:var(--sev-high);}.ref.mod{color:var(--sev-mod);}.ref.low{color:var(--sev-low);}
+
+.verdict-bar{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin:22px 0 4px;padding:13px 0;border-top:1px solid var(--ink);border-bottom:1px solid var(--line);font-family:var(--mono);font-size:13px;}
+.verdict-bar .v{font-weight:600;display:inline-flex;align-items:center;gap:8px;}
+.verdict-bar .v .dot{width:9px;height:9px;border-radius:50%;}
+.verdict-bar .v.fail{color:var(--sev-block);}.verdict-bar .v.fail .dot{background:var(--sev-block);box-shadow:0 0 0 4px color-mix(in srgb,var(--sev-block) 18%,transparent);}
+.verdict-bar .v.pass{color:var(--ok);}.verdict-bar .v.pass .dot{background:var(--ok);box-shadow:0 0 0 4px color-mix(in srgb,var(--ok) 20%,transparent);}
+.verdict-bar .stat{color:var(--muted);}.verdict-bar .stat b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums;}
+.verdict-bar .sep{color:var(--faint);}
+
+.findings{margin:6px 0 0;}
+.f-row{display:grid;grid-template-columns:26px 1fr auto;gap:16px;align-items:baseline;padding:15px 0;border-bottom:1px solid var(--line);}
+.f-row:first-child{border-top:1px solid var(--line);}
+.f-no{font-family:var(--mono);font-size:12px;color:var(--faint);font-variant-numeric:tabular-nums;padding-top:2px;}
+.f-rule{font-family:var(--mono);font-size:13.5px;color:var(--ink);}
+.f-rule .q{color:var(--faint);}
+.f-fix{font-size:15.5px;line-height:1.5;color:var(--muted);margin:5px 0 0;}
+.f-fix .swap{font-family:var(--mono);font-size:0.85em;color:var(--accent);}
+.sev{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;white-space:nowrap;padding-top:3px;}
+.sev .dot{width:7px;height:7px;border-radius:50%;background:var(--sev-low);flex:none;}
+.sev.block{color:var(--sev-block);}.sev.block .dot{background:var(--sev-block);}
+.sev.high{color:var(--sev-high);}.sev.high .dot{background:var(--sev-high);}
+.sev.mod{color:var(--sev-mod);}.sev.mod .dot{background:var(--sev-mod);}
+.sev.low{color:var(--sev-low);}.sev.low .dot{background:var(--sev-low);}
+.f-clean{padding:20px 0;color:var(--ok);font-style:italic;border-top:1px solid var(--line);}
+
+.note{margin:22px 0 0;font-size:14px;color:var(--muted);max-width:66ch;}
+.note em{color:var(--ink);font-style:italic;}
+footer{margin:46px 0 44px;padding-top:16px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+footer .r{color:var(--faint);}
+a{color:var(--accent);text-decoration:none;}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="topbar label">
+    <span>humanizer-mcp · deterministic checker</span>
+    <span class="r">MIT · github.com/nicojan/humanizer-mcp</span>
+  </div>
+
+  <section class="hero">
+    <p class="eyebrow label">humanizer_check_text · running in your browser</p>
+    <h1>The AI-writing tells a machine can <em>catch</em>.</h1>
+    <p class="lede">Edit the text on the left. The checker runs on every keystroke, entirely in your browser, and flags what a fixed rule can find: the openers and em-dashes that block outright, then the flagged words, rhetorical tics, and flat rhythm to clear. It is the same engine the MCP server ships, ported to run with <em>no server and no network</em>.</p>
+  </section>
+
+  <section>
+    <div class="section-head"><span class="no label">1.0</span><span class="ttl label">Your text</span></div>
+    <div class="controls">
+      <span class="label">Content type</span>
+      <select id="ctype" aria-label="Content type">
+        <option value="marketing">marketing</option>
+        <option value="prose">prose</option>
+        <option value="technical">technical</option>
+        <option value="academic">academic</option>
+      </select>
+      <button id="reset" type="button">Restore sample</button>
+      <button id="clear" type="button">Clear</button>
+    </div>
+    <div class="io">
+      <div>
+        <p class="pane-label label">Edit</p>
+        <textarea id="input" spellcheck="false" aria-label="Text to check"></textarea>
+      </div>
+      <div>
+        <p class="pane-label label">Flagged</p>
+        <div id="rendered" class="rendered" aria-live="off"></div>
+      </div>
+    </div>
+    <div id="verdict" class="verdict-bar"></div>
+  </section>
+
+  <section>
+    <div class="section-head"><span class="no label">2.0</span><span class="ttl label">Findings · document order</span></div>
+    <div id="findings" class="findings"></div>
+    <p class="note">The checker returns findings and fixes; it never rewrites the text. That judgment stays with the writer. Severity colours follow <em>Apple's Human Interface Guidelines</em>. Document-level findings (rhythm, section variation, list density) apply to the whole draft and carry no inline mark.</p>
+  </section>
+
+  <footer class="label">
+    <span>© Nico Jan</span>
+    <span class="r">humanizer-mcp · open source</span>
+  </footer>
+</div>
+
+<script>/*__CHECKER__*/</script>
+<script>
+(function () {
+  var SAMPLE = "In today's fast-paced world, our innovative platform leverages cutting-edge AI to deliver seamless solutions. It's not just a tool — it's a revolution. We are committed to transparency, authenticity, and genuine results. Whether you are a scrappy startup or a global enterprise, our platform helps you streamline workflows, boost productivity, and unlock your team's full potential. The best part? It is completely free to start.";
+  var MAX_CHARS = 100000; // matches the server's input cap; keeps huge pastes responsive
+  var input = document.getElementById("input");
+  var rendered = document.getElementById("rendered");
+  var verdict = document.getElementById("verdict");
+  var findingsEl = document.getElementById("findings");
+  var ctype = document.getElementById("ctype");
+
+  function esc(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+
+  function sevClass(f) {
+    if (f._hard) return "block";
+    switch (f.type) {
+      case "flagged_term": return f.severity === "high" ? "high" : f.severity === "moderate" ? "mod" : "low";
+      case "banned_structure": return f.confidence === "medium" ? "high" : "low";
+      case "comma_splice": case "run_on_without_terminal": case "missing_terminal_mark": return "high";
+      default: return "low";
+    }
+  }
+  var SEV_WORD = { block: "block", high: "high", mod: "moderate", low: "low" };
+
+  function label(f) {
+    switch (f.type) {
+      case "em_dash": return "AR-002 · em-dash";
+      case "stacked_punctuation": return "AR-003 · stacked punctuation";
+      case "fixed_phrase": return "banned phrase";
+      case "comma_splice": return "AR-003 · comma splice";
+      case "missing_terminal_mark": return "AR-003 · missing terminal";
+      case "run_on_without_terminal": return "AR-003 · run-on";
+      case "flagged_term": return f.term;
+      case "banned_structure": return f.id + " · " + f.name.replace(/_/g, " ");
+      case "rule_of_three_density": return "rule-of-three density";
+      case "credibility_insistence": return "credibility insistence";
+      case "burstiness": return "burstiness · document";
+      case "segment_uniformity": return "segment uniformity · document";
+      default: return f.type;
+    }
+  }
+  function quoteOf(f) {
+    if (f.type === "fixed_phrase") return '"' + f.phrase + '"';
+    return "";
+  }
+  function fixOf(f) {
+    if (f.type === "flagged_term") {
+      var alts = (f.alternatives || []).slice(0, 4);
+      return alts.length ? 'Swap for <span class="swap">' + esc(alts.join(" · ")) + "</span>." : "";
+    }
+    return esc(f.fix || f.detail || "");
+  }
+
+  function collect(report) {
+    var findings = [];
+    report.hard_violations.forEach(function (f) { var g = Object.assign({}, f); g._hard = true; findings.push(g); });
+    report.must_clear.forEach(function (f) { findings.push(Object.assign({}, f)); });
+    return findings;
+  }
+
+  function render() {
+    var raw = input.value;
+    var truncated = raw.length > MAX_CHARS;
+    var text = truncated ? raw.slice(0, MAX_CHARS) : raw;
+    var report = HZ.runChecks(text, ctype.value);
+    var findings = collect(report);
+
+    // Assign inline spans per finding.
+    findings.forEach(function (f) {
+      f._spans = [];
+      f._ref = null;
+      if (f.type === "flagged_term") {
+        (f.locations || []).forEach(function (loc) {
+          f._spans.push([loc, loc + HZ.flaggedFormLen(text, f.term, loc)]);
+        });
+      } else {
+        var sp = HZ.spanOf(text, f);
+        if (sp) f._spans.push(sp);
+      }
+    });
+
+    // Candidate marks (per finding, per span); shorter-first on a tie.
+    var cand = [];
+    findings.forEach(function (f) {
+      f._spans.forEach(function (sp) { cand.push({ s: sp[0], e: sp[1], sev: sevClass(f), f: f }); });
+    });
+    cand.sort(function (a, b) { return a.s - b.s || (a.e - a.s) - (b.e - b.s); });
+    // Place non-overlapping marks and number findings by their first PLACED mark,
+    // so every list number has a matching inline mark and vice versa.
+    var placed = [], prevEnd = -1, order = [];
+    cand.forEach(function (m) {
+      if (m.s >= prevEnd) {
+        placed.push(m); prevEnd = m.e;
+        if (order.indexOf(m.f) === -1) order.push(m.f);
+      }
+    });
+    order.forEach(function (f, i) { f._ref = i + 1; });
+    placed.forEach(function (m) { m.ref = m.f._ref; });
+
+    // Annotated render.
+    if (!text) {
+      rendered.innerHTML = '<span class="empty">Nothing to check yet.</span>';
+    } else {
+      var html = "", pos = 0;
+      placed.forEach(function (m) {
+        html += esc(text.slice(pos, m.s));
+        html += '<mark class="' + m.sev + '">' + esc(text.slice(m.s, m.e)) + "</mark>";
+        html += '<sup class="ref ' + m.sev + '">' + m.ref + "</sup>";
+        pos = m.e;
+      });
+      html += esc(text.slice(pos));
+      rendered.innerHTML = html;
+    }
+
+    // Verdict bar.
+    var m = report.metrics;
+    var pass = report.prohibitions_clear;
+    var vcls = pass ? "pass" : "fail";
+    var vtxt = "prohibitions_clear = " + (pass ? "true" : "false");
+    verdict.innerHTML =
+      '<span class="v ' + vcls + '"><span class="dot"></span>' + vtxt + "</span>" +
+      '<span class="stat"><b>' + report.hard_violations.length + "</b> hard</span><span class=\"sep\">·</span>" +
+      '<span class="stat"><b>' + report.must_clear.length + "</b> to clear</span><span class=\"sep\">·</span>" +
+      '<span class="stat"><b>' + m.sentence_count + "</b> sentences</span><span class=\"sep\">·</span>" +
+      '<span class="stat">burstiness <b>' + fmt(m.length_stdev) + "</b>/" + fmt(m.burstiness_target_stdev) + "</span>" +
+      (truncated ? '<span class="sep">·</span><span class="stat" style="color:var(--sev-high)">checking first ' + MAX_CHARS.toLocaleString() + " chars</span>" : "");
+
+    // Findings list: numbered findings (in placed order), then the rest as "—".
+    var rest = findings.filter(function (f) { return order.indexOf(f) === -1; });
+    var ordered = order.concat(rest);
+    if (!ordered.length) {
+      findingsEl.innerHTML = text
+        ? '<div class="f-clean">No findings. This reads clean to the checker.</div>'
+        : '<div class="f-clean" style="color:var(--faint)">Findings will appear here.</div>';
+      return;
+    }
+    findingsEl.innerHTML = ordered.map(function (f) {
+      var sc = sevClass(f);
+      var q = quoteOf(f);
+      return '<div class="f-row">' +
+        '<div class="f-no">' + (f._ref || "—") + "</div>" +
+        '<div class="f-main"><div class="f-rule">' + esc(label(f)) +
+          (q ? ' <span class="q">· ' + esc(q) + "</span>" : "") + "</div>" +
+          '<p class="f-fix">' + fixOf(f) + "</p></div>" +
+        '<div class="sev ' + sc + '"><span class="dot"></span>' + SEV_WORD[sc] + "</div>" +
+        "</div>";
+    }).join("");
+  }
+
+  function fmt(x) { return Number.isInteger(x) ? x.toFixed(1) : String(x); }
+
+  var timer = null;
+  function schedule() { clearTimeout(timer); timer = setTimeout(render, 90); }
+  input.addEventListener("input", schedule);
+  ctype.addEventListener("change", render);
+  document.getElementById("reset").addEventListener("click", function () { input.value = SAMPLE; ctype.value = "marketing"; render(); });
+  document.getElementById("clear").addEventListener("click", function () { input.value = ""; input.focus(); render(); });
+
+  input.value = SAMPLE;
+  render();
+})();
+</script>
+</body>
+</html>
