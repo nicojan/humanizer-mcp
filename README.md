@@ -2,6 +2,15 @@
 
 MCP server providing psycholinguistic, lexical, structural, and discourse-level rules for producing naturally human-sounding written content. Part of the **Human, an Education Collective** MCP ecosystem.
 
+## Demo
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/media/checker-demo-dark.png" />
+  <img src="docs/media/checker-demo-light.png" width="820" alt="humanizer_check_text output on a stock marketing paragraph: flagged words are underlined and numbered, a panel reports prohibitions_clear = false with 2 hard blocks and 7 findings to clear, and a numbered list gives each finding a severity and a fix." />
+</picture>
+
+Real output from `humanizer_check_text` on a stock piece of marketing copy. Two hard blocks, seven findings to clear, each with a fix. The server flags and suggests; it never rewrites the text.
+
 ## What It Does
 
 The reference Claude consults when writing or revising content that needs to read as human-authored. It supplies rules, patterns, substitutions, and before/after examples. It does **not** rewrite text itself.
