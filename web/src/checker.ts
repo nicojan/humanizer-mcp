@@ -137,14 +137,29 @@ const EMDASH_FIX =
   "for an aside. Use a comma only when it does not join two independent clauses " +
   "— a comma between independent clauses is a comma splice (AR-003).";
 
+// A line made only of hyphens, pipes, colons and spaces is markdown structure
+// (a table separator '|---|---|', a setext underline, a '---' horizontal rule
+// or front-matter fence), never an em-dash digraph. Checking the whole line
+// keeps a genuine inline 'word--word' flagged while markdown chrome passes.
+const STRUCTURAL_LINE = /^[\s\-|:]+$/;
+
+function isMarkdownStructure(text: string, offset: number): boolean {
+  const start = text.lastIndexOf("\n", offset - 1) + 1;
+  const end = text.indexOf("\n", offset);
+  const line = end === -1 ? text.slice(start) : text.slice(start, end);
+  return STRUCTURAL_LINE.test(line);
+}
+
 function findEmdashes(text: string): Finding[] {
-  return finditer(/—|--/g, text).map((m) => ({
-    rule: "AR-002",
-    type: "em_dash",
-    offset: m.index,
-    excerpt: excerpt(text, m.index, m.end),
-    fix: EMDASH_FIX,
-  }));
+  return finditer(/—|-{2,}/g, text)
+    .filter((m) => !isMarkdownStructure(text, m.index))
+    .map((m) => ({
+      rule: "AR-002",
+      type: "em_dash",
+      offset: m.index,
+      excerpt: excerpt(text, m.index, m.end),
+      fix: EMDASH_FIX,
+    }));
 }
 
 // ---------------------------------------------------------------------------

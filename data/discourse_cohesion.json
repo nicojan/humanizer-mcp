@@ -116,6 +116,6 @@
         "guidance": "If the same antithesis or balanced 'A carries X; B carries Y' contrast appears three or four times, the repeated form reads as a tic. Keep one canonical statement and cut the restatements. The repetition_patterns rules and the checker catch repeated WORDS; repeated SHAPE is a judgment call left to you."
       }
     ],
-    "research_basis": "Dead Language Society rhetorical analysis (2025) names 'it's not X; it's Y' as 'the technique LLMs love the most'. Corroborated by an in-the-wild copy audit."
+    "research_basis": "Dead Language Society rhetorical analysis (2025) names 'it's not X; it's Y' as 'the technique LLMs love the most'. Corroborated by the project's own nicojan.com copy audit (proposed-rules #4, #5)."
   }
 }

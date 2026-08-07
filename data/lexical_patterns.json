@@ -309,6 +309,72 @@
       "severity": "moderate",
       "notes": "Inflated copula substitute (the 'serves as / features / boasts' family). Use plain 'has' or 'is'. See AP-010.",
       "research_basis": "Long-cited AI copula-inflation tell; named in the project's own AP-010 audit example."
+    },
+    {
+      "ai_word": "unlock",
+      "alternatives": [
+        "open up",
+        "make possible",
+        "access",
+        "release"
+      ],
+      "severity": "moderate",
+      "notes": "Marketing cluster ('unlock the potential/power of'). Prefer a plain verb."
+    },
+    {
+      "ai_word": "unleash",
+      "alternatives": [
+        "release",
+        "let loose",
+        "set off",
+        "trigger"
+      ],
+      "severity": "moderate",
+      "notes": "Marketing hyperbole ('unleash the power of')."
+    },
+    {
+      "ai_word": "embark",
+      "alternatives": [
+        "start",
+        "begin",
+        "set out on"
+      ],
+      "severity": "moderate",
+      "notes": "Especially 'embark on a journey'. Pairs with the flagged noun 'journey'."
+    },
+    {
+      "ai_word": "empower",
+      "alternatives": [
+        "let",
+        "enable",
+        "help",
+        "give the tools to"
+      ],
+      "severity": "moderate",
+      "notes": "Corporate-AI staple ('empower teams to')."
+    },
+    {
+      "ai_word": "elevate",
+      "alternatives": [
+        "raise",
+        "lift",
+        "improve",
+        "boost"
+      ],
+      "severity": "moderate",
+      "notes": "Marketing ('elevate your X')."
+    },
+    {
+      "ai_word": "resonate",
+      "alternatives": [
+        "land",
+        "stick",
+        "ring true",
+        "connect",
+        "hit home"
+      ],
+      "severity": "moderate",
+      "notes": "On the arXiv:2412.11385 focal-word list. 'Resonate with' is near-universal in AI marketing copy."
     }
   ],
   "flagged_adjectives": [
@@ -526,6 +592,57 @@
       ],
       "severity": "moderate",
       "notes": "Promotional-brochure adjective; overused in AI travel and marketing copy."
+    },
+    {
+      "ai_word": "vibrant",
+      "alternatives": [
+        "lively",
+        "bright",
+        "colorful",
+        "energetic"
+      ],
+      "severity": "moderate",
+      "notes": "Travel/marketing register ('a vibrant scene'); sibling of bustling/breathtaking."
+    },
+    {
+      "ai_word": "invaluable",
+      "alternatives": [
+        "valuable",
+        "essential",
+        "a big help"
+      ],
+      "severity": "moderate"
+    },
+    {
+      "ai_word": "unwavering",
+      "alternatives": [
+        "steady",
+        "firm",
+        "constant",
+        "unshakable"
+      ],
+      "severity": "moderate",
+      "notes": "Especially 'unwavering commitment'."
+    },
+    {
+      "ai_word": "ever-evolving",
+      "alternatives": [
+        "changing",
+        "shifting",
+        "fast-moving"
+      ],
+      "severity": "moderate",
+      "notes": "Cliche for change; cut or be specific about what changes. Overlaps 'In today's rapidly evolving'."
+    },
+    {
+      "ai_word": "compelling",
+      "alternatives": [
+        "convincing",
+        "strong",
+        "hard to argue with",
+        "persuasive"
+      ],
+      "severity": "moderate"
     }
   ],
   "flagged_nouns": [
@@ -625,6 +742,138 @@
       ],
       "severity": "moderate",
       "notes": "Promotional cliché ('a hidden gem'). Multi-word, matched verbatim."
+    },
+    {
+      "ai_word": "treasure trove",
+      "alternatives": [
+        "wealth",
+        "rich store",
+        "goldmine",
+        "trove"
+      ],
+      "severity": "moderate",
+      "notes": "Cliche ('a treasure trove of'). Multi-word, matched verbatim; sibling of 'hidden gem'."
+    },
+    {
+      "ai_word": "plethora",
+      "alternatives": [
+        "plenty",
+        "a lot",
+        "many",
+        "a wide range"
+      ],
+      "severity": "moderate",
+      "notes": "Especially 'a plethora of'. Inflated quantifier."
+    },
+    {
+      "ai_word": "myriad",
+      "alternatives": [
+        "many",
+        "countless",
+        "a wide range",
+        "lots of"
+      ],
+      "severity": "moderate",
+      "notes": "Especially 'a myriad of'. Inflated quantifier."
+    },
+    {
+      "ai_word": "mosaic",
+      "alternatives": [
+        "mix",
+        "patchwork",
+        "assortment",
+        "range"
+      ],
+      "severity": "high"
+    },
+    {
+      "ai_word": "symphony",
+      "alternatives": [
+        "combination",
+        "mix",
+        "interplay"
+      ],
+      "severity": "high"
+    },
+    {
+      "ai_word": "labyrinth",
+      "alternatives": [
+        "maze",
+        "tangle",
+        "thicket",
+        "mess"
+      ],
+      "severity": "high"
+    },
+    {
+      "ai_word": "beacon",
+      "alternatives": [
+        "example",
+        "signal",
+        "standout",
+        "landmark"
+      ],
+      "severity": "moderate",
+      "notes": "Flagged when used metaphorically ('a beacon of hope'). A literal navigational beacon is fine."
+    },
+    {
+      "ai_word": "bedrock",
+      "alternatives": [
+        "foundation",
+        "basis",
+        "core"
+      ],
+      "severity": "moderate"
+    },
+    {
+      "ai_word": "cacophony",
+      "alternatives": [
+        "noise",
+        "clash",
+        "din",
+        "jumble"
+      ],
+      "severity": "high"
+    },
+    {
+      "ai_word": "kaleidoscope",
+      "alternatives": [
+        "mix",
+        "range",
+        "shifting set"
+      ],
+      "severity": "high"
+    },
+    {
+      "ai_word": "odyssey",
+      "alternatives": [
+        "journey",
+        "process",
+        "long haul",
+        "slog"
+      ],
+      "severity": "high"
+    },
+    {
+      "ai_word": "crucible",
+      "alternatives": [
+        "test",
+        "proving ground",
+        "pressure point"
+      ],
+      "severity": "moderate",
+      "notes": "Flagged when used metaphorically. Literal metallurgical or lab use is fine."
+    },
+    {
+      "ai_word": "north star",
+      "alternatives": [
+        "goal",
+        "priority",
+        "guiding aim",
+        "the point"
+      ],
+      "severity": "moderate",
+      "notes": "Flagged in the strategy-jargon sense. Literal astronomical use is fine."
     }
   ],
   "flagged_transitions": [
@@ -1039,6 +1288,6 @@
       "Replace the assertion with the specific that justified it: not 'a real engagement' but 'a live, mid-build engagement'; not 'the real flow' but 'the flow the operators actually follow'.",
       "Keep a single use only where it draws a genuine contrast (e.g. real versus hypothetical), and make that contrast explicit."
     ],
-    "research_basis": "In-the-wild audit of a portfolio case-study page (2026-06-28), where seven uses of 'real' in ~1,500 words passed the checker clean."
+    "research_basis": "proposed-rules PR2-#1; in-the-wild audit of nicojan.com/work/art-studio-blueprint (2026-06-28), where seven uses of 'real' in ~1,500 words passed the checker clean."
   }
 }

@@ -5,12 +5,26 @@ import re
 
 from src.checker.util import excerpt
 
-_EMDASH = re.compile(r"—|--")
+_EMDASH = re.compile(r"—|-{2,}")
+# A line made only of hyphens, pipes, colons and spaces is markdown structure
+# (a table separator '|---|---|', a setext underline, a '---' horizontal rule
+# or front-matter fence), never an em-dash digraph. Checking the whole line
+# keeps a genuine inline 'word--word' flagged while markdown chrome passes.
+_STRUCTURAL_LINE = re.compile(r"^[\s\-|:]+$")
+
+
+def _is_markdown_structure(text: str, offset: int) -> bool:
+    start = text.rfind("\n", 0, offset) + 1
+    end = text.find("\n", offset)
+    line = text[start:] if end == -1 else text[start:end]
+    return bool(_STRUCTURAL_LINE.match(line))
 
 
 def find_emdashes(text: str) -> list[dict]:
     out = []
     for m in _EMDASH.finditer(text):
+        if _is_markdown_structure(text, m.start()):
+            continue
         out.append(
             {
                 "rule": "AR-002",

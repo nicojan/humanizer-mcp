@@ -45,6 +45,15 @@ def test_research_caveats_present():
         assert cid in ids, f"missing caveat {cid}"
 
 
+def test_label_text_scope_caveat_present():
+    """Measured on deck chrome: burstiness fired at stdev 1.0 on 11 headings,
+    which have no sentences to vary, while two real label-register tells in the
+    same input passed. Documented, not detected: guessing "this is labels" from
+    length or punctuation would misfire on real short-form prose."""
+    ids = {c["id"] for c in load_json("caveats.json")["core_caveats"]}
+    assert "metrics_do_not_apply_to_label_text" in ids
+
+
 def test_every_caveat_has_statement_and_explanation():
     for c in load_json("caveats.json")["core_caveats"]:
         assert c["id"] and c["statement"] and c["explanation"]

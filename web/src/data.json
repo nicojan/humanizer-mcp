@@ -219,7 +219,7 @@
     {
       "id": "BS-022",
       "name": "meta_label",
-      "description": "A standalone meta-label line or heading that names the artifact's own format or length instead of its subject ('In 200 words', 'In brief', 'At a high level', 'To put it simply'). The mechanizable slice of the performative-framing beat: a self-aware flourish that performs concision or structure rather than carrying content. Fires ONLY when the label IS the whole bounded line/sentence (optionally one terminal mark, then a line break or end), so embedded uses ('At a high level, the system does X.') never match. TL;DR is deliberately excluded (common and acceptable in casual writing). The judgment sub-forms — self-satisfied closers, first-person meta-commentary, paradox-substitution headlines — are the self_review 'performative framing beat' rubric item, not this detector.",
+      "description": "A standalone meta-label line or heading that names the artifact's own format or length instead of its subject ('In 200 words', 'In brief', 'At a high level', 'To put it simply'). The mechanizable slice of the performative-framing beat: a self-aware flourish that performs concision or structure rather than carrying content. Fires ONLY when the label IS the whole bounded line/sentence (optionally one terminal mark, then a line break or end), so embedded uses ('At a high level, the system does X.') never match. TL;DR is deliberately excluded (common and acceptable in casual writing). The judgment sub-forms, self-satisfied closers, first-person meta-commentary, paradox-substitution headlines, are the self_review 'performative framing beat' rubric item, not this detector.",
       "detection": {
         "method": "regex",
         "pattern": "(?:^|\\n|[.!?]\\s+)(in\\s+\\d+\\s+words|in\\s+brief|in\\s+short|the\\s+short\\s+version|the\\s+short\\s+of\\s+it|the\\s+gist|a\\s+quick\\s+summary|at\\s+a\\s+high\\s+level|to\\s+put\\s+it\\s+simply)[ \\t]*[:.!?]?[ \\t]*(?=\\n|$)",
@@ -251,7 +251,7 @@
     {
       "id": "BS-024",
       "name": "vague_authority_attribution",
-      "description": "An appeal to an unnamed authority as evidence ('Researchers say...', 'Studies show...', 'Experts agree...', 'It is widely believed...', 'Many argue...'). A content-level AI tell distinct from credibility_insistence (which flags reality-assertion words like real/actual): here the sentence borrows authority it never names. The verb list is scoped to epistemic-claim frames, so a named or specific reference with a concrete action ('The researchers at MIT published their data') does not match. Checklist because attributed uses are legitimate — the fix is to name the source or cut the appeal.",
+      "description": "An appeal to an unnamed authority as evidence ('Researchers say...', 'Studies show...', 'Experts agree...', 'It is widely believed...', 'Many argue...'). A content-level AI tell distinct from credibility_insistence (which flags reality-assertion words like real/actual): here the sentence borrows authority it never names. The verb list is scoped to epistemic-claim frames, so a named or specific reference with a concrete action ('The researchers at MIT published their data') does not match. Checklist because attributed uses are legitimate, the fix is to name the source or cut the appeal.",
       "detection": {
         "method": "regex",
         "pattern": "\\b(?:(?:researchers|scientists|experts|scholars|analysts|observers|critics|historians|economists)\\s+(?:say|says|said|argue|argues|note|notes|noted|agree|agrees|believe|believes|suggest|suggests|contend|contends|claim|claims|have\\s+(?:found|noted|shown|argued|suggested|observed|concluded))|(?:studies|research)\\s+(?:show|shows|shown|suggest|suggests|indicate|indicates|reveal|reveals|demonstrate|demonstrates|have\\s+shown|has\\s+shown)|it\\s+is\\s+widely\\s+(?:believed|known|accepted|understood|recognized|regarded)|(?:many|some)\\s+(?:argue|argues|believe|believes|contend|contends|say|says))\\b",
@@ -262,12 +262,12 @@
       "source_examples": [
         "AP-037"
       ],
-      "research_basis": "Wikipedia 'Signs of AI writing' (2026): 'vague attributions' — attributing claims to undefined authorities ('researchers', 'observers', 'scholarship') without naming them — listed as a core content tell. Scoped to unnamed-agent + epistemic-verb frames so named/specific references pass."
+      "research_basis": "Wikipedia 'Signs of AI writing' (2026): 'vague attributions', attributing claims to undefined authorities ('researchers', 'observers', 'scholarship') without naming them, listed as a core content tell. Scoped to unnamed-agent + epistemic-verb frames so named/specific references pass."
     },
     {
       "id": "BS-025",
       "name": "question_fragment_cadence",
-      "description": "The 'The best part? It's this.' rhetorical tic: a sentence-initial determiner-led noun-phrase fragment ending in '?', immediately answered by a short sentence ('The result? A total win.', 'My advice? Take the job.'). Named repeatedly as a 2026 ChatGPT fingerprint (the 'contrasting question with a short answer' pattern). Scoped to a determiner-led NP of up to three words so WH-questions ('What is the best part?') and mid-sentence questions ('Did you see the result?') never match — the determiner must sit at a sentence boundary.",
+      "description": "The 'The best part? It's this.' rhetorical tic: a sentence-initial determiner-led noun-phrase fragment ending in '?', immediately answered by a short sentence ('The result? A total win.', 'My advice? Take the job.'). Named repeatedly as a 2026 ChatGPT fingerprint (the 'contrasting question with a short answer' pattern). Scoped to a determiner-led NP of up to three words so WH-questions ('What is the best part?') and mid-sentence questions ('Did you see the result?') never match, the determiner must sit at a sentence boundary.",
       "detection": {
         "method": "regex",
         "pattern": "(?:^|[.!?]\\s+|\\n)(?:the|my|our|his|her|its|their)\\s+(?:[a-z]+\\s+){0,2}[a-z]+\\?\\s+[^\\s?!][^?!]{0,80}[.!?]",
@@ -279,6 +279,198 @@
         "AP-038"
       ],
       "research_basis": "Walter Writes / PlusAI 'most overused ChatGPT patterns' (2026) and in-the-wild reports: 'contrasting questions with short answers' ('The best part? It's this. The kicker? It's that.') as a durable 2026 structural fingerprint. NP-fragment + boundary scoping keeps genuine questions clear."
+    },
+    {
+      "id": "BS-026",
+      "name": "when_it_comes_to_opener",
+      "description": "The 'When it comes to X...' sentence opener, a very-high-frequency AI phrase frame that sets up a topic with an empty preamble instead of stating the point. Scoped to a sentence boundary with a trailing comma so mid-sentence uses ('she knew when it comes to a vote') never match.",
+      "detection": {
+        "method": "regex",
+        "pattern": "(?:^|[.!?]\\s+|\\n)when it comes to\\s+[^.!?\\n]{1,40},",
+        "confidence": "medium"
+      },
+      "gate": "checklist",
+      "fix": "Cut the preamble and state the point. 'When it comes to pricing, we keep it simple' becomes 'Our pricing is simple.'",
+      "source_examples": [
+        "AP-039"
+      ],
+      "research_basis": "Bloomberry 'AI Sentence DNA' (2026): 'when it comes to' listed Very High across all models. Boundary plus trailing-comma scoping keeps false positives near zero."
+    },
+    {
+      "id": "BS-027",
+      "name": "world_state_opener",
+      "description": "The grand temporal/world-state opener ('In a world where...', 'In an era of...', 'In an age where...', 'In a time of...'), a very-high-frequency AI hook that opens on a sweeping generalization. Complements the flagged transition 'In today's rapidly evolving' and BS-016 meta_framing_opener. Scoped to a sentence boundary and a fixed determiner-plus-noun-plus-where/of skeleton so a literal 'in a world of magic' mid-sentence never matches.",
+      "detection": {
+        "method": "regex",
+        "pattern": "(?:^|[.!?]\\s+|\\n)in (?:a world where|an era (?:of|where)|an age (?:of|where)|a time (?:of|where))\\b",
+        "confidence": "medium"
+      },
+      "gate": "checklist",
+      "fix": "Cut the cosmic setup and open on the specific. Say what is changing and for whom.",
+      "source_examples": [
+        "AP-040"
+      ],
+      "research_basis": "Bloomberry 'AI Sentence DNA' (2026): 'In a world where...' hook formula, Very High across all models. Boundary scoping keeps mid-sentence literal uses clear."
+    },
+    {
+      "id": "BS-028",
+      "name": "pivotal_role_frame",
+      "description": "The 'plays a [pivotal/crucial/key/central...] role in' template. The evaluative adjectives are individually flagged, but the template slips through when the adjective is an un-flagged option (key/central/major), so the frame itself is matched. Restricted to evaluative adjectives so a neutral 'play a supporting role in the film' does not match.",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\bplay(?:s|ed|ing)?\\s+an?\\s+(?:pivotal|crucial|vital|key|central|significant|major|critical|important|essential|integral)\\s+role\\s+in\\b",
+        "confidence": "medium"
+      },
+      "gate": "checklist",
+      "fix": "Say what the thing actually does. 'Monitoring plays a pivotal role in catching problems' becomes 'Monitoring catches problems early.'",
+      "source_examples": [
+        "AP-041"
+      ],
+      "research_basis": "Bloomberry 'AI Sentence DNA' (2026) and 2026 overused-phrase lists: 'play a pivotal/crucial role in' as a recurring filler template. Adjective allow-list keeps neutral role-descriptions clear."
+    },
+    {
+      "id": "BS-029",
+      "name": "solution_pivot",
+      "description": "The 'That's where X comes in.' marketing pivot-to-product beat ('This is where we come in.'). Scoped to a sentence-initial 'that's/this is where' plus a terminal 'comes in.' so the idiom 'comes in handy' and ordinary locatives ('this is where we live') never match.",
+      "detection": {
+        "method": "regex",
+        "pattern": "(?:^|[.!?]\\s+|\\n)(?:that's|that is|this is|here's|here is) where\\s+[^.!?\\n]{1,40}\\bcomes? in[.!?]",
+        "confidence": "medium"
+      },
+      "gate": "checklist",
+      "fix": "State what the product does directly instead of staging a reveal.",
+      "source_examples": [
+        "AP-042"
+      ],
+      "research_basis": "Bloomberry 'AI Sentence DNA' (2026): the reveal/solution-pivot cadence. Terminal scoping ('comes in.') keeps 'comes in handy' and locatives clear."
+    },
+    {
+      "id": "BS-030",
+      "name": "empathy_conditional_opener",
+      "description": "The 'If you've ever struggled with...' empathy opener, a fixed second-person conditional that manufactures relatability, in the same family as BS-023 validation_reassurance. Scoped to a sentence boundary plus 'you've/you have ever' plus an empathy verb (struggled/wondered/felt/...), so anecdotal openers ('If you've ever been to Paris') and mid-sentence uses do not match.",
+      "detection": {
+        "method": "regex",
+        "pattern": "(?:^|[.!?]\\s+|\\n)if you(?:['’]ve| have) ever\\s+(?:struggled|wondered|felt|feared|worried|dreamed|dreamt|wished|hoped|questioned|doubted|found yourself|asked yourself|been told)\\b",
+        "confidence": "low"
+      },
+      "gate": "checklist",
+      "fix": "Open on the concrete situation, not a canned 'if you've ever felt X' hook.",
+      "source_examples": [
+        "AP-043"
+      ],
+      "research_basis": "Bloomberry 'AI Sentence DNA' (2026): empathy opener 'If you've ever struggled with...'. Empathy-verb allow-list plus boundary scoping keeps genuine conditional anecdotes clear."
+    },
+    {
+      "id": "BS-031",
+      "name": "metaphorical_carry",
+      "description": "Metaphorical 'carry': the fixed abstract collocation ('the design carries the weight', 'carrying the burden of the argument') and the text-unit intransitive ('eight words to carry'). A strong Claude-register tell: the verb performs gravity while no one does anything. FP-guarded by an abstract-object allow-list and, on the intransitive branch, a text-unit head noun, so literal carrying ('too heavy to carry', 'carry the groceries', 'the truck carries the load') never matches. 'load' and 'freight' were dropped from the object list during design because logistics prose uses them literally. Known accepted boundary: the fixed idiom 'carries the weight of the world' does fire; at gate=checklist that is a rewrite-or-justify prompt, and the idiom is a cliche worth a second look either way. Deliberately NOT a bare 'carry' word-flag: 'carry' is a high-frequency ordinary verb and a bare flag is the flow_over_surface_features low-ceiling trap. The wider family (any abstract noun as subject of 'carry') is not mechanizable without a parser and lives in the self_review abstraction-as-agent item.",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\bcarr(?:y|ies|ied|ying)\\s+the\\s+(?:weight|burden|meaning)\\b|\\b(?:words?|lines?|phrases?|sentences?|ideas?|stor(?:y|ies)|truths?)\\s+to\\s+carry\\b",
+        "confidence": "medium"
+      },
+      "gate": "checklist",
+      "fix": "Name the actual agent and the actual effect. 'The layout carries the weight of the argument' -> 'The layout is what makes the argument land.' For the label form, say what the words must do: 'Eight words to carry' -> 'Eight words, and they have to do the whole job.'",
+      "source_examples": [
+        "AP-044"
+      ],
+      "research_basis": "In-the-wild report (2026-08-06) plus caveats.json metrics_do_not_apply_to_label_text (2026-08-03), which recorded 'Eight words to carry' as a genuine AI-register tell that the checker missed."
+    },
+    {
+      "id": "BS-032",
+      "name": "honestly_fragment_opener",
+      "description": "A standalone one-word interrogative opener promising candour and delivering a platitude ('Honestly? Most people don't follow up.'). Scoped to a fixed adverb set as the WHOLE bounded fragment at a sentence or line boundary, so quoted dialogue ('\"Honestly?\" she said.') and mid-sentence uses never match.",
+      "detection": {
+        "method": "regex",
+        "pattern": "(?:^|[.!?]\\s+|\\n)\\s*(?:honestly|truthfully|frankly|real talk|seriously)\\?\\s+",
+        "confidence": "medium"
+      },
+      "gate": "checklist",
+      "fix": "Delete the fragment and state the claim. If the point is not actually candid or contrarian, the opener is advertising something the sentence does not deliver.",
+      "source_examples": [
+        "AP-045"
+      ],
+      "research_basis": "Forbes, 'The 15 New Giveaway Signs Of AI-Generated Content' (2026-02-03), tell #3: \"'Honestly?' followed by nothing honest\"."
+    },
+    {
+      "id": "BS-033",
+      "name": "quiet_prestige_modifier",
+      "description": "The 'everything is quietly something' tic: 'quiet confidence', 'quiet rebellion', 'quietly reshaping'. Both branches are allow-listed ('quiet' + an abstract-quality noun, or 'quietly' + a transformation verb), so ordinary use ('a quiet room', 'she quietly closed the door') passes. This is the collocation, not the word: a bare 'quiet' flag was rejected on 2026-07-13 as the flow_over_surface_features trap, and that rejection stands.",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\bquiet\\s+(?:confidence|rebellion|revolution|power|truth|strength|dignity|competence|authority|luxury|ambition|resolve|desperation)\\b|\\bquietly\\s+(?:became|becoming|building|built|growing|grew|reshaping|redefining|transforming|revolutioni[sz]ing|dismantling|rewriting)\\b",
+        "confidence": "medium"
+      },
+      "gate": "checklist",
+      "fix": "Cut the modifier or replace it with the evidence. 'Quiet confidence' -> say what the person did that showed it. 'Quietly reshaping the industry' -> name the change and who noticed.",
+      "source_examples": [
+        "AP-046"
+      ],
+      "research_basis": "Forbes (2026-02-03), tell #5: 'Everything is quietly something', 'quiet confidence', 'quiet rebellion', 'quietly growing', 'the quiet truth'."
+    },
+    {
+      "id": "BS-034",
+      "name": "concessive_balance_hedge",
+      "description": "The risk-averse both-sides frame that concludes nothing: 'While X has benefits, it also carries risks.' Scoped so BOTH the hedge verb and its object are allow-listed, leaving ordinary concessive 'While' clauses clear. Distinct frame from BS-007 ('despite ... faces ... challenges').",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\bwhile\\s+[^.!?]{1,60},\\s+(?:it|they|this|that)\\s+(?:also\\s+|still\\s+)?(?:carr(?:y|ies)|comes?\\s+with|poses?|presents?|brings?|introduces?|raises?)\\s+(?:significant\\s+|serious\\s+|real\\s+|certain\\s+)?(?:risks?|challenges?|drawbacks?|trade-?offs?|limitations?|concerns?|downsides?)\\b",
+        "confidence": "medium"
+      },
+      "gate": "checklist",
+      "fix": "Pick the claim you actually want to make and make it. If the trade-off is real, name the specific cost and who pays it, rather than balancing the sentence for its own sake.",
+      "source_examples": [
+        "AP-047"
+      ],
+      "research_basis": "Gibson, 'The Predictable Rhetoric of AI-Generated Text' (Medium, 2026-04), device #3 'Balancing Hedging'; corroborated by Forbes tell #13 'faux balance without consequence'."
+    },
+    {
+      "id": "BS-035",
+      "name": "internal_cross_reference",
+      "description": "Over-tidy self-reference: 'As mentioned above', 'As we discussed earlier', 'As noted previously'. Legitimate in long technical and academic documents, which is why it is checklist (rewrite or justify), never hard.",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\bas\\s+(?:mentioned|noted|discussed|stated|outlined|described|explained)\\s+(?:above|earlier|previously|before|already)\\b|\\bas\\s+(?:we|i)\\s+(?:mentioned|noted|discussed|saw|said)\\s+(?:above|earlier|previously|before)\\b",
+        "confidence": "low"
+      },
+      "gate": "checklist",
+      "fix": "Cut it and restate the point in three words, or trust the reader to remember. Keep it only where a real document needs a genuine back-reference.",
+      "source_examples": [
+        "AP-048"
+      ],
+      "research_basis": "Forbes (2026-02-03), tell #14: 'internal references that are too tidy'."
+    },
+    {
+      "id": "BS-036",
+      "name": "deepening_invitation",
+      "description": "The therapeutic prompt to go deeper: 'Let that sink in.', 'Do you want to sit with that for a while?', 'Are you ready to go deeper?', 'Read that again.' A fixed phrase set rather than a productive frame, so precision is near-total. Family relative of BS-023 (validation_reassurance).",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\blet\\s+that\\s+sink\\s+in\\b|\\bsit\\s+with\\s+(?:that|this|it)\\s+for\\s+a\\s+(?:while|moment|minute|bit)\\b|\\bare\\s+you\\s+ready\\s+to\\s+(?:go\\s+deeper|dive\\s+deeper|take\\s+it\\s+further)\\b|\\bread\\s+that\\s+again\\b",
+        "confidence": "medium"
+      },
+      "gate": "checklist",
+      "fix": "Delete it. If the point deserves weight, give it weight with a fact or a consequence, not an instruction to feel something.",
+      "source_examples": [
+        "AP-049"
+      ],
+      "research_basis": "Forbes (2026-02-03), tell #7: 'questions designed to deepen', 'Do you want to sit with that for a while?', 'Are you ready to go deeper?'"
+    },
+    {
+      "id": "BS-037",
+      "name": "withheld_insight_teaser",
+      "description": "The setup that announces a payoff it rarely delivers: 'Here's the kicker', 'the part most people miss', 'what nobody tells you'. Scoped to the 'most people|nobody|no one' + 'miss|get wrong|tell you|know' skeleton plus the fixed 'here's the kicker'. Adjacent to 'Here's the thing', which was rejected on 2026-07-25 as register-dependent; that rejection stands; what is flagged here is the marker PLUS the withheld-insight claim.",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\bhere(?:['’])?s\\s+the\\s+kicker\\b|\\b(?:what|the\\s+(?:part|thing|bit|secret|truth))\\s+(?:that\\s+)?(?:most\\s+people|nobody|no\\s+one|almost\\s+nobody)\\s+(?:miss(?:es)?|gets?\\s+wrong|don['’]?t\\s+(?:see|know|realise|realize)|doesn['’]?t\\s+(?:see|know|realise|realize)|tells?\\s+you|knows?)\\b",
+        "confidence": "low"
+      },
+      "gate": "checklist",
+      "fix": "Lead with the insight itself. If it is genuinely counterintuitive the reader will notice without being told to.",
+      "source_examples": [
+        "AP-050"
+      ],
+      "research_basis": "Forbes (2026-02-03), tells #1 'announcing the good part' ('Here's the kicker') and #4 'setup phrases that don't deliver' ('Here's the part most people miss')."
     }
   ],
   "flagged_terms": [
@@ -572,6 +764,66 @@
       ]
     },
     {
+      "term": "unlock",
+      "severity": "moderate",
+      "alternatives": [
+        "open up",
+        "make possible",
+        "access",
+        "release"
+      ]
+    },
+    {
+      "term": "unleash",
+      "severity": "moderate",
+      "alternatives": [
+        "release",
+        "let loose",
+        "set off",
+        "trigger"
+      ]
+    },
+    {
+      "term": "embark",
+      "severity": "moderate",
+      "alternatives": [
+        "start",
+        "begin",
+        "set out on"
+      ]
+    },
+    {
+      "term": "empower",
+      "severity": "moderate",
+      "alternatives": [
+        "let",
+        "enable",
+        "help",
+        "give the tools to"
+      ]
+    },
+    {
+      "term": "elevate",
+      "severity": "moderate",
+      "alternatives": [
+        "raise",
+        "lift",
+        "improve",
+        "boost"
+      ]
+    },
+    {
+      "term": "resonate",
+      "severity": "moderate",
+      "alternatives": [
+        "land",
+        "stick",
+        "ring true",
+        "connect",
+        "hit home"
+      ]
+    },
+    {
       "term": "comprehensive",
       "severity": "moderate",
       "alternatives": [
@@ -782,6 +1034,54 @@
       ]
     },
     {
+      "term": "vibrant",
+      "severity": "moderate",
+      "alternatives": [
+        "lively",
+        "bright",
+        "colorful",
+        "energetic"
+      ]
+    },
+    {
+      "term": "invaluable",
+      "severity": "moderate",
+      "alternatives": [
+        "valuable",
+        "essential",
+        "a big help"
+      ]
+    },
+    {
+      "term": "unwavering",
+      "severity": "moderate",
+      "alternatives": [
+        "steady",
+        "firm",
+        "constant",
+        "unshakable"
+      ]
+    },
+    {
+      "term": "ever-evolving",
+      "severity": "moderate",
+      "alternatives": [
+        "changing",
+        "shifting",
+        "fast-moving"
+      ]
+    },
+    {
+      "term": "compelling",
+      "severity": "moderate",
+      "alternatives": [
+        "convincing",
+        "strong",
+        "hard to argue with",
+        "persuasive"
+      ]
+    },
+    {
       "term": "realm",
       "severity": "high",
       "alternatives": [
@@ -870,6 +1170,132 @@
         "find",
         "lesser-known spot",
         "overlooked option"
+      ]
+    },
+    {
+      "term": "treasure trove",
+      "severity": "moderate",
+      "alternatives": [
+        "wealth",
+        "rich store",
+        "goldmine",
+        "trove"
+      ]
+    },
+    {
+      "term": "plethora",
+      "severity": "moderate",
+      "alternatives": [
+        "plenty",
+        "a lot",
+        "many",
+        "a wide range"
+      ]
+    },
+    {
+      "term": "myriad",
+      "severity": "moderate",
+      "alternatives": [
+        "many",
+        "countless",
+        "a wide range",
+        "lots of"
+      ]
+    },
+    {
+      "term": "mosaic",
+      "severity": "high",
+      "alternatives": [
+        "mix",
+        "patchwork",
+        "assortment",
+        "range"
+      ]
+    },
+    {
+      "term": "symphony",
+      "severity": "high",
+      "alternatives": [
+        "combination",
+        "mix",
+        "interplay"
+      ]
+    },
+    {
+      "term": "labyrinth",
+      "severity": "high",
+      "alternatives": [
+        "maze",
+        "tangle",
+        "thicket",
+        "mess"
+      ]
+    },
+    {
+      "term": "beacon",
+      "severity": "moderate",
+      "alternatives": [
+        "example",
+        "signal",
+        "standout",
+        "landmark"
+      ]
+    },
+    {
+      "term": "bedrock",
+      "severity": "moderate",
+      "alternatives": [
+        "foundation",
+        "basis",
+        "core"
+      ]
+    },
+    {
+      "term": "cacophony",
+      "severity": "high",
+      "alternatives": [
+        "noise",
+        "clash",
+        "din",
+        "jumble"
+      ]
+    },
+    {
+      "term": "kaleidoscope",
+      "severity": "high",
+      "alternatives": [
+        "mix",
+        "range",
+        "shifting set"
+      ]
+    },
+    {
+      "term": "odyssey",
+      "severity": "high",
+      "alternatives": [
+        "journey",
+        "process",
+        "long haul",
+        "slog"
+      ]
+    },
+    {
+      "term": "crucible",
+      "severity": "moderate",
+      "alternatives": [
+        "test",
+        "proving ground",
+        "pressure point"
+      ]
+    },
+    {
+      "term": "north star",
+      "severity": "moderate",
+      "alternatives": [
+        "goal",
+        "priority",
+        "guiding aim",
+        "the point"
       ]
     },
     {
@@ -1224,7 +1650,7 @@
       "Replace the assertion with the specific that justified it: not 'a real engagement' but 'a live, mid-build engagement'; not 'the real flow' but 'the flow the operators actually follow'.",
       "Keep a single use only where it draws a genuine contrast (e.g. real versus hypothetical), and make that contrast explicit."
     ],
-    "research_basis": "In-the-wild audit of a portfolio case-study page (2026-06-28), where seven uses of 'real' in ~1,500 words passed the checker clean."
+    "research_basis": "proposed-rules PR2-#1; in-the-wild audit of nicojan.com/work/art-studio-blueprint (2026-06-28), where seven uses of 'real' in ~1,500 words passed the checker clean."
   },
   "self_review": [
     "AR-001 — meaning preserved: confirm claims, numbers, names, and stance are unchanged from the source, and the tone the user asked for is intact.",
@@ -1232,7 +1658,7 @@
     "Reused rhetorical shape: the same construction — an antithesis ('not X, but Y'), a copula maxim, a rule-of-three — restated across the piece reads as a tic even when the words differ. Vary the constructions, not just the vocabulary.",
     "Section-to-section variation: does the style shift between sections, or hold one flat fingerprint throughout? Humans modulate; LLMs stay even. Make one section terse and another more flowing. (Cross-section uniformity is auto-detected; this is the qualitative read.)",
     "Generic competence and stance: could this have been written about almost any topic, by almost anyone? Cut smooth-but-empty phrasing, reflexive hedges, and motivational closers. Commit to a real point of view and at least one concrete, specific, checkable detail.",
-    "Abstraction-as-agent: an abstract noun ('the gap', 'the work', 'the craft', 'the order') used as the subject of an agentive or experiential verb (mattered, decided, kept, taught) reads fluent but no one is actually doing anything. Prefer a human or concrete subject (server cannot verify reliably; see AP-033).",
+    "Abstraction-as-agent: an abstract noun ('the gap', 'the work', 'the craft', 'the order') used as the subject of an agentive or experiential verb (mattered, decided, kept, taught, carries, carried, holds, demands) reads fluent but no one is actually doing anything. Metaphorical 'carry' is the most frequent instance and the hardest to hear ('the layout carries the weight', 'the silence carried the room', 'eight words to carry'): the verb performs gravity while the sentence names no actor and no effect. Prefer a human or concrete subject, and say what the thing actually does. The fixed collocations are auto-detected as BS-031; the open-ended abstract-subject cases are this rubric item (server cannot verify reliably; see AP-033, AP-044).",
     "Performative framing beat: a sentence or label whose real job is to perform insight, closure, or self-awareness rather than carry content. Three forms — (a) a self-satisfied closer: a neat aphorism ending a section that adds no new fact, name, or number, often crediting the author or pivoting on a tidy antithesis ('The data set is public; the reading of it is mine.'); (b) first-person meta-commentary on the work itself ('my take', 'the reading of it is mine', 'as I see it') in a piece meant to be evidence-led; (c) a clever paradox headline used to sound sharp where a plain statement of the point would do. Delete the beat and end on the last substantive point. Keep at most one aphoristic or paradox construction per piece, and only where it does analytical work — the device is human in moderation; the tell is repetition and substitution for content. The standalone meta-label form ('in 200 words', 'in brief') is auto-detected as BS-022; the closer overlaps BS-018; see AP-035, AP-033.",
     "Excessive coherence and tidiness: does every point line up too neatly — each example fitting perfectly, every thread resolved, no loose ends or tension left? Real human writing has friction: a caveat that complicates the thesis, a digression, an example that only mostly fits, a point left partly open. Seamless, frictionless argument is itself a tell. Add back the messiness the topic actually has.",
     "Durable signal: local word-level unpredictability and section-to-section variation are the most human signals and are not measured server-side. Surface word swaps are necessary but not sufficient — do not stop at vocabulary."
