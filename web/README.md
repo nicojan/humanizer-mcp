@@ -12,7 +12,7 @@ as the Python `run_checks`. `dump.py` runs the real checker over a battery of
 texts (crafted edge cases plus a corpus of AI-written samples) and writes the
 results to `golden.json`. `parity.mjs` runs the compiled port over the same
 battery and diffs every finding, offset, count, metric, and fix string. Current
-status: **77/77 texts match exactly**, plus 779/779 `pyRound` cases.
+status: **110/110 texts match exactly**, plus 779/779 `pyRound` cases.
 
 The battery includes one adversarial case per regex banned structure, each with
 its negative control, so a rule that silently stopped firing (or started firing
@@ -65,3 +65,26 @@ correctly on any input.
 `pyRound` reproduces CPython's `round(x, 1)` (round half to even, on the true
 value of the double). `parity.mjs` checks it against Python over every `.x5`
 step, the dyadic eighths, and a set of irrational values.
+
+## Inline regex flags (Python-only syntax)
+
+Two deployed patterns (`BS-052`, `BS-053`) use Python `re` inline-flag syntax
+that JS `RegExp` has no equivalent for. `checker.ts`'s `translatePattern`
+handles both by rewriting the pattern before compiling it, rather than by
+hand-editing a divergent copy:
+
+- A leading `(?m)` is stripped and the `m` flag is added to the `RegExp`
+  instead, since JS has no inline-flag syntax at all.
+- A scoped `(?-i:...)` (force case-sensitive within an otherwise
+  case-insensitive pattern) has no JS equivalent, scoped or otherwise. The
+  group is rewritten into an ordinary capturing group so the surrounding match
+  still succeeds case-insensitively, and after a match the captured text is
+  re-checked case-sensitively against the same sub-pattern; a guard that fails
+  discards the match. This is an exact behavioral match for the deployed use
+  (BS-053's leading-capital check on a noun phrase), not an approximation, but
+  it does add one extra regex test per candidate match rather than encoding
+  the exclusion into the character class itself.
+
+Both are covered by parity's adversarial battery (`bs052_*` / `bs053_*` cases
+in `dump.py`), so a future pattern using either form is exercised
+automatically as long as a case is added for it.

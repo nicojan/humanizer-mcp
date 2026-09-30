@@ -142,6 +142,53 @@ crafted = [
      "nobody walked and the fog sat low over the water and we talked about nothing "
      "in particular and let the miles go by until the tank ran low and we pulled "
      "off at a station that time forgot"),
+    # --- adversarial: each regex banned-structure added since 2026-08-06 ---
+    ("bs038_appended_wh_label", "prose", "Method, and why this one worked better than the rest."),
+    ("bs038_ok_ordinary_clause", "prose", "He explained the delay, and why it mattered to the whole team."),
+    ("bs039_not_but_fragment", "prose", "Not because it was easy, but because it was right for the team."),
+    ("bs039_ok_mid_sentence", "prose", "He did not go to the store, but to the park instead that day."),
+    ("bs040_artifact_carry", "prose", "The deck carries one still image from the original pitch we made."),
+    ("bs040_ok_literal_frame", "prose", "The frame carries the roof of the old barn without any trouble."),
+    ("bs041_stale_figure", "prose", "The new pricing page really moves the needle for the whole team."),
+    ("bs041_ok_time_of_day", "prose", "We wrapped the review at the end of the day and went home."),
+    ("bs042_candour_disclaimer", "prose", "The redesign took nine months, and I'm not going to pretend that was the plan."),
+    ("bs042_ok_sentence_initial", "prose", "I'm not going to pretend I understand the tax code at all."),
+    ("bs043_copula_avoidance", "prose", "The report serves as a guide for every new hire on the team."),
+    ("bs043_ok_role_object", "prose", "She stood as the Labour candidate in the general election that year."),
+    ("bs044_significance_predicate", "prose", "The ceremony represents a profound turning point for the whole community."),
+    ("bs044_ok_literal", "prose", "The graph represents the data collected from three separate sites."),
+    ("bs045_signposted_conclusion", "prose", "The pilot ran for six weeks. In conclusion, the team should keep the new schedule."),
+    ("bs046_staccato_negation", "prose", "Not a bug. Not a feature. It is simply how the system behaves."),
+    ("bs046_ok_ordinary_emphasis", "prose", "Not now. Not ever. She had made up her mind about it."),
+    ("bs047_analogy_invitation", "prose", "Think of it like a garden that needs tending every single week."),
+    ("bs048_structure_announcement", "prose", "Let's break this down into three parts before we go any further."),
+    ("bs048_ok_let_be_honest", "prose", "Let's be honest, the deadline was always going to be tight."),
+    ("bs049_boast_collocation", "prose", "The brochure boasts a rooftop pool and a private screening room."),
+    ("bs050_elevate_collocation", "prose", "The new signage will elevate your lobby into something guests remember."),
+    ("bs050_ok_literal_elevate", "prose", "The engineers elevated the track above the river to stop the flooding."),
+    ("bs051_landscape_metaphor", "prose", "The competitive landscape has shifted dramatically over the last year."),
+    ("bs052_time_noun_as_agent", "prose", "Busy season eats the Fridays I used to spend at the club."),
+    ("bs052_ok_literal_season", "prose", "The winter killed the roses we planted along the back fence."),
+    ("bs053_clipped_retention_verdict", "prose", "The Scouts books and the tutoring stay. Everything else goes."),
+    ("bs053_ok_literal_car", "prose", "The car stays in the garage until the snow tires go on."),
+    # the (?-i:[A-Z]) capital check and the case-insensitive exclusions
+    ("bs053_list_item", "prose", "- Tutoring stays.\n- The gym goes."),
+    ("bs053_ok_all_caps_pronoun", "prose", "HE STAYS. NOTHING REMAINS. No one stays."),
+    ("bs053_ok_title_name", "prose", "Mr. Darcy stays. Please stay."),
+    ("bs053_ok_lowercase_start", "prose", "then tutoring stays. and the gym goes."),
+    ("bs054_deictic_stance_closer", "prose", "Seven to eight hours of sleep, and I want to keep it there."),
+    ("bs054_ok_no_number", "prose", "The kitchen is tidy, and I want to keep it that way."),
+    ("bs055_time_back_refrain_single", "prose", "I get my Fridays back in May when the season ends."),
+    ("bs055_time_back_refrain_budget", "prose",
+     "I get my Fridays back in May. I get my evenings back too. I even get my "
+     "weekends back once the tournament wraps up for good."),
+    # --- adversarial: document budgets (BS-038 appended label, twice) ---
+    ("document_budget_overrun", "prose",
+     "## Method, and why this one\n\nWe ran it for six weeks.\n\n"
+     "## Scope, and why it matters\n\nThe pilot covered two schools."),
+    ("document_budget_bs053", "prose", "Tutoring stays. I cut the gym. Piano stays."),
+    # --- adversarial: content_type="label" suppresses burstiness/uniformity ---
+    ("label_content_type", "label", "Eight words to carry. Your answer first. Section three."),
 ]
 
 # --- 3. Real text: the eval corpus (human + AI) ------------------------------

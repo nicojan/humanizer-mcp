@@ -175,7 +175,8 @@
           "lexical_patterns.word_length_patterns",
           "lexical_patterns.nominalization",
           "lexical_patterns.abstract_concrete_balance",
-          "lexical_patterns.credibility_insistence"
+          "lexical_patterns.credibility_insistence",
+          "lexical_patterns.orwell"
         ],
         "stop_condition": "Every flagged term considered; substitutions applied contextually per lexical_patterns.meta.application_rule, NOT uniformly."
       },
@@ -283,7 +284,21 @@
           "checker.must_clear[*]",
           "checker.manual_review[*]"
         ],
-        "stop_condition": "humanizer_check_text returns prohibitions_clear=true; every must_clear item has been rewritten or justified; manual_review items self-attested."
+        "stop_condition": "humanizer_check_text returns prohibitions_clear=true; every must_clear item has been rewritten or justified; manual_review items self-attested. On a multi-section document the LAST run of this phase is on the assembled whole, not on the section edited last: the one-per-piece budgets (the antithesis, the appended significance label, the aphorism) cannot be enforced from per-section calls, because each call sees one instance and reports a finding the writer can reasonably justify. See caveats.per_section_checks_miss_document_budgets."
+      },
+      {
+        "phase": 10,
+        "name": "Plainness pass (Orwell)",
+        "purpose": "Cut the flab the human-likeness layers do not look for: stale figures, words that can go, the passive where the active will do. The other phases ask whether the prose reads as machine-made; this one asks whether it reads as anything at all. Runs last, on copy that has already cleared phases 0 to 9, because cutting words changes rhythm and a cut is cheaper to make than to undo.",
+        "tools": [{"name": "humanizer_get_lexical_patterns"}, {"name": "humanizer_check_text", "params": {"text": "the trimmed output"}}],
+        "rule_paths": [
+          "lexical_patterns.orwell.rules[*]",
+          "lexical_patterns.orwell.long_word_substitutions[*]",
+          "lexical_patterns.orwell.padding_phrases[*]",
+          "lexical_patterns.orwell.jargon_carve_out",
+          "lexical_patterns.orwell.rewriting_guidance[*]"
+        ],
+        "stop_condition": "Every stale figure either cut or deliberately justified; every word that can go is gone; the passive kept only where the agent is genuinely unknown or irrelevant; every domain term defined in plain words at first use and then used plainly, never substituted (caveats.jargon_substitution_loses_meaning). Then phase 9 is re-run, because trimming changes sentence-length variance and can undo the burstiness work."
       }
     ]
   },

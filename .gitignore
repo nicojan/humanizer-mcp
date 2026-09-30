@@ -10,3 +10,4 @@ build/
 .venv/
 venv/
 data/.git/
+eval/fpcorpus/longform/

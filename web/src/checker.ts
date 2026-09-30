@@ -12,6 +12,8 @@ interface FlaggedTerm { term: string; severity: string; alternatives: string[]; 
 interface RegexStructure {
   id: string; name: string; fix?: string;
   detection: { method: string; pattern: string; confidence?: string };
+  document_budget?: number;
+  budget_only?: boolean;
 }
 
 const HARD_PHRASES: string[] = (DATA as any).hard_phrases;
@@ -118,6 +120,94 @@ function finditer(re: RegExp, text: string): MatchLite[] {
     if (m[0].length === 0) g.lastIndex++;
   }
   return out;
+}
+
+/**
+ * Translate a Python `re` pattern (compiled server-side with re.IGNORECASE)
+ * into a JS RegExp source/flags pair, emulating the two inline-flag forms the
+ * data actually uses (see BS-052/BS-053 in banned_structures.json):
+ *   - a leading `(?m)`: JS has no inline flag syntax, so it is stripped and
+ *     the `m` flag is added to the RegExp instead.
+ *   - a scoped `(?-i:...)`: JS has no scoped-flag groups at all. The group is
+ *     turned into an ordinary capturing group so the match still succeeds
+ *     case-insensitively, and the captured text is re-checked case-sensitively
+ *     against the same sub-pattern after the match (see matchPassesCaseGuards).
+ * Every other pattern in the data set passes through unchanged.
+ */
+interface CaseGuard { groupIndex: number; validator: RegExp; }
+function translatePattern(pattern: string): { source: string; flags: string; caseGuards: CaseGuard[] } {
+  let src = pattern;
+  let flags = "gi";
+  if (src.startsWith("(?m)")) {
+    src = src.slice(4);
+    flags += "m";
+  }
+  const caseGuards: CaseGuard[] = [];
+  let out = "";
+  let groupIndex = 0;
+  let i = 0;
+  while (i < src.length) {
+    const ch = src[i];
+    if (ch === "\\") { out += src.slice(i, i + 2); i += 2; continue; }
+    if (ch === "[") {
+      // character class: copy verbatim so a `(` inside it is never mistaken
+      // for a group open.
+      let j = i + 1;
+      if (src[j] === "]") j++;
+      while (j < src.length && src[j] !== "]") { if (src[j] === "\\") j++; j++; }
+      j++;
+      out += src.slice(i, j);
+      i = j;
+      continue;
+    }
+    if (ch === "(") {
+      if (src.startsWith("(?-i:", i)) {
+        let depth = 1;
+        let j = i + 5;
+        const start = j;
+        while (j < src.length && depth > 0) {
+          const c = src[j];
+          if (c === "\\") { j += 2; continue; }
+          if (c === "[") {
+            j++;
+            while (j < src.length && src[j] !== "]") { if (src[j] === "\\") j++; j++; }
+            j++;
+            continue;
+          }
+          if (c === "(") depth++;
+          else if (c === ")") { depth--; if (depth === 0) break; }
+          j++;
+        }
+        const inner = src.slice(start, j);
+        groupIndex += 1;
+        caseGuards.push({ groupIndex, validator: new RegExp("^(?:" + inner + ")$") });
+        out += "(" + inner + ")";
+        i = j + 1;
+        continue;
+      }
+      if (src[i + 1] === "?") {
+        // non-capturing group, lookaround, or (already-handled) inline flag.
+        out += ch;
+        i += 1;
+        continue;
+      }
+      groupIndex += 1;
+      out += ch;
+      i += 1;
+      continue;
+    }
+    out += ch;
+    i += 1;
+  }
+  return { source: out, flags, caseGuards };
+}
+
+function matchPassesCaseGuards(m: MatchLite, caseGuards: CaseGuard[]): boolean {
+  for (const guard of caseGuards) {
+    const g = m.groups[guard.groupIndex - 1];
+    if (g !== undefined && !guard.validator.test(g)) return false;
+  }
+  return true;
 }
 
 // ---------------------------------------------------------------------------
@@ -397,18 +487,31 @@ const NEG_CLAUSE =
   /^(?:it|they|that)\s+(?:never|does not|doesn't|do not|don't|will not|won't|cannot|can't)\s+([a-z']+)/i;
 const ALPHA = /[a-z']+/gi;
 
-function findRegexStructures(text: string, structures: RegexStructure[]): Finding[] {
+interface CompiledStructure {
+  id: string; name: string; fix?: string; confidence?: string;
+  source: string; flags: string; caseGuards: CaseGuard[];
+}
+const COMPILED_REGEX_STRUCTURES: CompiledStructure[] = REGEX_STRUCTURES
+  .filter((s) => s.detection?.method === "regex")
+  .map((s) => {
+    const { source, flags, caseGuards } = translatePattern(s.detection.pattern);
+    return {
+      id: s.id, name: s.name, fix: s.fix, confidence: s.detection.confidence,
+      source, flags, caseGuards,
+    };
+  });
+
+function findRegexStructures(text: string, structures: CompiledStructure[]): Finding[] {
   const out: Finding[] = [];
   for (const s of structures) {
-    const det = s.detection ?? ({} as any);
-    if (det.method !== "regex") continue;
-    const re = new RegExp(det.pattern, "gi");
+    const re = new RegExp(s.source, s.flags);
     for (const m of finditer(re, text)) {
+      if (!matchPassesCaseGuards(m, s.caseGuards)) continue;
       out.push({
         type: "banned_structure",
         id: s.id,
         name: s.name,
-        confidence: det.confidence ?? "medium",
+        confidence: s.confidence ?? "medium",
         offset: m.index,
         excerpt: excerpt(text, m.index, m.end),
         fix: s.fix ?? "",
@@ -588,6 +691,70 @@ function findRuleOfThreeDensity(text: string): Finding[] {
 }
 
 // ---------------------------------------------------------------------------
+// budgets.py
+// ---------------------------------------------------------------------------
+const BUDGETS: Record<string, number> = {};
+const BUDGET_NAMES: Record<string, string> = {};
+const BUDGET_ONLY = new Set<string>();
+for (const s of REGEX_STRUCTURES) {
+  if (s.document_budget) {
+    BUDGETS[s.id] = s.document_budget;
+    BUDGET_NAMES[s.id] = s.name ?? s.id;
+    if (s.budget_only) BUDGET_ONLY.add(s.id);
+  }
+}
+
+/**
+ * One finding per budgeted rule that appears more often than its budget.
+ * `findings` is the already-assembled must_clear list, so this counts what
+ * the detectors actually reported rather than re-running them. For a rule in
+ * budgetOnly the instances are dropped from the report by the caller, so the
+ * overrun carries their excerpts instead: the writer still needs to find them.
+ */
+function findBudgetOverruns(
+  findings: Finding[],
+  budgets: Record<string, number>,
+  names: Record<string, string>,
+  budgetOnly: Set<string>,
+): Finding[] {
+  const counts = new Map<string, number>();
+  for (const f of findings) {
+    const id = (f as any).id;
+    if (id && id in budgets) counts.set(id, (counts.get(id) ?? 0) + 1);
+  }
+  const out: Finding[] = [];
+  for (const ruleId of [...counts.keys()].sort()) {
+    const count = counts.get(ruleId)!;
+    const budget = budgets[ruleId];
+    if (count <= budget) continue;
+    const name = names[ruleId] ?? ruleId;
+    const finding: any = {
+      type: "document_budget",
+      id: ruleId,
+      name,
+      count,
+      budget,
+      detail:
+        `${name} appears ${count} times in the text supplied; the budget for ` +
+        `the whole piece is ${budget}. A repeated rhetorical shape is the ` +
+        "durable tell, not any single use.",
+      fix:
+        "Keep the strongest instance and rewrite the rest. Counted only " +
+        "within this call, so run the final check on the assembled document " +
+        "rather than section by section " +
+        "(caveats.per_section_checks_miss_document_budgets).",
+    };
+    if (budgetOnly.has(ruleId)) {
+      finding.excerpts = findings
+        .filter((f: any) => f.id === ruleId)
+        .map((f: any) => f.excerpt ?? "");
+    }
+    out.push(finding);
+  }
+  return out;
+}
+
+// ---------------------------------------------------------------------------
 // insistence.py
 // ---------------------------------------------------------------------------
 const CRED_WORD = /[A-Za-z]+(?:[-'][A-Za-z]+)*/g;
@@ -681,6 +848,16 @@ const MIN_SENTENCES_PER_SEGMENT = 3;
 const MIN_SEGMENTS = 3;
 const PARA_SPLIT = /\n\s*\n/;
 
+// Content types whose caller declares the input is labels, worksheet cells or
+// notes, where sentence-length variance is undefined or deliberately flat
+// (caveats.metrics_do_not_apply_to_label_text). An explicit opt-in, never
+// inferred from the text.
+const SHORT_COPY_TYPES = new Set(["label", "labels", "notes"]);
+
+function lengthMetricsApply(contentType: string | null | undefined): boolean {
+  return !SHORT_COPY_TYPES.has((contentType ?? "prose").toLowerCase());
+}
+
 function targetStdev(contentType: string | null | undefined): number {
   return TARGETS[(contentType ?? "prose").toLowerCase()] ?? 6.0;
 }
@@ -770,16 +947,28 @@ export function runChecks(text: string, contentType?: string | null): Report {
     });
   }
 
-  const must: Finding[] = [];
-  must.push(...findUnterminated(text));
-  must.push(...findCommaSplices(text));
-  must.push(...findFlaggedTerms(text, FLAGGED_TERMS));
-  must.push(...findRegexStructures(text, REGEX_STRUCTURES));
-  must.push(...findHeuristicStructures(text));
-  must.push(...findRuleOfThreeDensity(text));
-  must.push(...findCredibilityInsistence(text, CRED));
+  const rawMust: Finding[] = [];
+  rawMust.push(...findUnterminated(text));
+  rawMust.push(...findCommaSplices(text));
+  rawMust.push(...findFlaggedTerms(text, FLAGGED_TERMS));
+  rawMust.push(...findRegexStructures(text, COMPILED_REGEX_STRUCTURES));
+  rawMust.push(...findHeuristicStructures(text));
+  rawMust.push(...findRuleOfThreeDensity(text));
+  rawMust.push(...findCredibilityInsistence(text, CRED));
 
-  const metrics = burstiness(text, targetStdev(contentType));
+  const overruns = findBudgetOverruns(rawMust, BUDGETS, BUDGET_NAMES, BUDGET_ONLY);
+  const must: Finding[] = rawMust.filter((f: any) => !(f.id && BUDGET_ONLY.has(f.id)));
+  must.push(...overruns);
+
+  // Under content_type "label"/"notes" the numbers are still reported, but the
+  // flags are cleared so no consumer reads them as a failure.
+  const applies = lengthMetricsApply(contentType);
+  const rawMetrics = burstiness(text, targetStdev(contentType));
+  const metrics: any = {
+    ...rawMetrics,
+    burstiness_flag: applies && rawMetrics.burstiness_flag,
+    length_metrics_apply: applies,
+  };
   if (metrics.burstiness_flag) {
     must.push({
       type: "burstiness",
@@ -788,7 +977,8 @@ export function runChecks(text: string, contentType?: string | null): Report {
     });
   }
 
-  const segments = segmentUniformity(text);
+  const rawSegments = segmentUniformity(text);
+  const segments = { ...rawSegments, uniformity_flag: applies && rawSegments.uniformity_flag };
   metrics.segment_variation = segments;
   if (segments.uniformity_flag) {
     must.push({
@@ -829,9 +1019,9 @@ export function spanOf(text: string, f: any): [number, number] | null {
     }
     case "banned_structure": {
       if (!f.id) return null; // heuristic BS-009/012/018/020 → list only
-      const s = REGEX_STRUCTURES.find((x) => x.id === f.id);
+      const s = COMPILED_REGEX_STRUCTURES.find((x) => x.id === f.id);
       if (!s) return null;
-      const re = new RegExp(s.detection.pattern, "gi");
+      const re = new RegExp(s.source, s.flags);
       let m: RegExpExecArray | null;
       while ((m = re.exec(text)) !== null) {
         if (m.index === f.offset) return [f.offset, f.offset + m[0].length];

@@ -42,10 +42,10 @@
     {
       "id": "BS-005",
       "name": "participle_tail",
-      "description": "Comma + present-participle tail that adds interpretation without new information.",
+      "description": "Comma + present-participle tail that adds interpretation without new information. Narrowed 2026-09-18: 'setting' and 'marking' were dropped because their attested forms ('setting the stage for', 'marking a pivotal moment') are already BS-004, and their bare forms are ordinary English ('setting aside his bread and butter'). 'reflecting' and 'emphasizing' are now scoped to an abstract complement, since the human uses take a concrete one ('reflecting the clouds', 'emphasizing each slow down-stroke'). Measured 1.9 to 0.0 per 10k on 47,088 sentences of long-form human prose, with recall on the attested tell unchanged.",
       "detection": {
         "method": "regex",
-        "pattern": ",\\s+(contributing|underscoring|highlighting|reflecting|setting|marking|emphasizing|showcasing|demonstrating|reinforcing|paving|ushering)\\b\\w*",
+        "pattern": ",\\s+(?:contributing|underscoring|highlighting|showcasing|demonstrating|reinforcing|paving|ushering)\\b\\w*|,\\s+reflecting\\s+(?:a|an|the|its|their)\\s+(?:broader|growing|wider|deeper|larger|renewed|shift|trend|commitment|desire|need)\\b|,\\s+emphasizing\\s+(?:the|its|their)\\s+(?:importance|need|value|significance|role|commitment|urgency)\\b",
         "confidence": "medium"
       },
       "gate": "checklist",
@@ -68,10 +68,10 @@
     {
       "id": "BS-006",
       "name": "negative_parallelism",
-      "description": "'not just X, but also Y' / 'not only X but Y' contrast inflation.",
+      "description": "'not just X, but also Y' contrast inflation, plus the explicit 'not only X but also Y' correlative. Narrowed 2026-09-18: the previous pattern accepted any 'not only ... but' and fired 94 times, 20.0 per 10k, on 47,088 sentences of long-form human prose, 93 of them on the ordinary correlative ('I was not only instructed in everything, but was soon engaged in helping'). The narrowed form fires 7 times, 1.5 per 10k, with the attested AP-006 tell intact. The bare correlative used as a flourish ('not only a design problem but a cultural one') is no longer detected and is carried by the self_review antithesis item.",
       "detection": {
         "method": "regex",
-        "pattern": "\\bnot (just|only)\\b[^.?!]{0,60}?\\bbut\\b",
+        "pattern": "\\bnot just\\b[^.?!]{0,60}?\\bbut\\b|\\bnot only\\b[^.?!]{0,60}?\\bbut also\\b",
         "confidence": "medium"
       },
       "gate": "checklist",
@@ -107,12 +107,13 @@
     {
       "id": "BS-011",
       "name": "x_not_y_contrastive",
-      "description": "'X, not Y' contrastive binary that reads constructed.",
+      "description": "Copula-anchored 'X, not Y' contrastive binary that reads constructed: a copula (is/was/are/were/means/becomes/remains), a short noun phrase, a comma, then a Y that closes the clause. Narrowed 2026-09-18 from a bare two-token pattern that fired 358 times, 76.0 per 10k, on 47,088 sentences of long-form human prose. Known and accepted false positive: the identical shape serves as a scope note or a factual correction (\"The self-review rubric is data, not code.\", \"The response was 406, not 421.\"). Nothing readable in the string separates that sense from the tell, so a firing on it is justified rather than rewritten. Contrastives outside this frame are no longer detected and are carried by the self_review rubric.",
       "detection": {
         "method": "regex",
-        "pattern": "\\b\\w+,\\s+not\\s+\\w+",
+        "pattern": "\\b(?:is|was|are|were|means|becomes|remains)\\s+(?:(?:a|an|the|any|some|its|his|her|their|our|my|your)\\s+)?\\w+,\\s+not\\s+(?:(?:a|an|the|any|some|its|his|her|their|our|my|your)\\s+)?(?!(?:yet|more|less|only|just|even|so|too|that|as|to|be|at|in|for|by|of|with|without|until|much|many|long|far|very|quite|always|often|now|then|once|half|above|below|out|up|down|because|if|when|while|but|unlike|merely|simply|entirely|wholly|altogether|necessarily|absolutely|likely|unlikely|mine|yours|his|hers|ours|theirs|thee|thou|me|him|her|us|them|it|this|these|those)\\b)\\w+\\s*[.;!?]",
         "confidence": "low"
       },
+      "document_budget": 1,
       "gate": "checklist",
       "fix": "Make the positive claim and let it stand, or use a separate sentence for the contrast.",
       "source_examples": ["AP-005"]
@@ -209,6 +210,7 @@
       "name": "copula_maxim_closer",
       "description": "A paragraph or section closes on a short abstract-subject copula maxim ('The craft is mostly restraint.'). Generalizes BS-014 beyond rarely/never aphorisms. Detected heuristically (src/checker/structures.py): paragraph-final, <=10 words, opens with The/My/Our, an abstract subject noun, a copula main verb, no proper noun or number.",
       "detection": { "method": "heuristic", "confidence": "low" },
+      "document_budget": 1,
       "gate": "checklist",
       "fix": "End on the concrete thing, not a distilled lesson about it. If the maxim is earned, attach it to a specific action rather than floating it as a closer.",
       "source_examples": ["BS-014"],
@@ -328,7 +330,7 @@
       "description": "The grand temporal/world-state opener ('In a world where...', 'In an era of...', 'In an age where...', 'In a time of...'), a very-high-frequency AI hook that opens on a sweeping generalization. Complements the flagged transition 'In today's rapidly evolving' and BS-016 meta_framing_opener. Scoped to a sentence boundary and a fixed determiner-plus-noun-plus-where/of skeleton so a literal 'in a world of magic' mid-sentence never matches.",
       "detection": {
         "method": "regex",
-        "pattern": "(?:^|[.!?]\\s+|\\n)in (?:a world where|an era (?:of|where)|an age (?:of|where)|a time (?:of|where))\\b",
+        "pattern": "(?:^|[.!?]\\s+|\\n)(?:in (?:a world where|an era (?:of|where)|an age (?:of|where)|a time (?:of|where))|(?:imagine|picture) a world where)\\b",
         "confidence": "medium"
       },
       "gate": "checklist",
@@ -440,7 +442,7 @@
       "description": "Over-tidy self-reference: 'As mentioned above', 'As we discussed earlier', 'As noted previously'. Legitimate in long technical and academic documents, which is why it is checklist (rewrite or justify), never hard.",
       "detection": {
         "method": "regex",
-        "pattern": "\\bas\\s+(?:mentioned|noted|discussed|stated|outlined|described|explained)\\s+(?:above|earlier|previously|before|already)\\b|\\bas\\s+(?:we|i)\\s+(?:mentioned|noted|discussed|saw|said)\\s+(?:above|earlier|previously|before)\\b",
+        "pattern": "\\bas\\s+(?:mentioned|noted|discussed|stated|outlined|described|explained)\\s+(?:above|earlier|previously|before|already)\\b|\\bas\\s+(?:we|i)\\s+(?:mentioned|noted|discussed|saw|said)\\s+(?:above|earlier|previously|before)\\b|\\bas\\s+(?:we|i)\\s+(?:have\\s+)?(?:seen|explored|covered|established)\\b(?:\\s+(?:above|earlier|previously|before))?\\s*(?=[,;])",
         "confidence": "low"
       },
       "gate": "checklist",
@@ -475,6 +477,273 @@
       "fix": "Lead with the insight itself. If it is genuinely counterintuitive the reader will notice without being told to.",
       "source_examples": ["AP-050"],
       "research_basis": "Forbes (2026-02-03), tells #1 'announcing the good part' ('Here's the kicker') and #4 'setup phrases that don't deliver' ('Here's the part most people miss')."
+    },
+    {
+      "id": "BS-038",
+      "name": "appended_wh_label",
+      "description": "The label line that appends a second, evaluative element promising significance instead of naming a subject: 'Method, and why this one', 'The rebuild, and why it took nine months', 'The rollout, and how we got here'. The heading states the topic, then annexes a WH clause that pre-announces the defence the body is about to make. Mechanized slice of the performative framing beat. Four FP guards keep it label-scoped: the appendix must END the bounded line (so mid-sentence coordination cannot match), the head is blocked from containing a subject pronoun or auxiliary (so an ordinary prose clause cannot match), the head is capped at 12 tokens, and the tail is short and comma-free (so a full second clause cannot match). The open-ended sibling that appends a reduced relative clause rather than a WH word ('..., and the officer the whole system turns on.') is deliberately NOT mechanized: separating it from ordinary coordination needs a parser, so it is a self_review judgment item.",
+      "detection": {
+        "method": "regex",
+        "pattern": "(?:^|\\n)[ \\t]*(?:\\#{1,6}[ \\t]+)?(?:\\*\\*)?(?!(?:he|she|they|we|i|you|it|is|are|was|were|be|been|am|has|have|had|do|does|did|will|would|can|could|should|may|might|must|there)\\b)[A-Za-z0-9'’\\-]+(?:[ \\t]+(?!(?:he|she|they|we|i|you|it|is|are|was|were|be|been|am|has|have|had|do|does|did|will|would|can|could|should|may|might|must|there)\\b)[A-Za-z0-9'’\\-]+){0,11},[ \\t]+and[ \\t]+(?:why|what|how|who)\\b[^\\n.!?,;:]{0,30}[ \\t]*[.!?:]?[ \\t]*(?=\\n|$)",
+        "confidence": "low"
+      },
+      "document_budget": 1,
+      "gate": "checklist",
+      "fix": "Cut the appendix. Name the subject and let the section make its own case: 'Method, and why this one' is 'Method'. If the justification is worth stating, it is worth a sentence in the body, not a promise in the label.",
+      "source_examples": ["AP-051"],
+      "research_basis": "In-the-wild reviewer report (2026-08-08) on a document that passed the 2026-08-06 checker clean: the shape fired twice in one piece, which is the durable signal (a repeated rhetorical shape) rather than any single instance."
+    },
+    {
+      "id": "BS-039",
+      "name": "not_but_fragment",
+      "description": "The sentence-initial antithesis fragment: 'Not because the person stopped mattering, but because the officer is reachable.', 'Not to save time, but to save arguments.', 'Not a strategy, but a habit.' Fragment sibling of BS-013, which only covers the two-sentence copula flip ('It is not just X. It is Y.') and therefore missed this, the more common written form. The FP guard is PARALLELISM: the same function word must open both limbs (because/because, to/to, a/a), which is what separates the rhetorical fragment from ordinary prose where 'Not' heads a real subject ('Not all of them agreed, but most did.') or where the correlative sits mid-sentence ('He did not go to the store, but to the park.'), neither of which can match. The bare adverb form ('Not always, but often.') is deliberately NOT matched: without a shared function word it cannot be told from ordinary casual speech ('Not bad, but okay.'), and cry-wolf costs more than the miss.",
+      "detection": {
+        "method": "regex",
+        "pattern": "(?:^|[.!?]\\s+|\\n)Not\\s+(because|to|for|about|a|an|the|in|by|with|from|as|so)\\s+[^.!?\\n,]{1,60},\\s+but\\s+\\1\\s+[^.!?\\n]{0,60}[.!?]",
+        "confidence": "medium"
+      },
+      "document_budget": 1,
+      "gate": "checklist",
+      "fix": "State the reason that holds and drop the one that does not. The rejected half is usually a claim nobody made, so cutting it costs nothing: 'Not because the person stopped mattering, but because the officer is reachable' is 'The officer is the reachable point in the system.'",
+      "source_examples": ["AP-052"],
+      "research_basis": "In-the-wild reviewer report (2026-08-08). Same document as BS-038; the reviewer named the 'Not X, but Y' structure and the checker returned nothing for it, confirming the BS-013 scope gap."
+    },
+    {
+      "id": "BS-040",
+      "name": "artifact_subject_carry",
+      "description": "An artifact or document noun as the subject of 'carry' with an informational object: 'the deck carries one still of the dashboard', 'each board carries its own title, rule and legend', 'the margin rail carries the tags', 'slide 18 carries the business model', 'the presenter notes carry the argument'. The middle slice between BS-031, which matches only the fixed abstract collocations ('carries the weight|burden|meaning'), and the open abstract-subject family that stays a self_review item for want of a parser. It is mechanizable because both ends are closed lists. Detection requires BOTH an artifact-noun subject head immediately before the verb (deck, slide, board, page, section, rail, panel, frame, column, caption, chart, table, screen, dashboard, prototype, report, layout, card, note...) AND an informational object head (title, legend, argument, tags, model, lessons, story, data, still, screenshot, claim, stakes...), which is what keeps the many load-bearing homographs literal: 'the column carries the roof', 'the frame carries the glass', 'the table carries the plates' and 'the truck carries the load' all pass, because no physical-load object is in the list. Objects the subject genuinely bears in the physical world were left out for the same reason 'load' and 'freight' were dropped from BS-031, and 'number' was dropped after a probe on 'the card carries an account number'. Known accepted boundary: 'the frame carries the image' fires, and a picture frame arguably does that literally, though 'holds' is the verb English actually uses there. Subject nouns for stocked retail (store, shop) are excluded so the 'carries that brand' sense cannot match. Extended 2026-09-17 with abstract process and project nouns as subjects (rebuild, redesign, rollout, migration, project, initiative, effort, process, method, approach, decision, change, pivot, experiment, pilot, study, analysis, review), after 'The rebuild carries the argument' came back clean: the object was already on the list and only the subject head was missing. The object list was deliberately NOT extended in that round, which is what keeps the ordinary business and legal register out - 'carries risk', 'carries a cost', 'carries weight', 'carries a penalty' and 'carries consequences' all stay clean.",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\b(?:deck|slide|slides|board|boards|page|pages|spread|section|sections|chapter|paragraph|sentence|line|lines|column|columns|panel|panels|frame|frames|rail|caption|captions|legend|heading|headline|label|labels|footer|header|sidebar|chart|charts|diagram|diagrams|figure|figures|table|tables|screen|screens|dashboard|mockup|wireframe|prototype|document|report|memo|draft|copy|layout|grid|tile|tiles|card|cards|banner|note|notes|appendix|footnote|footnotes|template|rebuild|redesign|rollout|launch|migration|refactor|overhaul|revamp|project|programme|program|initiative|effort|process|method|approach|decision|change|shift|pivot|experiment|pilot|study|analysis|argument|review)\\s+(?:\\d{1,3}\\s+)?carr(?:y|ies|ied|ying)\\s+(?:the|its|it's|a|an|one|our|their|my|his|her|all|both|each|every|two|three|\\d{1,3})\\s+(?:own\\s+)?(?:[a-z][\\w-]*\\s+){0,2}(?:title|titles|legend|legends|argument|arguments|message|messages|tag|tags|label|labels|caption|captions|story|model|lesson|lessons|point|points|copy|text|information|data|detail|details|name|names|rule|rules|still|stills|image|images|screenshot|screenshots|note|notes|explanation|claim|claims|thesis|idea|ideas|tone|voice|brand|logic|case|narrative|reasoning|emphasis|focus|content|evidence|proof|context|subtext|theme|themes|agenda|pitch|ask|takeaway|takeaways|summary|definition|definitions|warning|caveat|disclaimer|framing|question|questions|answer|answers|conclusion|conclusions|finding|findings|spec|brief|statement|quote|quotes|timeline|stakes)\\b",
+        "confidence": "medium"
+      },
+      "gate": "checklist",
+      "fix": "Say what the artifact does, or give the sentence a person. 'Each board carries its own title, rule and legend' is 'Each board has its own title, rule and legend.' 'Slide 18 carries the business model' is 'Slide 18 is where the business model gets spoken.' 'The margin rail carries the tags' is 'The tags sit in a margin rail on the right.'",
+      "source_examples": ["AP-053"],
+      "research_basis": "In-the-wild report (2026-08-10) from the design project that produced BS-031, BS-038 and BS-039. Six sentences of exactly this shape, drawn from that project's own working documents, were run against the deployed checker and returned prohibitions_clear with zero findings: BS-031's object list covers 'the weight' but not 'its own title', which is the form design writing actually produces. Verified 0 of 16 false positives on the genuine-human eval corpus and 0 of 19 on constructed literal-carry probes."
+    },
+    {
+      "id": "BS-041",
+      "name": "stale_figure_of_speech",
+      "description": "Orwell's first rule, mechanized on a closed list: a figure of speech the reader is used to seeing in print, which has stopped producing an image and now only fills the slot where a plain statement belongs. 'It moves the needle on readiness', 'the federal purse would feel it', 'the low-hanging fruit', 'the tip of the iceberg', 'a double-edged sword', 'many moving parts', 'the lion's share'. This is house style, not an authorship signal: human writing reaches for these constantly, which is the whole reason Orwell wrote the rule, and the eval corpus is therefore not evidence either way. It sits in this file because the mechanism is a fixed phrase set, the same shape as BS-036. Two guards keep the literal senses out: 'raise the bar' matches only when terminal or followed by for/on/across, so 'raised the bar three inches' passes, and 'at the end of the day' matches only in the filler frame (comma, then a subject and a copula or 'comes down to'), so the time-of-day reading passes. Known accepted boundary: a literal high-jump 'raised the bar for the next attempt' fires. 'Guardrail' was considered and rejected: it is ordinary technical vocabulary in AI-safety writing, not a dead metaphor.",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\bmov(?:e|es|ed|ing)\\s+the\\s+needle\\b|\\blow[- ]hanging\\s+fruit\\b|\\bboil\\s+the\\s+ocean\\b|\\bpeel(?:s|ed|ing)?\\s+back\\s+the\\s+layers\\b|\\bthe\\s+elephant\\s+in\\s+the\\s+room\\b|\\bdouble[- ]edged\\s+sword\\b|\\btip\\s+of\\s+the\\s+iceberg\\b|\\blevel\\s+playing\\s+field\\b|\\bwhen\\s+push\\s+comes\\s+to\\s+shove\\b|\\bthe\\s+lion'?s?\\s+share\\b|\\ba\\s+perfect\\s+storm\\b|\\bsea\\s+change\\b|\\brais(?:e|es|ed|ing)\\s+the\\s+bar\\s*(?:[.,;:!?]|\\b(?:for|on|across)\\b)|\\bpush(?:es|ed|ing)?\\s+the\\s+envelope\\b|\\bthink(?:s|ing)?\\s+outside\\s+the\\s+box\\b|\\bthe\\s+best\\s+of\\s+both\\s+worlds\\b|\\bhit(?:s|ting)?\\s+the\\s+ground\\s+running\\b|\\b(?:many|a\\s+lot\\s+of|lots\\s+of|so\\s+many)\\s+moving\\s+parts\\b|\\bthe\\s+(?:public|federal)\\s+purse\\b|\\bthe\\s+taxpayer'?s?\\s+(?:dime|dollar)\\b|\\bat\\s+the\\s+end\\s+of\\s+the\\s+day,\\s+(?:it|this|that|what|the\\s+[\\w-]+)\\s+(?:is|are|was|were|comes\\s+down\\s+to|boils\\s+down\\s+to|matters|remains)\\b",
+        "confidence": "low"
+      },
+      "gate": "checklist",
+      "fix": "Say the thing the figure is standing in for, with the number or the name if you have one. 'It moves the needle on readiness' is 'It shortens the release plan by a day and a half.' 'The federal purse would feel it' is 'It would show up in the CSC budget.' If the image is doing real work and you chose it deliberately, justify it and keep it.",
+      "source_examples": ["AP-054"],
+      "research_basis": "Orwell, 'Politics and the English Language' (1946), rule 1, adopted 2026-08-10 from a case-study copy gate that had been running the Orwell pass by hand alongside this server. The list is the set of figures that gate kept catching after the checker had already cleared the text. Judgment-only Orwell rules (cut every word that can go, prefer the active) and the domain-jargon carve-out are in self_review.json and lexical_patterns.orwell; see caveats.jargon_substitution_loses_meaning."
+    },
+    {
+      "id": "BS-042",
+      "name": "conjoined_candour_disclaimer",
+      "description": "The first-person candour beat appended to the clause it follows: 'The redesign took nine months, and I'm not going to pretend that was the plan.' A performed admission that costs the writer nothing, placed where it reads as earned honesty. Conjoined relative of BS-017, which matches only the two-sentence form (a disclaiming sentence then a short 'But ...' reversal) and whose auxiliary list excludes 'am not going to'. Scoped to the CONJOINED form only: a comma plus and/but must precede the frame. That guard is what distinguishes it from the 2026-07-25 rejection of 'Here's the thing' and 'Let's be honest' as register-dependent traps. Sentence-initial 'I'm not going to pretend I understand the tax code.' is an ordinary hedge qualifying a claim and stays unflagged; the tell is the appending, where the beat attaches to a finished statement to add a note of candour. Accepts straight and curly apostrophes.",
+      "detection": {
+        "method": "regex",
+        "pattern": ",\\s+(?:and|but)\\s+I(?:'m|’m|\\s+am)?\\s+(?:not\\s+(?:going\\s+to|gonna|about\\s+to)|will\\s+not|won(?:'|’)t)\\s+(?:pretend|claim|sugarcoat|act\\s+like|tell\\s+you|sit\\s+here)\\b",
+        "confidence": "medium"
+      },
+      "gate": "checklist",
+      "fix": "Cut the beat and let the statement stand, or replace it with the thing you are declining to pretend about. 'It shipped late, and I'm not going to pretend otherwise.' -> 'It shipped late.' or 'It shipped six weeks late, and the cause was ours.' If the admission is real, name it; if it is not, the clause is performing candour rather than doing it.",
+      "source_examples": ["AP-055"],
+      "research_basis": "In-the-wild report (2026-09-17); design doc docs/superpowers/specs/2026-09-17-candour-frame-and-carry-widening-design.md."
+    },
+    {
+      "id": "BS-043",
+      "name": "copula_avoidance",
+      "description": "The copula dodge: the model will not write 'is', so it reaches for 'serves as' or 'stands as'. 'The report serves as a guide.' is 'The report is a guide.' Named independently by Wikipedia's editor guide, the tropes.fyi community list and the slop-sense pattern set, which estimates the substitute carries meaning the copula would not in roughly one case in ten. The wider verb family (functions as, operates as, comprises, encompasses, constitutes, resides, features) is DELIBERATELY excluded: a rejection probe found 8/8 of their uses legitimate ('the capacitor functions as a filter', 'the clinic operates as a charity', 'the board comprises seven members'), because those verbs carry technical, legal and organisational senses the copula cannot replace. Only 'serves as' and 'stands as' have no competing sense, the same discipline that dropped 'load' and 'freight' from BS-031. The FP guard is a role-object exclusion over a three-token window, because a person holding an office is ordinary English and the role word is often not adjacent to the determiner ('She stood as the Labour candidate in 2019.'). The electoral sense of 'stands as' falls under the same list.",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\b(?:serves?|served|serving|stands?|stood|standing)\\s+as\\s+(?:a|an|the)\\s+(?!(?:[A-Za-z][\\w-]*\\s+){0,2}(?:chair|chairman|chairwoman|chairperson|president|vice|director|treasurer|secretary|head|chief|captain|lead|mentor|trustee|ambassador|liaison|adviser|advisor|counsel|deputy|interim|acting|coordinator|officer|principal|dean|editor|registrar|warden|governor|mayor|judge|juror|member|delegate|representative|spokesperson|host|volunteer|apprentice|intern|candidate|nominee|independent|backup|substitute|proxy|witness|referee)\\b)",
+        "confidence": "medium"
+      },
+      "gate": "checklist",
+      "fix": "Use 'is'. 'The report serves as a guide' is 'The report is a guide.' 'The building stands as a monument to the era' is 'The building is a monument to the era', or better, say what it actually does now. Keep the substitute only where it carries meaning 'is' does not.",
+      "source_examples": ["AP-056"],
+      "research_basis": "Wikipedia:Signs of AI writing (copula avoidance); slop-sense pattern 09; tropes.fyi 'serves as dodge'; survey of 2026-09-17."
+    },
+    {
+      "id": "BS-044",
+      "name": "significance_predicate",
+      "description": "The other half of the copula dodge, where the substitute verb also inflates the claim: 'represents / marks / embodies / exemplifies' plus a determiner and an evaluative abstract noun ('a shift', 'a pivotal moment', 'the culmination', 'a commitment'). Both ends are closed lists, which keeps the literal senses clean: 'the graph represents the data', 'the lawyer represents the defendant', 'the symbol represents hydrogen', 'the line marks the boundary' and 'the union represents four thousand workers' all pass, because no concrete object is on the list. Overlaps BS-004 significance_puffery at the edges; BS-004 matches four fixed strings, this matches the frame.",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\b(?:represents?|represented|marks?|marked|embodies|embodied|exemplifies|exemplified)\\s+(?:a|an|the)\\s+(?:[a-z][\\w-]*\\s+){0,2}(?:shift|turning point|milestone|departure|watershed|step|moment|testament|reminder|symbol|commitment|opportunity|challenge|breakthrough|culmination|evolution|transformation|landmark|cornerstone|hallmark|benchmark|paradigm|beginning|chapter|era|leap)\\b",
+        "confidence": "medium"
+      },
+      "gate": "checklist",
+      "fix": "Say what changed and for whom. 'It represents a shift in how the team works' is 'The team now reviews before merging, which it did not do in March.' If the significance is real, the fact carries it.",
+      "source_examples": ["AP-057"],
+      "research_basis": "Wikipedia:Signs of AI writing (undue emphasis on significance; copula avoidance); survey of 2026-09-17."
+    },
+    {
+      "id": "BS-045",
+      "name": "signposted_conclusion",
+      "description": "The announced ending: 'In conclusion', 'To sum up', 'In summary', 'To conclude', 'In closing', 'All in all'. The reader can see the piece ending; saying so spends a sentence on navigation. Legitimate in academic and formal report writing, which is why the gate is checklist rather than hard. Boundary-anchored, so 'he wrote a summary of the meeting' and 'she gave it in summary form' never match.",
+      "detection": {
+        "method": "regex",
+        "pattern": "(?:^|[.!?]\\s+|\\n)[ \\t]*(?:\\*\\*)?(?:in conclusion|to sum up|to summarise|to summarize|in summary|to conclude|in closing|all in all)\\b[,:]?",
+        "confidence": "medium"
+      },
+      "gate": "checklist",
+      "fix": "Cut the signpost and state the last point. If the closing paragraph needs an announcement to read as closing, it is not closing anything.",
+      "source_examples": ["AP-058"],
+      "research_basis": "Wikipedia:Signs of AI writing; tropes.fyi 'signposted conclusion'; survey of 2026-09-17."
+    },
+    {
+      "id": "BS-046",
+      "name": "staccato_negation_triple",
+      "description": "The staccato negation run: 'Not a bug. Not a feature. A fundamental design flaw.' Two consecutive Not-initial fragments, usually resolved by a third. Distinct from BS-013 (the two-sentence copula flip) and BS-039 (the single-sentence 'Not because X, but because Y'), both of which are two-limb and return nothing here. The FP guard is a REQUIRED DETERMINER (a/an/the/just), which is what separates the machine version from ordinary human emphasis: 'Not now. Not ever.' and 'Not bad. Not great.' are adverbial and pass.",
+      "detection": {
+        "method": "regex",
+        "pattern": "(?:^|[.!?]\\s+|\\n)Not\\s+(?:a|an|the|just)\\s+[^.!?\\n]{1,40}[.!]\\s+Not\\s+(?:a|an|the|just)\\s+[^.!?\\n]{1,40}[.!]",
+        "confidence": "medium"
+      },
+      "gate": "checklist",
+      "fix": "Say the thing once, in a full sentence. 'Not a bug. Not a feature. A fundamental design flaw.' is 'This is a design flaw, not a bug.'",
+      "source_examples": ["AP-059"],
+      "research_basis": "tropes.fyi 'Not X. Not Y. Just Z.'; survey of 2026-09-17."
+    },
+    {
+      "id": "BS-047",
+      "name": "analogy_invitation",
+      "description": "The instructed analogy: 'Think of it as a Swiss Army knife for your workflow.' The reader is told to hold a comparison rather than shown why it fits, and the comparison is usually generic enough to drop into any topic. Boundary-anchored and determiner-scoped, so mid-sentence uses ('I think of it as home'), the unrelated 'Think of the children' and quoted dialogue all pass.",
+      "detection": {
+        "method": "regex",
+        "pattern": "(?:^|[.!?]\\s+|\\n)[ \\t]*think of (?:it|this|them) (?:as|like)\\s+(?:a|an|the)\\b",
+        "confidence": "low"
+      },
+      "gate": "checklist",
+      "fix": "Give the comparison a job or cut it. If the analogy explains something the plain description does not, make the mapping explicit; otherwise describe the thing.",
+      "source_examples": ["AP-060"],
+      "research_basis": "tropes.fyi 'Think of it as...'; survey of 2026-09-17."
+    },
+    {
+      "id": "BS-048",
+      "name": "structure_announcement",
+      "description": "Announcing the procedure instead of performing it: 'Let's break this down', 'Let's unpack', 'Let's dive into', 'Let's walk through'. Sibling of BS-022 meta_label, which catches the standalone label form. These announce PROCEDURE, which is what separates them from the 2026-07-25 rejection of 'Let's be honest' and 'Here's the thing' as register-dependent stance markers. 'Let's explore' was cut from the list during the build as too close to ordinary collaborative writing.",
+      "detection": {
+        "method": "regex",
+        "pattern": "(?:^|[.!?]\\s+|\\n)[ \\t]*let(?:'|’)s\\s+(?:break (?:this|it|that) down|unpack|dive in(?:to)?|walk through)\\b",
+        "confidence": "medium"
+      },
+      "gate": "checklist",
+      "fix": "Delete the announcement and do the thing. The next paragraph is the breakdown; saying it is coming adds a sentence and no information.",
+      "source_examples": ["AP-061"],
+      "research_basis": "tropes.fyi \"Let's break this down\"; survey of 2026-09-17."
+    },
+    {
+      "id": "BS-049",
+      "name": "boasts_feature_brag",
+      "description": "'boasts a/an/over X' as an inflated copula: the marketing brag that replaces 'has'. Scoped to the collocation 2026-09-18 after the bare lexicon entry measured 7.4 per 10k on long-form human prose, where 'boast' is an ordinary verb of vanity ('a man not given to boast of his courage').",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\bboasts\\s+(?:a|an|the|over|more than|some|its|their|two|three|four|five|\\d)\\b",
+        "confidence": "medium"
+      },
+      "gate": "checklist",
+      "fix": "Use 'has', 'offers', 'includes' or 'comes with', or state the feature without the verb.",
+      "source_examples": [
+        "AP-010"
+      ]
+    },
+    {
+      "id": "BS-050",
+      "name": "elevate_your_x",
+      "description": "'elevate your X' and 'elevate the experience/brand/conversation': the marketing intensifier for 'improve'. Scoped to the collocation 2026-09-18 after the bare lexicon entry measured 7.4 per 10k on long-form human prose, where 'elevate' is literal ('the engineers elevated the track above the river').",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\belevat(?:e|es|ing)\\s+(?:your|our)\\b|\\belevat(?:e|es|ing)\\s+the\\s+(?:experience|brand|conversation|standard|standards|game|discourse)\\b",
+        "confidence": "medium"
+      },
+      "gate": "checklist",
+      "fix": "Say what actually improves and by how much: 'raise', 'lift', 'improve', or name the change.",
+      "source_examples": [
+        "AP-010"
+      ]
+    },
+    {
+      "id": "BS-051",
+      "name": "metaphorical_landscape",
+      "description": "'the digital/competitive/evolving landscape' and 'the landscape is shifting': the metaphor that names a field without describing it. Scoped to the collocation 2026-09-18 after the bare lexicon entry measured 6.8 per 10k on long-form human prose, where 'landscape' is literal geography. The lexicon entry already said 'flagged when used metaphorically'; this mechanizes that note.",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\b(?:digital|competitive|business|technology|technological|marketing|media|political|regulatory|cultural|economic|evolving|ever-evolving|changing|shifting|current|modern|broader|global)\\s+landscape\\b|\\blandscape\\s+(?:is|has been|continues to be)\\s+(?:evolving|shifting|changing)\\b",
+        "confidence": "medium"
+      },
+      "gate": "checklist",
+      "fix": "Name the field and the change: 'the market', 'the field', 'what buyers now expect', with the specific shift.",
+      "source_examples": [
+        "AP-010"
+      ]
+    },
+    {
+      "id": "BS-052",
+      "name": "time_noun_as_agent",
+      "description": "A time, calendar or activity noun as the agent of a survival, predation or possession verb: 'the Fridays survived', 'Busy season eats the Fridays', 'Billiards survives final year', 'Work does not get to claim them'. The schedule becomes a creature and the person who decides disappears. Added 2026-09-29 from a B2 worksheet exemplar that passed the checker clean while a reviewer flagged all four. Three scoped branches, each anchored at a clause, line, cell or list-item start: a weekday, weekend, part-of-day, semester or compound-season subject whose verb is followed by a determiner, an object pronoun or the sentence end; a noun subject with third-person 'survives final year / the semester' (so 'I survived the semester' passes); and 'work/school/the job does not get to claim'. Bare seasons are excluded ('the winter killed the roses' is literal), and so are 'Mondays kill me', 'steal up on', 'died away', the passive 'claimed by', compounds and headings ('Weekend eats: five brunch spots', 'Saturday claims are processed') and 'claimed two lives'. Sibling of BS-031 and the abstraction-as-agent rubric item (AP-033, AP-044).",
+      "detection": {
+        "method": "regex",
+        "pattern": "(?m)(?:^|(?<=[.!?;:,]\\s)|(?<=[.!?]\\s\\s)|(?<=\\b[Ss]o\\s)|(?<=\\b[Aa]nd\\s)|(?<=\\b[Bb]ut\\s)|(?<=\\|\\s)|(?<=^[-*•]\\s))(?:(?:the|my|our|your|his|her|their|these|those)\\s+)?(?:mondays?|tuesdays?|wednesdays?|thursdays?|fridays?|saturdays?|sundays?|weekends?|evenings?|mornings?|afternoons?|(?:busy|exam|tax|holiday|peak|recital|tournament|hockey|soccer|basketball|playoff)\\s+season|semesters?)\\s+(?:survive[sd]?|eats?|ate|swallow(?:s|ed)?|devour(?:s|ed)?|kill(?:s|ed)?|steals?|stole|claim(?:s|ed)?|die[sd]?)(?=\\s+(?:the|my|our|your|his|her|their|them|it|us|every|all|most|what|whatever)\\b|\\s*[.!?;]|\\s*$)(?!\\s+(?:me|him|her)\\s*[.!?]?$)|(?:^|(?<=[.!?;:,]\\s)|(?<=[.!?]\\s\\s)|(?<=\\b[Ss]o\\s)|(?<=\\b[Aa]nd\\s)|(?<=\\b[Bb]ut\\s)|(?<=\\|\\s)|(?<=^[-*•]\\s))(?:work|school|the\\s+job|my\\s+job|co-?op|the\\s+internship)\\s+(?:does\\s+not|doesn't|doesn’t|did\\s+not|didn't|didn’t)\\s+get\\s+to\\s+(?:claim|have|take|eat|keep)\\b|(?:^|(?<=[.!?;:,]\\s)|(?<=[.!?]\\s\\s)|(?<=\\b[Ss]o\\s)|(?<=\\b[Aa]nd\\s)|(?<=\\b[Bb]ut\\s)|(?<=\\|\\s)|(?<=^[-*•]\\s))(?!(?:he|she|it|who|that|this|one|which|nobody|everyone|everybody)\\b)(?:(?:the|my|our|your|his|her|their)\\s+)?[a-z][\\w'’-]*(?:\\s+[a-z][\\w'’-]*)?\\s+survives\\s+(?:final\\s+year|(?:the|this|next|another|one\\s+more)\\s+(?:semester|term|school\\s+year|busy\\s+season|exam\\s+season|summer\\s+term))\\b",
+        "confidence": "low"
+      },
+      "gate": "checklist",
+      "fix": "Name the person as the actor and say what happens: 'I still make it to billiards on Fridays', 'No billiards from January to April', 'I keep billiards every second Friday through final year'.",
+      "source_examples": [
+        "AP-062",
+        "AP-033",
+        "AP-044"
+      ]
+    },
+    {
+      "id": "BS-053",
+      "name": "clipped_retention_verdict",
+      "description": "A two-to-six-word sentence of the form [noun phrase] + stays/goes + full stop, performing a decision in executive-summary cadence: 'The Scouts books and the tutoring stay.', 'Tutoring stays.'. Added 2026-09-29 from the same worksheet exemplar. Fires only when the verb ends the sentence, so 'The car stays in the garage.' passes. Declined: pronoun, quantifier and adverb subjects in any case ('He stays.', 'No one stays.', 'Few stay.', 'Please stay.', 'So it goes.', 'As the saying goes.'), a name after a title ('Mr. Darcy stays.'), and a determiner or modal before the verb ('his stay.'). 'remains' is left out on purpose: 'Questions remain.' and 'The chapel remains.' are ordinary prose. Known residual: a literal 'The dog stays.' still fires, since nothing short of semantics separates it from the verdict. Budgeted at one per document, because the repeated verdict is the stronger tell.",
+      "detection": {
+        "method": "regex",
+        "pattern": "(?m)(?:^|(?<=[.!?]\\s)|(?<=[.!?]\\s\\s)|(?<=[.!?][\\\"”’]\\s)|(?<=\\|\\s)|(?<=^[-*•]\\s))(?<!\\b(?:Mr|Ms|Dr|St)\\.\\s)(?<!\\bMrs\\.\\s)(?!(?:he|she|it|they|we|i|you|this|that|these|those|who|nobody|everybody|everyone|one|someone|something|everything|nothing|anything|all|which|what|as|so|there|here|off|away|down|out|up|thus|now|then|and|but|or|if|when|while|where|how|why|whatever|wherever|whoever|only|let|mr|mrs|ms|miss|dr|no|few|some|many|most|others|other|both|none|please|just|never|always|fine|ok|okay|yes|well|still)\\b)(?-i:[A-Z][\\w'’-]*)(?:\\s+(?!(?:his|her|my|their|its|our|your|a|an|the|shall|will|would|can|could|must|may|might|should|to|do|did|does|not|it|them|him|me|us|you|let|always|still|never|longer|here|there|please|just)\\s+(?:stays?|goes)\\.)[\\w'’-]+){0,5}\\s+(?:stays|stay|goes)\\.(?!\\w)",
+        "confidence": "medium"
+      },
+      "document_budget": 1,
+      "gate": "checklist",
+      "fix": "Say who is doing what: 'I am keeping the Scouts books and the tutoring.', '...and keep tutoring my Grade 9 student.'",
+      "source_examples": [
+        "AP-063"
+      ]
+    },
+    {
+      "id": "BS-054",
+      "name": "deictic_stance_closer",
+      "description": "A clause-final 'and I want to keep it there / keep it that way' pointing back at a number already named in the same sentence ('Seven to eight hours of sleep, and I want to keep it there.'). It adds no fact and performs resolve; a performative framing beat in the AP-035 family. Added 2026-09-29. Requires a number earlier in the sentence and the sentence end right after 'there' or 'that way', so 'keep it simple', 'keep it there until Tuesday', 'keep it up' and the literal 'the key is under the mat and I want to keep it there' pass. The bare 'I want to keep it that way' after a state with no number is left to the rubric: it is common human speech.",
+      "detection": {
+        "method": "regex",
+        "pattern": "(?:\\d|\\b(?:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty|thirty|forty|fifty|hundred|half|percent)\\b)[^.!?;\\n]{0,80}?\\b(?:I|we)(?:['’]d\\s+like|\\s+(?:want|intend|plan|hope|mean|would\\s+like))\\s+to\\s+keep\\s+(?:it|them)\\s+(?:there|that\\s+way)\\s*[.!]",
+        "confidence": "low"
+      },
+      "gate": "checklist",
+      "fix": "Cut the closer and use the space for a new concrete fact: 'Most of my stress right now comes from co-op applications.'",
+      "source_examples": [
+        "AP-064",
+        "AP-035"
+      ]
+    },
+    {
+      "id": "BS-055",
+      "name": "time_back_refrain",
+      "description": "'get/have my [time noun] back' ('I get my Fridays back in May', 'I have my evenings back'). Ordinary once; repeated in one piece it becomes a refrain, which is what a second review pass flagged on 2026-09-29. Budget-only: single instances are not reported, and the checker emits one document_budget finding with every instance's excerpt when the count exceeds one. 'got my money back' and 'her back to the wall' do not match.",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\b(?:get|gets|got|getting|have|has|had|having)\\s+(?:my|our|your|his|her|their)\\s+(?:mondays?|fridays?|saturdays?|sundays?|weekends?|evenings?|mornings?|nights?|summers?|winters?|holidays?|time|free\\s+time|life|lives)\\s+back\\b",
+        "confidence": "low"
+      },
+      "document_budget": 1,
+      "budget_only": true,
+      "gate": "checklist",
+      "fix": "Keep one and state the other plainly: 'Billiards starts again in May.'",
+      "source_examples": [
+        "AP-062"
+      ]
     }
   ]
 }

@@ -29,11 +29,20 @@ def test_surpass_surfaces_as_must_clear():
 
 
 def test_boast_surfaces_as_must_clear():
+    """Now BS-049 rather than a bare lexicon term: the word was scoped to its
+    collocation on 2026-09-18 after measuring 7.4 per 10k on human prose, where
+    'boast' is an ordinary verb of vanity. The tell is 'boasts a/an/over X'."""
     r = run_checks(
         "The new campus is large. It boasts three libraries and a quiet garden.",
         "prose",
     )
-    assert any(m.get("term") == "boast" for m in r["must_clear"])
+    assert any(m.get("id") == "BS-049" for m in r["must_clear"])
+
+
+def test_bare_boast_is_no_longer_flagged():
+    r = run_checks("He was not a man to boast of his own courage.", "prose")
+    assert not any(m.get("id") == "BS-049" for m in r["must_clear"])
+    assert not any(m.get("term") == "boast" for m in r["must_clear"])
 
 
 # --- Group B: discourse banned_structures (checklist gate, never hard) --------

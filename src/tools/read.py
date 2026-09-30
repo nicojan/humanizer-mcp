@@ -2,7 +2,7 @@
 
 import json
 import logging
-from typing import Any, Optional
+from typing import Any, Literal, Optional
 
 from mcp.server.fastmcp import FastMCP
 from pydantic import BaseModel, ConfigDict, Field
@@ -109,6 +109,29 @@ class ContentTypeInput(BaseModel):
     )
 
 
+class GuideInput(BaseModel):
+    """Input for humanizer_get_guide."""
+    model_config = ConfigDict(str_strip_whitespace=True, extra="forbid")
+
+    content_type: Optional[str] = Field(
+        default=None,
+        description=(
+            "Content type to tailor rules for. One of 'academic', 'marketing', "
+            "'tech'/'technical', 'prose'/'general_prose'. Defaults to 'prose'."
+        ),
+    )
+    part: Optional[Literal["core", "lexical", "anti_patterns", "caveats", "all"]] = Field(
+        default=None,
+        description=(
+            "Page of the guide to return. The full guide is about 40k tokens, "
+            "over some clients' tool-output limit, so fetch 'core' (foundation, "
+            "content profile, structure, texture, cohesion, tone, verification), "
+            "then 'lexical', 'anti_patterns' and 'caveats'. Omit, or pass 'all', "
+            "for the full payload in one call."
+        ),
+    )
+
+
 class RiskLevelInput(BaseModel):
     """Input for lexical patterns with optional severity filter."""
     model_config = ConfigDict(str_strip_whitespace=True, extra="forbid")
@@ -203,6 +226,42 @@ def build_guide_payload(content_type: Optional[str]) -> dict[str, Any]:
         ),
     }
     return result
+
+
+# Pages of the guide, in reading order. Each one stays under 75k characters,
+# which fits a 25k-token tool-output cap even at a dense 3 characters a token;
+# the full payload (about 166k characters for prose) does not.
+GUIDE_PARTS: dict[str, tuple[str, ...]] = {
+    "core": (
+        "foundation",
+        "content_profile",
+        "structural_patterns",
+        "psycholinguistic_texture",
+        "discourse_cohesion",
+        "sentiment_tone",
+        "verification",
+        "_warning",
+    ),
+    "lexical": ("lexical_patterns",),
+    "anti_patterns": ("anti_patterns",),
+    "caveats": ("caveats",),
+}
+
+
+def build_guide_part(content_type: Optional[str], part: Optional[str]) -> dict[str, Any]:
+    """One page of the guide, or the full payload for None / 'all'."""
+    full = build_guide_payload(content_type)
+    if part in (None, "all"):
+        return full
+    if part not in GUIDE_PARTS:
+        raise ValueError(f"unknown guide part {part!r}; use one of {sorted(GUIDE_PARTS)} or 'all'")
+    order = list(GUIDE_PARTS)
+    page = {key: full[key] for key in GUIDE_PARTS[part] if key in full}
+    return {
+        **page,
+        "guide_part": part,
+        "guide_parts_remaining": order[order.index(part) + 1:],
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -305,21 +364,25 @@ def register_read_tools(mcp: FastMCP) -> None:
             "openWorldHint": False,
         },
     )
-    async def humanizer_get_guide(params: ContentTypeInput) -> str:
+    async def humanizer_get_guide(params: GuideInput) -> str:
         """Full composite endpoint — returns ALL data dimensions for a content type
         with meta blocks stripped for token efficiency. Use only for major writing
-        tasks, new articles, or full rewrites.
+        tasks, new articles, or full rewrites. The whole guide is about 40k
+        tokens; if your client caps tool output, page it with part='core', then
+        'lexical', 'anti_patterns' and 'caveats' (each page names the ones still
+        to fetch).
 
         For quick edits, use humanizer_get_summary.
         For single-dimension fixes, call the specific layer tool.
 
         Args:
-            params: ContentTypeInput with optional content_type.
+            params: GuideInput with optional content_type and part.
 
         Returns:
-            str: All data dimensions assembled for the task, meta-stripped.
+            str: All data dimensions assembled for the task, meta-stripped, or
+            one page of them when part is given.
         """
-        return _compact_json(build_guide_payload(params.content_type))
+        return _compact_json(build_guide_part(params.content_type, params.part))
 
     # -- Single-layer endpoints ---------------------------------------------
 

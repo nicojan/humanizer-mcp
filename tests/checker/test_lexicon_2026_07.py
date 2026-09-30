@@ -24,7 +24,6 @@ def _terms(text: str) -> set[str]:
         ("The update unleashes the full power of the engine.", "unleash"),
         ("We embark on an ambitious rebuild this quarter.", "embark"),
         ("Our mission is to empower every team.", "empower"),
-        ("These tips will elevate your writing.", "elevate"),
         ("The city has a vibrant arts scene.", "vibrant"),
         ("Her feedback proved invaluable.", "invaluable"),
         ("They showed unwavering commitment to the goal.", "unwavering"),
@@ -36,6 +35,18 @@ def _terms(text: str) -> set[str]:
 )
 def test_new_lexical_terms_fire(text, term):
     assert term in _terms(text), f"expected {term!r} flagged in {text!r}"
+
+
+def test_elevate_moved_from_the_lexicon_to_its_collocation():
+    """2026-09-18: the bare word measured 7.4 per 10k on long-form human prose,
+    where 'elevate' is literal. The marketing form is BS-050."""
+    r = run_checks("These tips will elevate your writing.", "prose")
+    assert any(f.get("id") == "BS-050" for f in r["must_clear"])
+    assert "elevate" not in _terms("These tips will elevate your writing.")
+    assert not any(
+        f.get("id") == "BS-050"
+        for f in run_checks("The engineers elevated the track above the river.", "prose")["must_clear"]
+    )
 
 
 def test_new_lexical_terms_never_block_prohibitions():

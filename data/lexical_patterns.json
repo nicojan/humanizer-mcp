@@ -16,7 +16,13 @@
         "examine",
         "get into",
         "explore",
-        "pick apart"
+        "pick apart",
+        {
+          "ai_word": "nestle",
+          "alternatives": ["sits", "stands", "is"],
+          "severity": "moderate",
+          "notes": "Travel-brochure register ('nestled in the heart of the valley'). Sibling of 'bustling' and 'hidden gem'."
+        }
       ],
       "severity": "high",
       "notes": "One of the most-cited AI tells. Almost never used in natural human prose."
@@ -299,18 +305,6 @@
       "research_basis": "Juzek & Ward, COLING 2025 (arXiv:2412.11385): 'surpassing' +667% in PubMed abstracts 2020-2024."
     },
     {
-      "ai_word": "boast",
-      "alternatives": [
-        "has",
-        "offers",
-        "includes",
-        "comes with"
-      ],
-      "severity": "moderate",
-      "notes": "Inflated copula substitute (the 'serves as / features / boasts' family). Use plain 'has' or 'is'. See AP-010.",
-      "research_basis": "Long-cited AI copula-inflation tell; named in the project's own AP-010 audit example."
-    },
-    {
       "ai_word": "unlock",
       "alternatives": [
         "open up",
@@ -354,17 +348,6 @@
       "notes": "Corporate-AI staple ('empower teams to')."
     },
     {
-      "ai_word": "elevate",
-      "alternatives": [
-        "raise",
-        "lift",
-        "improve",
-        "boost"
-      ],
-      "severity": "moderate",
-      "notes": "Marketing ('elevate your X')."
-    },
-    {
       "ai_word": "resonate",
       "alternatives": [
         "land",
@@ -375,6 +358,24 @@
       ],
       "severity": "moderate",
       "notes": "On the arXiv:2412.11385 focal-word list. 'Resonate with' is near-universal in AI marketing copy."
+    },
+    {
+      "ai_word": "commence",
+      "alternatives": ["start", "begin", "open"],
+      "severity": "moderate",
+      "notes": "Orwell rule 2 (2026-08-10). Officialese rather than AI register, and there is no context where 'start' will not do. Zero occurrences in the human eval corpus."
+    },
+    {
+      "ai_word": "ascertain",
+      "alternatives": ["find out", "check", "confirm", "work out"],
+      "severity": "moderate",
+      "notes": "Orwell rule 2 (2026-08-10). Zero occurrences in the human eval corpus."
+    },
+    {
+      "ai_word": "necessitate",
+      "alternatives": ["need", "require", "force", "mean"],
+      "severity": "moderate",
+      "notes": "Orwell rule 2 (2026-08-10). Usually a nominalized 'need'; the fix is often to name who needs what. Zero occurrences in the human eval corpus."
     }
   ],
   "flagged_adjectives": [
@@ -386,7 +387,19 @@
         "complete",
         "detailed",
         "in-depth",
-        "broad"
+        "broad",
+        {
+          "ai_word": "profound",
+          "alternatives": ["deep", "far-reaching", "serious", "lasting"],
+          "severity": "moderate",
+          "notes": "Promotional intensifier from the Wikipedia signs-of-AI list (2026-09-17). Almost always reachable by a plainer word or by the fact itself."
+        },
+        {
+          "ai_word": "renowned",
+          "alternatives": ["well-known", "widely read", "respected", "named after"],
+          "severity": "moderate",
+          "notes": "Unearned prestige marker; pairs with 'boasts' and 'nestled' in generated travel and profile copy."
+        }
       ],
       "severity": "moderate"
     },
@@ -653,7 +666,19 @@
         "field",
         "domain",
         "space",
-        "world"
+        "world",
+        {
+          "ai_word": "diverse array",
+          "alternatives": ["range", "mix", "several kinds of", "list them"],
+          "severity": "moderate",
+          "notes": "Scoped to the collocation, not bare 'diverse', which is an ordinary word. Same discipline as 'hidden gem'."
+        },
+        {
+          "ai_word": "natural beauty",
+          "alternatives": ["the view", "the coastline", "name what is there"],
+          "severity": "moderate",
+          "notes": "Promotional cliche from the Wikipedia signs-of-AI list. Multi-word, matched verbatim."
+        }
       ],
       "severity": "high"
     },
@@ -668,18 +693,6 @@
       ],
       "severity": "high",
       "notes": "Especially 'rich tapestry', nearly exclusive to AI text."
-    },
-    {
-      "ai_word": "landscape",
-      "alternatives": [
-        "field",
-        "scene",
-        "market",
-        "space",
-        "situation"
-      ],
-      "severity": "moderate",
-      "notes": "Flagged when used metaphorically. Literal geographic use is fine."
     },
     {
       "ai_word": "synergy",
@@ -1250,7 +1263,6 @@
     "flagged_ai_adverbs": [
       { "ai_adverb": "significantly", "alternatives": ["meaningfully", "noticeably", "by a wide margin", "or quantify it"], "severity": "moderate" },
       { "ai_adverb": "effectively", "alternatives": ["well", "reliably", "in practice", "or describe what 'effective' looks like"], "severity": "moderate" },
-      { "ai_adverb": "particularly", "alternatives": ["especially", "mainly", "above all"], "severity": "low" },
       { "ai_adverb": "subsequently", "alternatives": ["then", "after that", "next", "later"], "severity": "moderate" }
     ],
     "human_adverbs_to_reintroduce": [
@@ -1289,5 +1301,54 @@
       "Keep a single use only where it draws a genuine contrast (e.g. real versus hypothetical), and make that contrast explicit."
     ],
     "research_basis": "proposed-rules PR2-#1; in-the-wild audit of nicojan.com/work/art-studio-blueprint (2026-06-28), where seven uses of 'real' in ~1,500 words passed the checker clean."
+  },
+  "orwell": {
+    "description": "The plainness pass, from Orwell's 'Politics and the English Language' (1946). Adopted 2026-08-10 from a case-study copy gate that had been running it by hand after this server's own loop, on the finding that the two passes catch different things: the humanizer layers catch what marks text as machine-made, and this one catches what makes any prose flabby. It runs LAST, on copy that has already cleared the other phases, because cutting words changes rhythm and a cut is cheaper to make than to undo.",
+    "usage": "Guidance, not auto-flagged. Only rule 1 is mechanized, as banned_structures BS-041, and only over a closed list of figures. Rules 3 and 4 are judgment and live in the self_review rubric. The substitution lists below are for the calling model to apply contextually, per this layer's application_rule, and never uniformly.",
+    "rules": [
+      {"rule": 1, "text": "Never use a metaphor, simile or other figure of speech which you are used to seeing in print.", "note": "Mechanized over a closed list as BS-041. The list is not the class: read the piece for any image you did not choose deliberately."},
+      {"rule": 2, "text": "Never use a long word where a short one will do.", "note": "Partly mechanized: the flagged_verbs and flagged_adjectives lists already carry the AI-register half (utilize, facilitate, endeavor, subsequently), and the officialese half is in long_word_substitutions below."},
+      {"rule": 3, "text": "If it is possible to cut a word out, always cut it out.", "note": "Judgment, and the rule that does the most work in a long document. The padding_phrases list is a starting point, not the rule."},
+      {"rule": 4, "text": "Never use the passive where you can use the active.", "note": "Judgment. Deliberately not mechanized: a be-plus-participle detector fires on every legitimate passive, and the legitimate ones are common in exactly the registers this server is used for (method sections, regulatory writing, anything where the agent is genuinely unknown or irrelevant)."},
+      {"rule": 5, "text": "Never use a foreign phrase, a scientific word or a jargon word if you can think of an everyday English equivalent.", "note": "Has a carve-out. See jargon_carve_out below and caveats.jargon_substitution_loses_meaning."},
+      {"rule": 6, "text": "Break any of these rules sooner than say anything outright barbarous.", "note": "The escape hatch, and it is real. A sentence that obeys all five and reads wrong loses."}
+    ],
+    "long_word_substitutions": [
+      {"long": "commence", "short": "start"},
+      {"long": "ascertain", "short": "find out"},
+      {"long": "necessitate", "short": "need"},
+      {"long": "prior to", "short": "before"},
+      {"long": "subsequent to", "short": "after"},
+      {"long": "in the vicinity of", "short": "near"},
+      {"long": "in the event that", "short": "if"},
+      {"long": "with regard to", "short": "about"},
+      {"long": "sufficient", "short": "enough"},
+      {"long": "terminate", "short": "end"},
+      {"long": "endeavour", "short": "try"},
+      {"long": "utilise", "short": "use"}
+    ],
+    "padding_phrases": [
+      {"phrase": "in order to", "cut_to": "to"},
+      {"phrase": "the fact that", "cut_to": "that, or recast the clause"},
+      {"phrase": "due to the fact that", "cut_to": "because"},
+      {"phrase": "at this point in time", "cut_to": "now"},
+      {"phrase": "in terms of", "cut_to": "cut, or name the dimension"},
+      {"phrase": "a number of", "cut_to": "the number, or several"},
+      {"phrase": "it is important to note that", "cut_to": "cut; if it were not important it would not be in the draft"},
+      {"phrase": "there is / there are (existential opener)", "cut_to": "put the real subject first"},
+      {"phrase": "very, quite, rather, somewhat", "cut_to": "cut, or replace the adjective with a stronger one"}
+    ],
+    "jargon_carve_out": {
+      "rule": "Rule 5 does not license replacing a domain term that has no everyday equivalent. Define it in plain words at first use, then use the term plainly. Do not substitute.",
+      "explanation": "A term of art often names something no ordinary word names. Swapping 'statutory release' for 'automatic release' or 'Protected B' for 'confidential' loses the precise thing the argument depends on, and a reader who needs the argument needs the term. The failure Orwell was attacking is jargon used to avoid a plain statement, not jargon used because it is correct. So the test is: does an everyday word mean the same thing? If yes, use it. If no, define once and keep the term.",
+      "worked_example": "First use: 'statutory release, the point two thirds of the way through a sentence when release is automatic unless the Parole Board intervenes'. Every use after that: 'statutory release'.",
+      "see_also": "caveats.jargon_substitution_loses_meaning"
+    },
+    "rewriting_guidance": [
+      "Run this pass last, after the lexical, structural and verification phases, then re-run humanizer_check_text: cutting words changes sentence-length variance and can undo the burstiness work.",
+      "Rule 3 is the one to spend time on in anything longer than a page. Read each paragraph and ask which words are load-bearing.",
+      "Do not apply the substitution lists as a find-and-replace. A long word chosen for rhythm at the end of a sentence can be the right word, and rule 6 covers it."
+    ],
+    "research_basis": "Orwell, 'Politics and the English Language' (1946). Added 2026-08-10 from the Day One case-study writing gate, which ran an Orwell layer by hand after this server's loop for the length of a 39-page document and kept catching the same three classes: stale figures, padding, and jargon substituted where a definition was wanted."
   }
 }

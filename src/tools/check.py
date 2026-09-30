@@ -24,7 +24,10 @@ class CheckTextInput(BaseModel):
         default=None,
         description=(
             "Optional content type tuning the burstiness target: 'academic', "
-            "'marketing', 'tech'/'technical', or 'prose' (default)."
+            "'marketing', 'tech'/'technical', or 'prose' (default). Pass "
+            "'label' or 'notes' for headings, worksheet cells, UI strings or "
+            "CEFR-pitched copy: burstiness and segment_uniformity are still "
+            "measured but not reported as findings, and every other layer runs."
         ),
     )
 

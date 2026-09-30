@@ -74,3 +74,31 @@ def load_self_review() -> list[str]:
     manual_review list. Lives in data so it can be edited and deployed by
     git-push + restart without a code change."""
     return load_json("self_review.json").get("self_review", {}).get("items", [])
+
+
+def load_document_budgets() -> tuple[dict[str, int], dict[str, str]]:
+    """(budget per rule id, name per rule id) for structures that carry a
+    `document_budget`. A shape is budgeted when repetition is the tell and one
+    instance is ordinary writing. See src/checker/budgets.py."""
+    data = load_json("banned_structures.json")
+    budgets: dict[str, int] = {}
+    names: dict[str, str] = {}
+    for s in data.get("structures", []):
+        budget = s.get("document_budget")
+        if budget:
+            budgets[s["id"]] = int(budget)
+            names[s["id"]] = s.get("name", s["id"])
+    return budgets, names
+
+
+def load_budget_only_ids() -> frozenset[str]:
+    """Budgeted structures whose single instances are not reported. For a shape
+    that is ordinary writing once and a tic only as a refrain ('I get my Fridays
+    back'), an instance finding would be a false positive by construction; only
+    the document_budget overrun is. See src/checker/budgets.py."""
+    data = load_json("banned_structures.json")
+    return frozenset(
+        s["id"]
+        for s in data.get("structures", [])
+        if s.get("budget_only") and s.get("document_budget")
+    )

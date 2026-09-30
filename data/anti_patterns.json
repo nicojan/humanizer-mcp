@@ -356,6 +356,104 @@
       "before": "Here's the kicker: the part most people miss is the review queue.",
       "after": "The review queue, not the build, is where the week goes.",
       "explanation": "Withheld-insight teaser: the sentence spends itself announcing that an insight is coming. Lead with the insight. Distinct from the bare 'Here's the thing' marker, which is ordinary casual register and is deliberately not flagged. Detected as BS-037."
+    },
+    {
+      "id": "AP-051",
+      "category": "structural",
+      "before": "Method, and why this one\n\nReintegration support at the moment of release from Canadian federal prison, and the officer the whole system turns on.",
+      "after": "Method\n\nReintegration support at the moment of release from Canadian federal prison.",
+      "explanation": "Appended significance label. The heading names its subject, then annexes a second element whose only job is to promise the subject matters: a WH clause ('and why this one') that pre-defends a choice the body has not made yet, or a reduced relative ('and the officer the whole system turns on') that asserts a hinge without evidence. Of course the method will be defended; saying so in the label spends a line on nothing. The tell is the repeated shape, not one instance. The WH form is detected as BS-038; the reduced-relative form is a self_review judgment item."
+    },
+    {
+      "id": "AP-052",
+      "category": "structural",
+      "before": "The handoff is where it breaks. Not because the released person stopped mattering, but because the officer is where a design can reach.",
+      "after": "The handoff is where it breaks: the officer is the only point in the system a design can reach.",
+      "explanation": "Antithesis fragment. The rejected half answers a charge nobody made, so it exists to give the real clause a running start. Cut it and the sentence loses nothing but the drum roll. Fragment sibling of the two-sentence copula flip in AP-021; detected as BS-039."
+    },
+    {
+      "id": "AP-053",
+      "category": "structural",
+      "before": "Each board carries its own title, rule and legend, and slide 18 carries the business model.",
+      "after": "Each board has its own title, rule and legend. Slide 18 is where the business model gets spoken.",
+      "explanation": "Artifact-subject 'carry'. The verb implies an actor and a burden, and neither is present: a board does not do anything, and a title is not a load. The shape is hard to hear because it reads as competent design writing, so it survives every pass looking for clumsiness. Replace it with what the artifact is (has, shows, lists) or with the person doing the work (the presenter says, the reader sees). Narrower sibling of AP-044, which covers the fixed abstract collocations; detected as BS-040."
+    },
+    {
+      "id": "AP-054",
+      "category": "lexical",
+      "before": "The savings move the needle, the federal purse would feel it, and the pilot is only the tip of the iceberg.",
+      "after": "The savings return about eight hours per release. That shows up in the CSC budget, and the pilot covers one region of five.",
+      "explanation": "Stale figures of speech: Orwell's first rule. Each phrase was an image once and is now a slot filler, and three in one sentence is a sentence that has stopped meaning anything in particular. The repair is not a fresher metaphor, it is the number or the name the figure stood in for. Detected as BS-041; the judgment half of the plainness pass is in self_review.json."
+    },
+    {
+      "id": "AP-055",
+      "category": "structural",
+      "before": "The rollout slipped two quarters, and I'm not going to pretend that was the plan.",
+      "after": "The rollout slipped two quarters. We scoped the migration against a staging set half the size of production.",
+      "explanation": "The conjoined candour disclaimer: a first-person admission appended to a finished statement, performing honesty without adding a fact. The repair is to say the thing the disclaimer gestures at - the cause, the number, the decision - or to let the statement stand alone. Detected as BS-042. The sentence-initial form ('I'm not going to pretend I understand the tax code') is an ordinary hedge and is deliberately not flagged."
+    },
+    {
+      "id": "AP-056",
+      "category": "structural",
+      "before": "The rail serves as a container for the tags, and the legend stands as a reminder of the scale.",
+      "after": "The tags sit in the rail. The legend is there so nobody has to guess the scale.",
+      "explanation": "Copula avoidance: the model reaches for 'serves as' and 'stands as' where 'is' would be clearer, because the simpler verb feels too plain. Use 'is'. Detected as BS-043. A person holding an office ('she serves as chair') is ordinary English and is deliberately not flagged."
+    },
+    {
+      "id": "AP-057",
+      "category": "structural",
+      "before": "The rebuild represents a pivotal moment for the team and marks a milestone in how we work.",
+      "after": "The rebuild is the first time the team reviewed every merge. That had not happened before March.",
+      "explanation": "The significance predicate: an inflating verb plus an evaluative abstract noun, asserting that something matters instead of showing it. Detected as BS-044. Literal senses ('the graph represents the data') are excluded by the closed object list."
+    },
+    {
+      "id": "AP-058",
+      "category": "structural",
+      "before": "In conclusion, the programme is worth continuing.",
+      "after": "The programme is worth continuing.",
+      "explanation": "The signposted conclusion. The reader can see the piece ending. Detected as BS-045; legitimate in academic and formal report writing, hence checklist rather than hard."
+    },
+    {
+      "id": "AP-059",
+      "category": "structural",
+      "before": "Not a bug. Not a feature. A fundamental design flaw.",
+      "after": "This is a design flaw, not a bug.",
+      "explanation": "The staccato negation run. Detected as BS-046, which requires a determiner in both fragments so ordinary human emphasis ('Not now. Not ever.') is left alone."
+    },
+    {
+      "id": "AP-060",
+      "category": "structural",
+      "before": "Think of it as a Swiss Army knife for your workflow.",
+      "after": "It does four jobs that used to need four tools, and it does none of them as well as the dedicated one.",
+      "explanation": "The instructed analogy: the reader is told to hold a comparison rather than shown why it fits. Detected as BS-047."
+    },
+    {
+      "id": "AP-061",
+      "category": "structural",
+      "before": "Let's break this down step by step.",
+      "after": "There are three steps.",
+      "explanation": "Announcing the procedure instead of performing it. Detected as BS-048. Sibling of BS-022; scoped to procedural announcements, so the stance markers rejected in 2026-07-25 stay unflagged."
+    },
+    {
+      "id": "AP-062",
+      "category": "structural",
+      "before": "Co-op hours were 9 to 5, so the Fridays survived. Busy season eats the Fridays.",
+      "after": "My summer co-op term ends at 5 most days, so I still make it to billiards on Fridays. No billiards from January to April.",
+      "explanation": "A time or calendar noun made into a creature that survives, eats or claims: the schedule acts and the person who chose disappears. Hard to hear because it reads as a lively figure. Name the person and state what happens. Detected as BS-052; the '[time] back' refrain it tends to travel with is budgeted as BS-055. From a reviewed B2 worksheet exemplar, 2026-09-29."
+    },
+    {
+      "id": "AP-063",
+      "category": "structural",
+      "before": "The Scouts books and the tutoring stay.",
+      "after": "I am keeping the Scouts books and the tutoring.",
+      "explanation": "The clipped retention verdict: a noun phrase plus 'stays', 'remains' or 'goes' and a full stop, closing a paragraph or cell like a line from an executive summary. It performs a decision instead of stating who made it. Detected as BS-053, budgeted at one per document."
+    },
+    {
+      "id": "AP-064",
+      "category": "structural",
+      "before": "Seven to eight hours of sleep, and I want to keep it there.",
+      "after": "Seven to eight hours of sleep. Most of my stress right now comes from co-op applications.",
+      "explanation": "A deictic stance closer points back at a number already given and adds resolve instead of information. Replace it with the next concrete fact. Detected as BS-054; a performative framing beat (AP-035)."
     }
   ]
 }

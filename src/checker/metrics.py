@@ -28,6 +28,18 @@ _TARGETS = {
 }
 
 
+# Content types whose caller declares the input is labels, worksheet cells or
+# notes, where sentence-length variance is undefined or deliberately flat
+# (caveats.metrics_do_not_apply_to_label_text). An explicit opt-in, never
+# inferred from the text: guessing "this is labels" from length would misfire on
+# real short-form prose.
+SHORT_COPY_TYPES = frozenset({"label", "labels", "notes"})
+
+
+def length_metrics_apply(content_type: str | None) -> bool:
+    return (content_type or "prose").lower() not in SHORT_COPY_TYPES
+
+
 def target_stdev(content_type: str | None) -> float:
     return _TARGETS.get((content_type or "prose").lower(), 6.0)
 

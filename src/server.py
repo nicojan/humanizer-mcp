@@ -34,7 +34,9 @@ SERVER_INSTRUCTIONS = (
     "narrative) and it matters that the result not sound AI-generated.\n"
     "Workflow (the loop is required, not optional polish): (1) call "
     "humanizer_get_summary for a quick edit, or humanizer_get_guide for a major "
-    "writing task; (2) write or revise the draft; (3) call humanizer_check_text "
+    "writing task (about 40k tokens in full; if your client caps tool output, "
+    "page it with part='core', then 'lexical', 'anti_patterns' and 'caveats'); "
+    "(2) write or revise the draft; (3) call humanizer_check_text "
     "on your draft and resolve every finding; (4) re-run humanizer_check_text "
     "until prohibitions_clear is true, then self-attest the manual_review items. "
     "Reading the rules alone leaves roughly half the violations in place; the "
@@ -63,7 +65,11 @@ if __name__ == "__main__":
     import uvicorn
     logger.info(f"Starting mcp-humanizer on {HOST}:{PORT}")
     # CRITICAL: Use uvicorn.run() with the ASGI app directly.
-    # Do NOT use mcp.run() — it ignores HOST/PORT env vars and
-    # defaults to 127.0.0.1:8000, which is unreachable from outside the container.
+    # Do NOT use mcp.run(), which ignores HOST/PORT env vars and
+    # defaults to 127.0.0.1:8000, unreachable from outside the container.
     app = CFConnectingIPLogMiddleware(mcp.streamable_http_app())
-    uvicorn.run(app, host=HOST, port=PORT)
+    # Trust X-Forwarded-Proto from a TLS-terminating reverse proxy bound to
+    # localhost, so the /mcp/ -> /mcp redirect keeps https instead of sending
+    # clients to http://. Safe only when the proxy is the sole path to this
+    # port; do not set this if the port is reachable directly.
+    uvicorn.run(app, host=HOST, port=PORT, proxy_headers=True, forwarded_allow_ips="*")
