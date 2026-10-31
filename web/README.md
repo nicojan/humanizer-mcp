@@ -12,7 +12,7 @@ as the Python `run_checks`. `dump.py` runs the real checker over a battery of
 texts (crafted edge cases plus a corpus of AI-written samples) and writes the
 results to `golden.json`. `parity.mjs` runs the compiled port over the same
 battery and diffs every finding, offset, count, metric, and fix string. Current
-status: **110/110 texts match exactly**, plus 779/779 `pyRound` cases.
+status: **136/136 texts match exactly**, plus 779/779 `pyRound` cases.
 
 The battery includes one adversarial case per regex banned structure, each with
 its negative control, so a rule that silently stopped firing (or started firing
@@ -42,7 +42,7 @@ terms, and structure patterns. There is no second copy of the rules to drift.
 # from web/, with the parent server's Python deps available
 python3 dump.py     # regenerate src/data.json + golden.json from the Python checker
 node build.mjs      # build ../index.html and the parity bundle
-node parity.mjs     # verify 77/77 against the Python checker
+node parity.mjs     # verify 136/136 against the Python checker
 ```
 
 ## Parity scope
@@ -88,3 +88,5 @@ hand-editing a divergent copy:
 Both are covered by parity's adversarial battery (`bs052_*` / `bs053_*` cases
 in `dump.py`), so a future pattern using either form is exercised
 automatically as long as a case is added for it.
+
+Two more Python-only forms arrived with the 2026-10-30 round (`BS-062`, `BS-064`), whose last-paragraph lookahead ends in `\Z` and uses possessive quantifiers (`[^\n]*+`, Python 3.11 and later). `\Z` becomes `(?![\s\S])`, the absolute end of input even under the `m` flag, because JS reads `\Z` as a literal `Z`. The possessive `+` is dropped: each `[^\n]*` run must be followed by a newline or the end of input, so backtracking can never change which text matches, and only the server's protection against slow adversarial input is lost. Covered by the `bs062_*` and `bs064_*` battery cases.

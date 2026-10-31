@@ -372,7 +372,7 @@
       "description": "The 'If you've ever struggled with...' empathy opener, a fixed second-person conditional that manufactures relatability, in the same family as BS-023 validation_reassurance. Scoped to a sentence boundary plus 'you've/you have ever' plus an empathy verb (struggled/wondered/felt/...), so anecdotal openers ('If you've ever been to Paris') and mid-sentence uses do not match.",
       "detection": {
         "method": "regex",
-        "pattern": "(?:^|[.!?]\\s+|\\n)if you(?:['’]ve| have) ever\\s+(?:struggled|wondered|felt|feared|worried|dreamed|dreamt|wished|hoped|questioned|doubted|found yourself|asked yourself|been told)\\b",
+        "pattern": "(?:^|[.!?]\\s+|\\n)if you(?:['’]ve| have) ever\\s+(?:struggled|wondered|felt|feared|worried|dreamed|dreamt|wished|hoped|questioned|doubted|found yourself|asked yourself|been told)\\b|(?:^|[.!?]\\s+|\\n)if\\s+(?:this|that|any\\s+of\\s+this|any\\s+of\\s+that)\\s+sounds\\s+familiar(?:\\s+to\\s+you)?\\s*,\\s*(?:take\\s+heart|you(?:'re|’re|\\s+are)\\s+(?:not\\s+alone|in\\s+good\\s+company)|don(?:'t|’t)\\s+worry|rest\\s+assured)\\b|(?:^|[.!?]\\s+|\\n)(?:does\\s+)?(?:(?:this|that)\\s+)?sounds?\\s+familiar\\?\\s+(?:you(?:'re|’re|\\s+are)\\s+not\\s+alone|don(?:'t|’t)\\s+worry|take\\s+heart)\\b",
         "confidence": "low"
       },
       "gate": "checklist",
@@ -744,6 +744,152 @@
       "source_examples": [
         "AP-062"
       ]
+    },
+    {
+      "id": "BS-056",
+      "name": "graded_contrast_like",
+      "description": "The graded comparison 'less like X and more like Y' ('The role is less like a manager and more like a translator.'). It recasts a plain description as a corrected misconception. Only the 'like ... like' form is reported per instance, because it fired nowhere in long-form human prose, pre-2022 essays or pre-2022 Wikipedia. The 'less about ... more about' form is ordinary once and is budgeted separately as BS-057. Scoped to one clause: a sentence end, semicolon, colon or line break between the halves stops the match, so 'Nothing is less like home. More like a hotel.' does not fire.",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\bless\\s+like\\b[^.?!;:\\n]{1,60}?\\bmore\\s+like\\b",
+        "confidence": "medium"
+      },
+      "gate": "checklist",
+      "fix": "Say what the thing is: 'Most of the job is translating between the two teams.' If the contrast is the point, name the misconception you are correcting and who holds it.",
+      "source_examples": [
+        "AP-065"
+      ],
+      "research_basis": "Graphite, 'AI Tells' (Druck, Paredes and Smith, 16 Sep 2026; an industry study, not peer-reviewed): 'less like a _ and more like' at 82 to 105 times the rate in 10k pre-ChatGPT human articles for Claude Opus 5, rising as hype vocabulary declines. Research round 2026-10-30 (docs/superpowers/specs/2026-10-30-research-round-academic-tells.md)."
+    },
+    {
+      "id": "BS-057",
+      "name": "graded_contrast_about",
+      "description": "'less about X and more about Y' ('It's less about speed and more about trust.'). Budget-only: a single use is ordinary human writing (three in Paul Graham's essays, e.g. 'less about ancientness and more about texts'), so single instances are not reported and only a second use in one piece is, as a document_budget finding with both excerpts. The per-instance 'like' form is BS-056.",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\bless\\s+about\\b[^.?!;:\\n]{1,60}?\\bmore\\s+about\\b",
+        "confidence": "low"
+      },
+      "document_budget": 1,
+      "budget_only": true,
+      "gate": "checklist",
+      "fix": "Keep the one that carries a real correction and state the others directly.",
+      "source_examples": [
+        "AP-065"
+      ],
+      "research_basis": "Graphite, 'AI Tells' (Druck, Paredes and Smith, 16 Sep 2026; an industry study, not peer-reviewed), as BS-056. Research round 2026-10-30 (docs/superpowers/specs/2026-10-30-research-round-academic-tells.md)."
+    },
+    {
+      "id": "BS-058",
+      "name": "chatbot_residue",
+      "description": "Assistant meta-talk left in a draft, on a narrow list: 'Certainly!' or 'Absolutely!' introducing a text artifact ('Certainly! Here is a revised summary'), a sentence-initial 'As an AI language model, I', 'as of my last knowledge cutoff', 'Here's a polished/rewritten version', and 'Would you like me to expand on / elaborate on / adjust the tone'. Each surviving branch is meta-talk that only makes sense addressed to the person who requested the text. Dropped because human email and Slack use them as ordinary courtesy: 'I hope this helps', 'You're absolutely right', 'I'd be happy to help', 'Let me know if you'd like me to', 'Great question', 'Sure! / Of course! Here's the Zoom link', 'Here's the updated/revised draft of the lease', 'Would you like me to make any changes before it goes to print?'. 'As an AI' needs a comma and then 'I', because 'They read as an AI tell' (this server's own sibling prompt, which the first draft fired on) and 'As an AI researcher, I' are ordinary. Narrowed before shipping by an independent adversarial review (2026-10-30).",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\b(?:certainly|absolutely)[!,]\\s+(?:here(?:'s|’s|\\s+is|\\s+are)|below\\s+is)\\s+(?:a|an|the|your)\\s+(?:[\\w-]+\\s+){0,2}?(?:version|summary|list|draft|breakdown|rewrite|overview|outline|revision|example|template)\\b|\\bas\\s+an\\s+AI(?:\\s+(?:language\\s+)?model|\\s+assistant)?\\s*,\\s*I\\b|\\bas\\s+of\\s+my\\s+(?:last\\s+)?(?:knowledge|training)\\s+(?:cutoff|update)\\b|\\bhere(?:'s|’s|\\s+is|\\s+are)\\s+(?:a|an|the|your)\\s+(?:polished|refined|improved|rewritten|humanized)\\s+(?:version|draft)\\b|\\bwould\\s+you\\s+like\\s+me\\s+to\\s+(?:expand\\s+on|elaborate\\s+on|adjust\\s+the\\s+tone)\\b",
+        "confidence": "high"
+      },
+      "gate": "checklist",
+      "fix": "Delete it. Nothing addressed to the person who asked for the text belongs in the text.",
+      "source_examples": [
+        "AP-068"
+      ],
+      "research_basis": "Wikipedia:Signs of AI writing (WP:CERTAINLY, communication intended for the user); Sun, Yin, Xu, Kolter and Liu, 'Idiosyncrasies in Large Language Models' (ICML 2025): ChatGPT characteristically opens with 'certainly' and 'below is'. Research round 2026-10-30 (docs/superpowers/specs/2026-10-30-research-round-academic-tells.md)."
+    },
+    {
+      "id": "BS-059",
+      "name": "fiction_stock_phrase",
+      "description": "Narrative stock phrases that most current models over-produce relative to human fiction, on a closed list of full collocations: '(voice) barely above a whisper', 'voice trembling slightly', 'heart hammering against his ribs' or 'pounding in her chest', 'the air thick with the scent of', 'eyes never leaving', 'casting long shadows', 'a smile playing on her lips', and the default character names Elara and Kael. Possessives are third person only, because 'I woke with my heart pounding in my chest' is memoir and health-forum English. 'Pauline Kael' and 'Kael'thas' are excluded. Removed after review because they are everyday idioms outside fiction: 'couldn't shake the feeling' ('I couldn't shake the feeling I'd left the stove on'), 'a profound sense of' (condolence statements), 'barely audible' (bug reports) and 'thick with the smell of' (protest reporting). Never added: 'took a deep breath' and 'something else entirely'. Narrowed before shipping by an independent adversarial review (2026-10-30).",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\b(?:barely|scarcely|little\\s+more\\s+than)\\s+above\\s+a\\s+whisper\\b|\\bvoice\\s+trembling\\s+slightly\\b|\\bheart\\s+(?:was\\s+|kept\\s+)?(?:hammer|pound|thunder|thrash)(?:ed|ing|s)?\\s+(?:against|in)\\s+(?:his|her|their)\\s+(?:ribs|ribcage|chest)\\b|\\bthe\\s+air\\s+(?:was\\s+|hung\\s+|grew\\s+)?thick\\s+with\\s+the\\s+scent\\s+of\\b|\\beyes\\s+never\\s+leaving\\b|\\bcasting\\s+long\\s+shadows\\b|\\bsmile\\s+play(?:ed|ing|s)?\\s+(?:on|at|about|across)\\s+(?:his|her|their)\\s+lips\\b|\\belara\\b|(?<!pauline\\s)\\bkael\\b(?!['’]thas)",
+        "confidence": "medium"
+      },
+      "gate": "checklist",
+      "fix": "Replace the stock image with what this character in this scene would actually do or notice: 'She could hardly get the words out.' Rename a default-named character.",
+      "source_examples": [
+        "AP-067"
+      ],
+      "research_basis": "Paech, Roush, Goldfeder and Shwartz-Ziv, 'Antislop' (arXiv 2510.15061, 2025), Table 5, share of 67 models whose top over-represented trigrams include the pattern: 'voice barely whisper' 68.7%, 'air thick scent' 49.3%, 'smile playing lips' 43.3%, 'could shake feeling' 31.3%, 'eyes never leaving' 29.9%, 'casting long shadows' 28.4%, 'heart pounding chest' 25.4%; Table 1: 'Elara' 85,513x and 'heart hammered ribs' 1,192x in gemma-3-12b. Chakrabarty, Laban and Wu (CHI 2025): cliche is about a sixth of 8,035 professional edits to LLM fiction. Research round 2026-10-30 (docs/superpowers/specs/2026-10-30-research-round-academic-tells.md)."
+    },
+    {
+      "id": "BS-060",
+      "name": "abstract_emotion_frame",
+      "description": "Emotion named as an inventory instead of shown: 'a mix of pride and sadness', 'a strange blend of relief and dread', 'the weight of the unspoken'. Known accepted boundary: reaction-story journalism writes 'greeted the verdict with a mix of relief and anger', which fires; the evidence is from fiction, so the rule ships at low confidence. The mix frame needs an emotion noun on both sides of 'and', so 'a mix of flour and sugar' and 'a blend of tea and spices' pass. Bare 'a sense of' and 'felt a sense of' were rejected: they fire on human prose in every corpus ('feel a sense of urgency', 'felt a sense of injury').",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\ban?\\s+(?:strange\\s+|curious\\s+|bittersweet\\s+|heady\\s+|complex\\s+|potent\\s+|familiar\\s+|uneasy\\s+|odd\\s+)?(?:mix|mixture|blend|cocktail)\\s+of\\s+(?:pride|sadness|fear|relief|excitement|anticipation|nervousness|guilt|anger|joy|grief|hope|dread|awe|curiosity|frustration|amusement|confusion|nostalgia|apprehension|gratitude|regret|longing|resignation|determination|exhaustion|wonder|unease|trepidation|disbelief|sorrow|envy|shame|warmth|melancholy|admiration|irritation|affection|defiance|tenderness)\\s+and\\s+(?:pride|sadness|fear|relief|excitement|anticipation|nervousness|guilt|anger|joy|grief|hope|dread|awe|curiosity|frustration|amusement|confusion|nostalgia|apprehension|gratitude|regret|longing|resignation|determination|exhaustion|wonder|unease|trepidation|disbelief|sorrow|envy|shame|warmth|melancholy|admiration|irritation|affection|defiance|tenderness)\\b|\\bthe\\s+weight\\s+of\\s+(?:the\\s+|their\\s+|his\\s+|her\\s+|all\\s+the\\s+|everything\\s+)?unspoken\\b",
+        "confidence": "medium"
+      },
+      "gate": "checklist",
+      "fix": "Show the two feelings through what the person does or says: 'She was proud of him, and it made her sad.'",
+      "source_examples": [
+        "AP-067"
+      ],
+      "research_basis": "Chakrabarty, Laban and Wu, 'Can AI writing be salvaged?' (CHI 2025): 'weight of', 'sense of' and 'mix of' occur rarely or never in the human seed paragraphs but often in GPT-4o, Claude 3.5 Sonnet and Llama 3.1 70B output; professional writers edited the 'a mix of' pattern 54 percent of the time; 'unspoken' appears in about 15 percent of responses. Research round 2026-10-30 (docs/superpowers/specs/2026-10-30-research-round-academic-tells.md)."
+    },
+    {
+      "id": "BS-061",
+      "name": "corrective_framing_disclaimer",
+      "description": "A disclaimer that corrects a reading nobody proposed, or flags the limits of its sources: 'Claims about its floating should be treated as religious tradition rather than as archaeological explanation', 'Her early life is not widely documented', 'based on the provided sources', 'in the provided context'. The 'treated as X rather than as Y' frame needs an evidentiary adjective on the Y side (historical, archaeological, scientific, factual, documented, established, verified, literal, empirical, definitive, authoritative), because legal and academic prose writes 'should be read as a limitation rather than as a grant of authority' and 'should be interpreted as exploratory rather than as confirmatory'. The source-gap branch keeps only 'provided', the retrieval-assistant word: 'Based on the available information, police believe' and 'no mention in the available sources before 1650' are police and historiography boilerplate. 'does not establish that' was never added. Narrowed before shipping by an independent adversarial review (2026-10-30).",
+      "detection": {
+        "method": "regex",
+        "pattern": "\\b(?:should|must|is\\s+best|are\\s+best)\\s+(?:be\\s+)?(?:treated|read|understood|seen|regarded|viewed|interpreted)\\s+as\\b[^.?!\\n]{1,80}?\\brather\\s+than\\s+as\\s+(?:an?\\s+)?(?:historical|archaeological|scientific|factual|documented|established|verified|literal|empirical|definitive|authoritative)\\b|\\b(?:is|are|remains?)\\s+not\\s+widely\\s+documented\\b|\\bin\\s+the\\s+provided\\s+(?:sources|documents|text|context|materials)\\b|\\bbased\\s+on\\s+the\\s+provided\\s+(?:information|sources|context|documents|text)\\b",
+        "confidence": "low"
+      },
+      "gate": "checklist",
+      "fix": "State what is known and stop: 'Local tradition says the stone floats; no survey has examined it.' If a source gap matters, name the source that is missing.",
+      "source_examples": [
+        "AP-068"
+      ],
+      "research_basis": "Wikipedia:Signs of AI writing (2024-26 source-gap phrasing, and corrective disclaimers described as nearly absent from AI output before July 2026); Graphite, 'AI Tells' (Druck, Paredes and Smith, 16 Sep 2026; an industry study, not peer-reviewed): corrective framing at about 12 times the human rate in GPT-6 Astra. Research round 2026-10-30 (docs/superpowers/specs/2026-10-30-research-round-academic-tells.md)."
+    },
+    {
+      "id": "BS-062",
+      "name": "optimistic_future_closer",
+      "description": "The forward-looking wrap-up in the final paragraph: 'As the field/industry/technology continues to evolve, ...', 'Looking ahead, ...' with no date or number in the sentence, 'One thing is clear:', 'the future of X looks bright'. Scoped to the last paragraph by a lookahead that walks to the end of the text and fails at the next blank line followed by content, so the same phrase in the body passes; carriage returns count as blank-line whitespace, so Windows line endings work. The lookahead uses possessive quantifiers (Python 3.11 and later; the image runs 3.12), which keep a body packed with candidate phrases linear per match: a plain lookahead took 3.3 seconds at the 100k-character input cap. A one-paragraph text is its own last paragraph, so run it on the assembled document. Removed after review: 'only time will tell' and 'remains to be seen' (neutral wire-story and review endings, not upbeat summaries), and any subject of 'continues to grow' outside a short list of abstract nouns ('As the plant continues to grow, move it to a larger pot'). Known gaps: a signature or sign-off after the closer counts as the last paragraph and hides it, and text whose paragraphs are separated by single newlines is treated as one paragraph. Narrowed before shipping by an independent adversarial review (2026-10-30).",
+      "detection": {
+        "method": "regex",
+        "pattern": "(?:\\bas\\s+(?:the\\s+)?(?:[\\w-]+\\s+)?(?:field|industry|landscape|technology|world|market|sector|AI|space|conversation|ecosystem|community|profession|discipline|research|science|economy|internet|web|culture)\\s+continues?\\s+to\\s+(?:evolve|grow|develop|change|expand|advance|mature)\\s*,|\\blooking\\s+ahead\\s*,(?![^.!?\\n]*(?:\\d|\\b(?:january|february|march|april|may|june|july|august|september|october|november|december)\\b))|\\bone\\s+thing\\s+is\\s+(?:clear|certain)\\s*:|\\bthe\\s+future\\s+(?:of\\s+[\\w-]+(?:\\s+[\\w-]+)?\\s+)?(?:looks|is|remains)\\s+(?:bright|promising)\\b)(?=[^\\n]*+(?:\\n(?![ \\t\\r]*\\n[ \\t\\r]*\\S)[^\\n]*+)*+\\Z)",
+        "confidence": "medium"
+      },
+      "gate": "checklist",
+      "fix": "End on the last concrete fact: 'The council votes in March.' Cut the forecast unless it has a date or a number in it.",
+      "source_examples": [
+        "AP-066"
+      ],
+      "research_basis": "Russell, Karpinska and Iyyer, 'People who frequently use ChatGPT for writing tasks are accurate and robust detectors of AI-generated text' (ACL 2025): conclusions are 13.1 percent of the clues expert annotators cite; AI endings are 'repetitive and overly optimistic summaries' while human ones 'end more abruptly and less tidily'. Graphite, 'AI Tells' (Druck, Paredes and Smith, 16 Sep 2026; an industry study, not peer-reviewed): 'looking ahead the' 33x. Tian et al. (EMNLP 2024): LLM stories are homogeneously positive. Research round 2026-10-30 (docs/superpowers/specs/2026-10-30-research-round-academic-tells.md)."
+    },
+    {
+      "id": "BS-063",
+      "name": "importance_flag",
+      "description": "A sentence that announces that something matters instead of showing the consequence: 'This distinction matters because ...', 'Knowing which type you have matters more than most beginners realize', and the heading 'Why this matters'. Scoped to a sentence-initial demonstrative or a short list of meta nouns (distinction, difference, point, detail, choice, order, framing, nuance), or to 'matters more than [people] realize/think'. 'It matters very little now', 'What matters is ...' (BS-015) and 'may matter more than outsiders think' (no third-person 'matters') pass, and 'The order matters here: auth middleware must run first' was taken out after review, because technical docs use it as a real warning. Accepted boundary: the personal-finance headline 'Your credit score matters more than you think' fires.",
+      "detection": {
+        "method": "regex",
+        "pattern": "(?:^|(?<=\\n)|(?<=[.!?]\\s)|(?<=[.!?]\\s\\s)|(?<=[.!?][\\\"”’)]\\s))(?:(?:this|that|the)\\s+(?:distinction|difference|point|detail|choice|order|framing|nuance)|this|that|it)\\s+matters\\s+(?:because|more\\s+than)\\b|\\bmatters\\s+more\\s+than\\s+(?:most\\s+|many\\s+)?(?:people|you|we|beginners|anyone|[a-z]+ers)?\\s*(?:might\\s+|may\\s+|would\\s+|['’]d\\s+)?(?:realize|realise|think|expect|assume|imagine|admit|suspect)\\b|(?:^|(?<=\\n))#+\\s*why\\s+(?:this|it)\\s+matters\\b",
+        "confidence": "low"
+      },
+      "gate": "checklist",
+      "fix": "Give the consequence and drop the announcement: 'Teams mix the two up, and then the audit fails.'",
+      "source_examples": [
+        "AP-066"
+      ],
+      "research_basis": "Graphite, 'AI Tells' (Druck, Paredes and Smith, 16 Sep 2026; an industry study, not peer-reviewed): 'matters because' at 132x (Claude Opus 5) and 357x (GPT-6 Astra), 'matters more than' 93x, 'distinction matters' absent from the human corpus. Also observed in a default-style Claude Sonnet sample generated for this round. Research round 2026-10-30 (docs/superpowers/specs/2026-10-30-research-round-academic-tells.md)."
+    },
+    {
+      "id": "BS-064",
+      "name": "as_much_about_aphorism",
+      "description": "The balanced aphorism 'X is as much about A as B' ('Gardening is as much about patience as technique.', 'Leadership is as much a matter of listening as speaking.'), usually a closer that restates the piece as a maxim, so it is scoped to the last paragraph with the BS-062 lookahead; the stock review sentence in the body ('The film is as much about the city as it is about the people who leave it') passes. Contractions count ('It's as much about patience as technique'). A sibling of BS-018 copula_maxim_closer. 'ate as much as I could' and 'costs as much as a car' pass, because the frame needs 'as much about' or 'as much a matter of' after a copula.",
+      "detection": {
+        "method": "regex",
+        "pattern": "(?:\\b(?:is|are|was|were)\\s+|['’](?:s|re)\\s+)as\\s+much\\s+(?:about|a\\s+matter\\s+of)\\s+[\\w-]+(?:\\s+[\\w-]+){0,2}?\\s+as\\s+(?:it\\s+is\\s+)?(?:about\\s+)?[\\w-]+(?=[^\\n]*+(?:\\n(?![ \\t\\r]*\\n[ \\t\\r]*\\S)[^\\n]*+)*+\\Z)",
+        "confidence": "low"
+      },
+      "gate": "checklist",
+      "fix": "Cut it, or replace the maxim with the specific claim it summarises.",
+      "source_examples": [
+        "AP-066"
+      ],
+      "research_basis": "Russell et al. (ACL 2025) on tidy, summarising conclusions. Observed closing a default-style Claude Sonnet sample generated for this round, with 0 matches in long-form human prose, pre-2022 essays and pre-2022 Wikipedia against an 'as much' control that fires in all three. Research round 2026-10-30 (docs/superpowers/specs/2026-10-30-research-round-academic-tells.md)."
     }
   ]
 }

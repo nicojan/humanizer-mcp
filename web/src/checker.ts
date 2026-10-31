@@ -132,6 +132,12 @@ function finditer(re: RegExp, text: string): MatchLite[] {
  *     turned into an ordinary capturing group so the match still succeeds
  *     case-insensitively, and the captured text is re-checked case-sensitively
  *     against the same sub-pattern after the match (see matchPassesCaseGuards).
+ *   - a possessive quantifier (`*+`, `++`, `?+`, `{m,n}+`, Python 3.11+): JS has
+ *     none, so the trailing `+` is dropped. The data uses them only where
+ *     backtracking cannot change the match (BS-062/BS-064's last-paragraph
+ *     lookahead, where a `[^\n]*+` run must be followed by `\n` or the end), so
+ *     results are identical; only the server's speed guard is lost.
+ *   - `\Z`, Python's absolute end of input, which JS reads as a literal Z.
  * Every other pattern in the data set passes through unchanged.
  */
 interface CaseGuard { groupIndex: number; validator: RegExp; }
@@ -146,9 +152,19 @@ function translatePattern(pattern: string): { source: string; flags: string; cas
   let out = "";
   let groupIndex = 0;
   let i = 0;
+  let afterQuantifier = false;
   while (i < src.length) {
     const ch = src[i];
-    if (ch === "\\") { out += src.slice(i, i + 2); i += 2; continue; }
+    if (ch === "+" && afterQuantifier) { afterQuantifier = false; i += 1; continue; }
+    afterQuantifier = ch === "*" || ch === "+" || ch === "}" || (ch === "?" && src[i - 1] !== "(");
+    if (ch === "\\") {
+      afterQuantifier = false;
+      // Python's \Z is the absolute end of input; JS reads \Z as a literal Z.
+      // (?![\s\S]) is the flag-independent equivalent, even under the m flag.
+      out += src[i + 1] === "Z" ? "(?![\\s\\S])" : src.slice(i, i + 2);
+      i += 2;
+      continue;
+    }
     if (ch === "[") {
       // character class: copy verbatim so a `(` inside it is never mistaken
       // for a group open.

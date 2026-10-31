@@ -656,6 +656,25 @@
         "persuasive"
       ],
       "severity": "moderate"
+    },
+    {
+      "ai_word": "palpable",
+      "alternatives": [
+        "obvious",
+        "thick",
+        "or name what people could see or hear"
+      ],
+      "severity": "low",
+      "notes": "Added 2026-10-30. Reinhart et al. (PNAS 2025): 95 times the human rate in GPT-4o, 145 in GPT-4o Mini. 1.7 per 10k sentences on long-form human prose, inside the bar; usually 'the tension was palpable'."
+    },
+    {
+      "ai_word": "unspoken",
+      "alternatives": [
+        "(say what was left unsaid)",
+        "or cut"
+      ],
+      "severity": "low",
+      "notes": "Added 2026-10-30. Chakrabarty, Laban and Wu (CHI 2025): 'unspoken' appears in about 15 percent of LLM fiction responses. 0.2 per 10k on long-form human prose."
     }
   ],
   "flagged_nouns": [
@@ -887,6 +906,26 @@
       ],
       "severity": "moderate",
       "notes": "Flagged in the strategy-jargon sense. Literal astronomical use is fine."
+    },
+    {
+      "ai_word": "camaraderie",
+      "alternatives": [
+        "friendship",
+        "the way they worked together",
+        "or show it"
+      ],
+      "severity": "low",
+      "notes": "Added 2026-10-30. Reinhart et al. (PNAS 2025): 162 times the human rate in GPT-4o, 171 in GPT-4o Mini. 0 in long-form human prose, pre-2022 essays and pre-2022 Wikipedia (121,527 sentences)."
+    },
+    {
+      "ai_word": "unease",
+      "alternatives": [
+        "worry",
+        "nerves",
+        "or show what the person does"
+      ],
+      "severity": "low",
+      "notes": "Added 2026-10-30. Reinhart et al. (PNAS 2025): 101 times the human rate in Llama 3 8B, 63 in Llama 3 70B. 'uneasiness' is a different word and is not flagged; Victorian prose uses it constantly. 1 in 39,891 sentences of pre-2022 Wikipedia."
     }
   ],
   "flagged_transitions": [
@@ -1186,11 +1225,11 @@
     ]
   },
   "vocabulary_diversity": {
-    "description": "AI-generated text is consistently less lexically diverse than human writing. It uses a smaller active vocabulary, repeats the same words and expressions, and favors high-frequency tokens over context-specific alternatives.",
+    "description": "Corrected 2026-10-30: the direction of whole-text lexical diversity is model-dependent, so it is not a reliable tell and this server does not measure it. Herbold et al. (2023) found ChatGPT essays MORE lexically diverse than student essays, and Kendro, Maloney and Jarvis (2025) found newer models more diverse than older ones while still reading as less human. What does carry over is narrower: AI text recycles the same distinctive expressions and generic nouns across a piece (the flagged lexicon, the stock frames in banned_structures) and favors the expected word over the one the context calls for. Repetition of a marked expression is the signal, not the type-token ratio.",
     "metrics": {
-      "ttr": "Type-Token Ratio. Human text scores higher. AI text clusters around lower values with narrower distribution.",
-      "hapax_legomenon_rate": "Proportion of words used only once. Higher in human text, reflecting creative, context-specific word use.",
-      "unique_word_count": "Human writing features considerably more unique words per passage."
+      "ttr": "Type-Token Ratio. Not a usable signal: depending on the model, AI text scores lower, equal or higher than human text (Herbold et al. 2023; Kendro et al. 2025). Do not raise it by swapping in synonyms.",
+      "hapax_legomenon_rate": "Proportion of words used only once. Same caveat as the type-token ratio: model-dependent, so not a target.",
+      "unique_word_count": "Not a target. A passage with many unique words can still read as machine-made if the words are the expected ones."
     },
     "rewriting_guidance": [
       "Avoid repeating the same content word within three sentences unless for deliberate emphasis.",
@@ -1258,7 +1297,7 @@
   },
   "adverb_patterns": {
     "description": "AI text consistently underuses adverbs, particularly manner and degree adverbs. Reintroducing them adds the texture of a writer making fine-grained judgments.",
-    "ai_pattern": "AI rarely uses adverbs that modify degree (barely, almost, roughly, somewhat, entirely) or manner (quickly, reluctantly, quietly, carefully). When it does use adverbs, they tend to be generic intensifiers (significantly, effectively, particularly).",
+    "ai_pattern": "Older and smaller models underuse degree and manner adverbs; when they do use adverbs, they tend to be generic intensifiers (significantly, effectively). The direction is model-specific for downtoners: Reinhart et al. (PNAS 2025) found GPT-4o overusing barely and nearly while the Llama 3 models avoid them. So the tell is the adverb that carries no judgment, not the presence or absence of adverbs.",
     "human_pattern": "Human writers use adverbs to calibrate precision. 'It mostly works' says something different from 'it works', and the choice between them reflects a real judgment call.",
     "flagged_ai_adverbs": [
       { "ai_adverb": "significantly", "alternatives": ["meaningfully", "noticeably", "by a wide margin", "or quantify it"], "severity": "moderate" },
@@ -1267,10 +1306,11 @@
     ],
     "human_adverbs_to_reintroduce": [
       "barely", "almost", "roughly", "somewhat", "entirely",
-      "quickly", "reluctantly", "quietly", "carefully", "deliberately",
-      "honestly", "frankly", "actually", "apparently", "supposedly",
+      "quickly", "reluctantly", "carefully", "deliberately",
+      "frankly", "apparently", "supposedly",
       "gradually", "suddenly", "consistently", "rarely", "occasionally"
     ],
+    "human_adverbs_to_reintroduce_notes": "Pruned 2026-10-30 because the list contradicted this server's own detectors: 'quietly' is the BS-033 / AP-046 tic, 'actually' is counted by credibility_insistence, and 'honestly' opens the AP-045 false-candour beat. A degree adverb belongs in the sentence only when it carries the writer's actual assessment; adding one to look human is the same move as adding a contraction to look human.",
     "rules": [
       {
         "rule": "Include degree adverbs to calibrate claims.",

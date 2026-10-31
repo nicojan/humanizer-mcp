@@ -46,7 +46,7 @@
       },
       {
         "rule": "Use passive voice selectively.",
-        "guidance": "AI text uses passive voice at a steady rate. Human writers use it unevenly: active in most places, passive when the object is more important than the actor. Cluster passive constructions in one section, then abandon them."
+        "guidance": "Corrected 2026-10-30: instruction-tuned models use the agentless passive LESS than humans, not more (GPT-4o at about half the human rate, Reinhart et al., PNAS 2025). So do not strip passives to sound human. Use the passive where the object matters more than the actor ('The bridge was closed for two days'), and the active where the actor is the news. Human writers are uneven here; an even, all-active surface is its own pattern."
       },
       {
         "rule": "Start some sentences with conjunctions.",

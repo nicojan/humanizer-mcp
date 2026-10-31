@@ -47,6 +47,14 @@ pip install -r requirements.lock
 PORT=8016 python src/server.py
 ```
 
+## Running the checker locally
+
+The rule files load from the repo's `data/` automatically when `/app/data` (the container path) doesn't exist, so a local checkout needs no setup. Set `HUMANIZER_DATA_DIR` only to point at a different data directory.
+
+```bash
+PYTHONPATH=. python -c "from src.checker import run_checks; import json; print(json.dumps(run_checks('Your draft here.'), indent=2))"
+```
+
 ## Regenerating the lock file
 
 `requirements.txt` is the human-edited input with loose top-level bounds. `requirements.lock` is the deploy artifact and is what the Dockerfile installs. The deployed image runs Python 3.12, so the lock **must** be resolved against Python 3.12. A lock generated under a different Python version can pin wheels that don't exist for cp312, which breaks the Docker build.

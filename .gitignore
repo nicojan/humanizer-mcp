@@ -11,3 +11,4 @@ build/
 venv/
 data/.git/
 eval/fpcorpus/longform/
+eval/fpcorpus/modern_probe/

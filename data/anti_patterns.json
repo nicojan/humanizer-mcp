@@ -193,8 +193,8 @@
       "id": "AP-027",
       "category": "psycholinguistic",
       "before": "The project was completed on schedule. The team utilized agile methodology to manage their workflow effectively. Key milestones were met consistently throughout the development process. Stakeholder feedback was incorporated at each stage. The final deliverable exceeded expectations in terms of both quality and scope.",
-      "after": "Somehow, we shipped on time. I still don't fully understand how. The first two sprints were a mess, and we lost a week to that authentication bug that kept coming back. But the team figured it out. Sarah's idea to run daily standups on the blocker board (instead of the usual status updates that nobody listens to) probably saved us. The client's happy. We're exhausted.",
-      "explanation": "First-person perspective introduced. Specific details (authentication bug, Sarah, blocker board) replace abstract claims. Honest admission of difficulty ('I still don't fully understand how'). Emotional texture ('We're exhausted'). Parenthetical aside with opinion ('nobody listens to'). Uneven development: more space for the key insight, less for the outcome. Em-dash from an earlier version replaced with a period. Note: this rewrite injects significant specifics (Sarah, the authentication bug); apply only when those specifics are present in source notes, otherwise keep the rewrite vaguer."
+      "after": "Somehow, we shipped on time. I still don't fully understand how. The first two sprints were a mess, and we lost a week to that authentication bug that kept coming back. But the team figured it out. Teodora's idea to run daily standups on the blocker board (instead of the usual status updates that nobody listens to) probably saved us. The client's happy. We're exhausted.",
+      "explanation": "First-person perspective introduced. Specific details (authentication bug, Teodora, blocker board) replace abstract claims. Honest admission of difficulty ('I still don't fully understand how'). Emotional texture ('We're exhausted'). Parenthetical aside with opinion ('nobody listens to'). Uneven development: more space for the key insight, less for the outcome. Em-dash from an earlier version replaced with a period. Note: this rewrite injects significant specifics (Sarah, the authentication bug); apply only when those specifics are present in source notes, otherwise keep the rewrite vaguer. The name was Sarah until 2026-10-30: Russell, Karpinska and Iyyer (ACL 2025) found an Emily or a Sarah in 63 to 70 percent of GPT-4o and Claude 3.5 articles, so a stock default name in the human example taught the tell it was meant to cure. A specific name belongs to the source notes, never to the model's defaults."
     },
     {
       "id": "AP-028",
@@ -454,6 +454,34 @@
       "before": "Seven to eight hours of sleep, and I want to keep it there.",
       "after": "Seven to eight hours of sleep. Most of my stress right now comes from co-op applications.",
       "explanation": "A deictic stance closer points back at a number already given and adds resolve instead of information. Replace it with the next concrete fact. Detected as BS-054; a performative framing beat (AP-035)."
+    },
+    {
+      "id": "AP-065",
+      "category": "structural",
+      "before": "Good onboarding is less like a lecture and more like an apprenticeship.",
+      "after": "New hires learn most of the job by sitting beside someone who already does it.",
+      "explanation": "The graded contrast recasts a plain description as a correction of a view nobody stated. Say what the thing is. Detected as BS-056 ('less like ... more like', per instance) and BS-057 ('less about ... more about', reported only when it repeats)."
+    },
+    {
+      "id": "AP-066",
+      "category": "structural",
+      "before": "Knowing which type you have matters more than most beginners realize. Gardening is as much about patience as technique. As the hobby grows, the future of home gardening looks bright.",
+      "after": "Check the seed packet for 'determinate' before you prune anything. The council's frost date this year is May 12.",
+      "explanation": "Three closer habits at once: an importance flag (BS-063) that announces a point matters, an 'as much about A as B' maxim (BS-064), and an optimistic forecast in the last paragraph (BS-062). Expert readers cite tidy, upbeat endings as a leading AI clue (Russell et al., ACL 2025); human endings stop on the last fact."
+    },
+    {
+      "id": "AP-067",
+      "category": "lexical",
+      "before": "Her voice was barely above a whisper, her heart hammering against her ribs. She felt a mix of pride and sadness as the air hung thick with the scent of rain.",
+      "after": "She could hardly get the words out. He had done it without her, and she was proud of him for that, and it was the worst thing she'd felt all year. It had rained.",
+      "explanation": "Stock fiction phrases that most current models over-produce (Antislop, 2025: 'voice barely whisper' is among the top over-represented trigrams of 68.7 percent of 67 models), plus an emotion named as an inventory (Chakrabarty et al., CHI 2025). Detected as BS-059 and BS-060. The fix is the specific thing this character does or notices."
+    },
+    {
+      "id": "AP-068",
+      "category": "discourse",
+      "before": "Certainly! Here is a revised version of the history section. The tower's early construction is not widely documented, and claims about its foundations should be treated as local tradition rather than as engineering fact.",
+      "after": "Local histories say the tower went up in the 1880s. No construction records survive.",
+      "explanation": "Two kinds of residue: assistant meta-talk addressed to the requester (BS-058), and a corrective disclaimer that guards against a reading nobody proposed (BS-061). State what is known, and name a missing source only when its absence matters."
     }
   ]
 }

@@ -182,6 +182,27 @@ crafted = [
     ("bs055_time_back_refrain_budget", "prose",
      "I get my Fridays back in May. I get my evenings back too. I even get my "
      "weekends back once the tournament wraps up for good."),
+    # --- 2026-10-30 research round (BS-056..064, BS-030 extension) ---
+    ("bs056_graded_contrast_like", "prose", "Good onboarding is less like a lecture and more like an apprenticeship."),
+    ("bs056_ok_cross_sentence", "prose", "Nothing is less like home. More like a hotel, really."),
+    ("bs057_about_single_silent", "prose", "I care less about the price and more about the fit of the jacket."),
+    ("bs057_about_budget", "prose", "The job is less about speed and more about trust. Hiring is less about pedigree and more about range."),
+    ("bs058_chatbot_residue", "prose", "Certainly! Here is a revised summary of the project. As an AI language model, I cannot browse."),
+    ("bs058_ok_chat_courtesy", "prose", "Sure! Here's the Zoom link for tomorrow. They read as an AI tell, and I hope this helps."),
+    ("bs059_fiction_stock", "prose", "Her voice was barely above a whisper, her heart hammering against her ribs. Elara waited."),
+    ("bs059_ok_memoir_and_critic", "prose", "I woke at 3 a.m. with my heart pounding in my chest. Pauline Kael hated it."),
+    ("bs060_emotion_inventory", "prose", "She felt a mix of pride and sadness, then an uneasy mix of hope and fear."),
+    ("bs060_ok_recipe", "prose", "Add a mix of flour and sugar, then fold in the eggs."),
+    ("bs061_corrective_disclaimer", "prose", "Claims about its floating should be treated as religious tradition rather than as archaeological explanation. Her early life is not widely documented."),
+    ("bs061_ok_legal_reading", "prose", "The provision should be read as a limitation on agency power rather than as a grant of authority."),
+    ("bs062_future_closer_last_para", "prose", "The council approved the plan.\n\nAs the industry continues to evolve, one thing is clear: the future looks bright."),
+    ("bs062_ok_body_and_crlf", "prose", "Looking ahead, the council plans a vote.\r\n\r\nThe vote is in March, and the bypass opens in June."),
+    ("bs063_importance_flag", "prose", "This distinction matters because teams often conflate the two."),
+    ("bs063_ok_docs_warning", "prose", "The order matters here: auth middleware must run before the router."),
+    ("bs064_as_much_about_closer", "prose", "The beds went in late.\n\nGardening is as much about patience as technique."),
+    ("bs064_ok_review_body", "prose", "The film is as much about the city as it is about the people who leave it.\n\nIt opens Friday."),
+    ("bs030_sounds_familiar", "prose", "Slow builds again? If this sounds familiar, take heart. Sound familiar? You're not alone."),
+    ("bs030_ok_callback", "prose", "If this sounds familiar, it's because I wrote about it last week."),
     # --- adversarial: document budgets (BS-038 appended label, twice) ---
     ("document_budget_overrun", "prose",
      "## Method, and why this one\n\nWe ran it for six weeks.\n\n"

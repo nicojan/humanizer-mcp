@@ -25,11 +25,19 @@ VALID_FILES = [
 
 _CACHE: dict[str, Any] = {}
 
+_CONTAINER_DATA_DIR = Path("/app/data")
+_REPO_DATA_DIR = Path(__file__).resolve().parents[2] / "data"
+
 
 def _data_dir() -> Path:
-    """Resolve the data directory. Defaults to the container path; override
-    with HUMANIZER_DATA_DIR for local development and tests."""
-    return Path(os.environ.get("HUMANIZER_DATA_DIR", "/app/data"))
+    """Resolve the data directory. HUMANIZER_DATA_DIR wins when set; otherwise
+    the container path, or the repo's data/ when run outside the container."""
+    override = os.environ.get("HUMANIZER_DATA_DIR")
+    if override:
+        return Path(override)
+    if _CONTAINER_DATA_DIR.is_dir():
+        return _CONTAINER_DATA_DIR
+    return _REPO_DATA_DIR
 
 
 def _read_from_disk(filename: str) -> dict[str, Any]:
