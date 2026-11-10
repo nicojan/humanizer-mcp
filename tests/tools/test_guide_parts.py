@@ -21,11 +21,14 @@ def _size(obj) -> int:
     return len(json.dumps(obj, separators=(",", ":"), ensure_ascii=False))
 
 
-@pytest.mark.parametrize("content_type", ["prose", "marketing", "academic", "technical", "not-a-type"])
+@pytest.mark.parametrize(
+    "content_type", ["prose", "marketing", "academic", "technical", "case_study", "resume", "not-a-type"]
+)
 @pytest.mark.parametrize("part", list(GUIDE_PARTS))
 def test_each_part_fits_a_client_output_cap(part, content_type):
-    """An unknown content_type returns every profile with a warning, which
-    lands in 'core', so it is measured too."""
+    """An unknown content_type falls back to the general-prose profile with a
+    warning (2026-11-09; it used to return every profile, which went over the
+    cap once there were seven), so 'core' stays measured for it too."""
     assert _size(build_guide_part(content_type, part)) < MAX_PART_CHARS, (part, content_type)
 
 
@@ -58,3 +61,11 @@ def test_all_is_the_legacy_full_payload():
 def test_unknown_part_is_rejected():
     with pytest.raises(ValueError):
         build_guide_part("prose", "everything")
+
+
+def test_an_unknown_type_falls_back_to_prose_and_names_the_valid_ones():
+    core = build_guide_part("not-a-type", "core")
+    prose = build_guide_part("prose", "core")
+    assert core["content_profile"] == prose["content_profile"]
+    assert "case_study" in core["_warning"] and "resume" in core["_warning"]
+    assert "general_prose" in core["_warning"]

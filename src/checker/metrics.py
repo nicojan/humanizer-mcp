@@ -33,11 +33,20 @@ _TARGETS = {
 # (caveats.metrics_do_not_apply_to_label_text). An explicit opt-in, never
 # inferred from the text: guessing "this is labels" from length would misfire on
 # real short-form prose.
-SHORT_COPY_TYPES = frozenset({"label", "labels", "notes"})
+# A résumé or CV is fragments and lists by design, so it is short copy too, and
+# its Skills block is a list, so rule-of-three density does not apply to it
+# either (see list_measures_apply).
+RESUME_TYPES = frozenset({"resume", "résumé", "cv"})
+SHORT_COPY_TYPES = frozenset({"label", "labels", "notes"}) | RESUME_TYPES
 
 
 def length_metrics_apply(content_type: str | None) -> bool:
     return (content_type or "prose").lower() not in SHORT_COPY_TYPES
+
+
+def list_measures_apply(content_type: str | None) -> bool:
+    """False for a résumé or CV, where parallel lists are the format."""
+    return (content_type or "prose").lower() not in RESUME_TYPES
 
 
 def target_stdev(content_type: str | None) -> float:

@@ -11,10 +11,12 @@ from src.checker.loader import (
     load_hard_phrases,
     load_regex_structures,
     load_self_review,
+    load_terms_of_art,
 )
 from src.checker.metrics import (
     burstiness,
     length_metrics_apply,
+    list_measures_apply,
     segment_uniformity,
     target_stdev,
 )
@@ -47,10 +49,11 @@ def run_checks(text: str, content_type: str | None = None) -> dict:
     must: list[dict] = []
     must.extend(find_unterminated(text))
     must.extend(find_comma_splices(text))
-    must.extend(find_flagged_terms(text, load_flagged_terms()))
+    must.extend(find_flagged_terms(text, load_flagged_terms(), load_terms_of_art()))
     must.extend(find_regex_structures(text, load_regex_structures()))
     must.extend(find_heuristic_structures(text))
-    must.extend(find_rule_of_three_density(text))
+    if list_measures_apply(content_type):
+        must.extend(find_rule_of_three_density(text))
     must.extend(find_credibility_insistence(text, load_credibility_insistence()))
     budgets, budget_names = load_document_budgets()
     budget_only = load_budget_only_ids()

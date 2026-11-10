@@ -23,6 +23,14 @@ CONTENT_TYPE_ALIASES = {
     "technical": "technical",
     "academic": "academic",
     "marketing": "marketing",
+    "case_study": "case_study",
+    "case-study": "case_study",
+    "case study": "case_study",
+    "portfolio": "case_study",
+    "product": "case_study",
+    "resume": "resume",
+    "résumé": "resume",
+    "cv": "resume",
 }
 
 
@@ -82,13 +90,19 @@ def _resolve_profile(
     content_type: Optional[str],
     profiles: dict,
 ) -> tuple[dict[str, Any], Optional[str]]:
-    """Resolve a content profile. Returns (profile_data, warning_or_none)."""
+    """Resolve a content profile. Returns (profile_data, warning_or_none).
+
+    An unknown type falls back to the general-prose profile with a warning
+    naming the valid types. It used to return every profile, which put the
+    guide's 'core' page over a client's output cap once there were seven
+    (2026-11-09). humanizer_get_content_profile still returns all on request."""
     ct = _resolve_content_type(content_type or "prose", profiles)
     if ct in profiles:
         return profiles[ct], None
-    return profiles, (
+    fallback = "general_prose" if "general_prose" in profiles else next(iter(profiles))
+    return profiles[fallback], (
         f"Content type '{content_type}' not found. "
-        f"Available: {list(profiles.keys())}. Returning all."
+        f"Available: {list(profiles.keys())}. Returning '{fallback}'."
     )
 
 
@@ -104,7 +118,9 @@ class ContentTypeInput(BaseModel):
         default=None,
         description=(
             "Content type to tailor rules for. One of 'academic', 'marketing', "
-            "'tech'/'technical', 'prose'/'general_prose'. Defaults to 'prose'."
+            "'tech'/'technical', 'prose'/'general_prose', 'creative', "
+            "'case_study'/'portfolio' (case studies and product copy) or "
+            "'resume'/'cv'. Defaults to 'prose'."
         ),
     )
 
@@ -117,7 +133,9 @@ class GuideInput(BaseModel):
         default=None,
         description=(
             "Content type to tailor rules for. One of 'academic', 'marketing', "
-            "'tech'/'technical', 'prose'/'general_prose'. Defaults to 'prose'."
+            "'tech'/'technical', 'prose'/'general_prose', 'creative', "
+            "'case_study'/'portfolio' (case studies and product copy) or "
+            "'resume'/'cv'. Defaults to 'prose'."
         ),
     )
     part: Optional[Literal["core", "lexical", "anti_patterns", "caveats", "all"]] = Field(
@@ -166,7 +184,9 @@ class ContentProfileInput(BaseModel):
         default=None,
         description=(
             "One of 'academic', 'marketing', 'tech'/'technical', "
-            "'prose'/'general_prose', or 'all'. Defaults to 'all'."
+            "'prose'/'general_prose', 'creative', 'case_study'/'portfolio' "
+            "(case studies and product copy), 'resume'/'cv', or 'all'. "
+            "Defaults to 'all'."
         ),
     )
 

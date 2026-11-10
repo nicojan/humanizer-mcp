@@ -68,6 +68,15 @@ def load_credibility_insistence() -> dict:
     return load_json("lexical_patterns.json").get("credibility_insistence", {})
 
 
+def load_terms_of_art() -> list[str]:
+    """Lower-cased multi-word terms of art (lexical_patterns.terms_of_art.items).
+    A flagged word inside one of these is a domain term with no plainer
+    equivalent ("differentiated instruction"), so it is not reported. Data, so
+    a new term deploys with a restart."""
+    block = load_json("lexical_patterns.json").get("terms_of_art", {})
+    return [str(it["phrase"]).lower() for it in block.get("items", []) if it.get("phrase")]
+
+
 def load_self_review() -> list[str]:
     """The human-likeness self-review rubric the calling model runs against its
     own draft (the texture half of write→check→fix). Surfaced as the report's

@@ -12,14 +12,14 @@ All responses have `meta` blocks stripped and use compact JSON for token efficie
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `content_type` | string | No | One of: `academic`, `marketing`, `tech`, `prose`. Defaults to `prose`. |
+| `content_type` | string | No | One of: `academic`, `marketing`, `tech`, `prose`, `creative`, `case_study` (aliases `portfolio`, `product`), `resume` (aliases `résumé`, `cv`). Defaults to `prose`. |
 | `part` | string | No | One of `core`, `lexical`, `anti_patterns`, `caveats`, or `all` (default). Pages the guide for clients that cap tool output: `core` bundles foundation, content profile, structure, texture, cohesion, tone and verification (each page stays under 75k characters); fetch `lexical`, `anti_patterns` and `caveats` after it. Each page's response names the pages still to fetch in `guide_parts_remaining`. Omit, or pass `all`, for the full payload in one call. |
 | `response_format` | string | No | `json` (compact, default) or `markdown` (human-readable). |
 
 **Returns:** Compact JSON containing all data dimensions (foundation, lexical_patterns, structural_patterns, sentiment_tone, discourse_cohesion, psycholinguistic_texture, content_profile, anti_patterns, caveats), all meta-stripped, or one page of them when `part` is given.
 
 **Error handling:**
-- If `content_type` is provided but not found in profiles, return all profiles with a warning note.
+- If `content_type` is provided but not found in profiles, return the `general_prose` profile with a `_warning` naming the valid types. (Before 2026-11-09 it returned every profile, which put `core` over the 75k cap once there were seven.)
 - If `part` is not one of the recognized values, the call errors rather than silently returning the full payload.
 
 ---
@@ -30,7 +30,7 @@ All responses have `meta` blocks stripped and use compact JSON for token efficie
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `content_type` | string | No | One of: `academic`, `marketing`, `tech`, `prose`. Defaults to `prose`. |
+| `content_type` | string | No | One of: `academic`, `marketing`, `tech`, `prose`, `creative`, `case_study` (aliases `portfolio`, `product`), `resume` (aliases `résumé`, `cv`). Defaults to `prose`. |
 | `response_format` | string | No | `json` (compact, default) or `markdown` (human-readable). |
 
 **Returns:** Compact JSON with core_principle, two_axes, priority_hierarchy, section_level_variation, and content_profile.
@@ -116,7 +116,7 @@ Returns per-content-type adjustments.
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `content_type` | string | No | One of: `academic`, `marketing`, `tech`, `prose`, or `all`. Defaults to `all`. |
+| `content_type` | string | No | One of: `academic`, `marketing`, `tech`, `prose`, `creative`, `case_study`/`portfolio`, `resume`/`cv`, or `all`. Defaults to `all`. |
 | `response_format` | string | No | `json` (compact, default) or `markdown` (human-readable). |
 
 **Returns:** The matching profile object, or all profiles if `all` or omitted.
@@ -158,7 +158,7 @@ Returns ESL considerations, detector brittleness notes, and ethical boundaries.
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `text` | string | Yes | Candidate text to check (1-100000 chars). |
-| `content_type` | string | No | Tunes the burstiness target: `academic`, `marketing`, `tech`/`technical`, or `prose` (default). Pass `label` or `notes` for headings, worksheet cells, UI strings or CEFR-pitched copy: burstiness and `segment_uniformity` are still measured and returned in `metrics` but not reported as findings in `must_clear` (since sentence-length variance is undefined at that length), and every other layer still runs. |
+| `content_type` | string | No | Tunes the burstiness target: `academic`, `marketing`, `tech`/`technical`, or `prose` (default). Pass `label` or `notes` for headings, worksheet cells, UI strings or CEFR-pitched copy: burstiness and `segment_uniformity` are still measured and returned in `metrics` but not reported as findings in `must_clear` (since sentence-length variance is undefined at that length), and every other layer still runs. `resume` (also `résumé`, `cv`; added 2026-11-09) does the same and also skips `rule_of_three_density`, because a Skills block is a list. `case_study` runs exactly as `prose`; its guidance is served by `humanizer_get_content_profile`. In every content type, a flagged term inside an entry of `lexical_patterns.terms_of_art` ("differentiated instruction") is not reported. |
 
 **Returns:** Compact JSON: `prohibitions_clear` (bool, true iff no hard violations), `note`, `hard_violations[]` (em-dashes, stacked punctuation marks, and fixed AI phrases, with offsets; the em-dash check covers U+2014 and the `--` digraph, but skips hyphen runs on a line made only of `-`, `|`, `:` and spaces, so markdown table separators, horizontal rules, setext underlines and front-matter fences do not block `prohibitions_clear`), `must_clear[]` (located findings to rewrite or justify: flagged terms; regex/heuristic banned structures (the `BS-*` tells); document-budget overruns for structures that carry a `document_budget` and appear more often than it in the text supplied; rule-of-three density; cross-section uniformity (`segment_uniformity`); reality-assertion density (`credibility_insistence`); low burstiness; and punctuation issues (missing terminal marks, run-on spans, comma splices)), `metrics` (burstiness stats, `length_metrics_apply`, plus `segment_variation`), `manual_review[]` (the human-likeness **self-review rubric** the calling model runs against its own draft: rhythm, reused rhetorical shape, section-to-section variation, generic competence/stance, abstraction-as-agent, performative framing beat, and more; the texture checks the server cannot verify; data-driven from `data/self_review.json`), `next_action` (sequences the self-review step after the mechanical fixes).
 

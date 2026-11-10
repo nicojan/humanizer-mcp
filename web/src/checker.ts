@@ -21,6 +21,7 @@ const REGEX_STRUCTURES: RegexStructure[] = (DATA as any).regex_structures;
 const FLAGGED_TERMS: FlaggedTerm[] = (DATA as any).flagged_terms;
 const CRED: any = (DATA as any).credibility;
 const SELF_REVIEW: string[] = (DATA as any).self_review;
+const TERMS_OF_ART: string[] = (DATA as any).terms_of_art ?? [];
 
 // ---------------------------------------------------------------------------
 // helpers
@@ -296,14 +297,28 @@ function findPhrases(text: string, phrases: string[]): Array<[string, number]> {
   return out;
 }
 
-function findFlaggedTerms(text: string, terms: FlaggedTerm[]): Finding[] {
+// A flagged word inside a term of art ("differentiated instruction") is not
+// reported. Mirrors _protected_spans in src/checker/phrases.py.
+function protectedSpans(low: string, termsOfArt: string[]): [number, number][] {
+  const spans: [number, number][] = [];
+  for (const phrase of termsOfArt) {
+    const re = new RegExp("\\b" + phrase.split(/\s+/).map(escapeRegExp).join("\\s+") + "\\b", "g");
+    for (const m of finditer(re, low)) spans.push([m.index, m.end]);
+  }
+  return spans;
+}
+
+function findFlaggedTerms(text: string, terms: FlaggedTerm[], termsOfArt: string[] = []): Finding[] {
   const low = text.toLowerCase();
+  const protectedRanges = protectedSpans(low, termsOfArt);
   const results: Finding[] = [];
   for (const entry of terms) {
     const locations: number[] = [];
     for (const form of inflections(entry.term)) {
       const re = new RegExp("\\b" + escapeRegExp(form) + "\\b", "g");
-      for (const m of finditer(re, low)) locations.push(m.index);
+      for (const m of finditer(re, low)) {
+        if (!protectedRanges.some(([s, e]) => s <= m.index && m.index < e)) locations.push(m.index);
+      }
     }
     if (locations.length) {
       results.push({
@@ -868,7 +883,14 @@ const PARA_SPLIT = /\n\s*\n/;
 // notes, where sentence-length variance is undefined or deliberately flat
 // (caveats.metrics_do_not_apply_to_label_text). An explicit opt-in, never
 // inferred from the text.
-const SHORT_COPY_TYPES = new Set(["label", "labels", "notes"]);
+// A résumé or CV is fragments and lists by design (RESUME_TYPES in metrics.py):
+// short copy, and rule-of-three density does not apply to its Skills block.
+const RESUME_TYPES = new Set(["resume", "résumé", "cv"]);
+const SHORT_COPY_TYPES = new Set(["label", "labels", "notes", ...RESUME_TYPES]);
+
+function listMeasuresApply(contentType: string | null | undefined): boolean {
+  return !RESUME_TYPES.has((contentType ?? "prose").toLowerCase());
+}
 
 function lengthMetricsApply(contentType: string | null | undefined): boolean {
   return !SHORT_COPY_TYPES.has((contentType ?? "prose").toLowerCase());
@@ -966,10 +988,10 @@ export function runChecks(text: string, contentType?: string | null): Report {
   const rawMust: Finding[] = [];
   rawMust.push(...findUnterminated(text));
   rawMust.push(...findCommaSplices(text));
-  rawMust.push(...findFlaggedTerms(text, FLAGGED_TERMS));
+  rawMust.push(...findFlaggedTerms(text, FLAGGED_TERMS, TERMS_OF_ART));
   rawMust.push(...findRegexStructures(text, COMPILED_REGEX_STRUCTURES));
   rawMust.push(...findHeuristicStructures(text));
-  rawMust.push(...findRuleOfThreeDensity(text));
+  if (listMeasuresApply(contentType)) rawMust.push(...findRuleOfThreeDensity(text));
   rawMust.push(...findCredibilityInsistence(text, CRED));
 
   const overruns = findBudgetOverruns(rawMust, BUDGETS, BUDGET_NAMES, BUDGET_ONLY);

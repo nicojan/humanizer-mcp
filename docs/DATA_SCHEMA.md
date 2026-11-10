@@ -72,6 +72,7 @@ Top-level keys: `meta`, `flagged_verbs`, `flagged_adjectives`, `flagged_nouns`, 
 | `abstract_concrete_balance` | object | `{description, ai_pattern, human_pattern, rules[]{rule, guidance}, research_basis}`. |
 | `adverb_patterns` | object | `{description, ai_pattern, human_pattern, flagged_ai_adverbs[]{ai_adverb, alternatives[], severity}, human_adverbs_to_reintroduce[], rules[]{rule, guidance}, research_basis}`. |
 | `credibility_insistence` | object | `{description, ai_pattern, human_pattern, tokens[], same_token_min, rate_per_words, exclusions[], rewriting_guidance[], research_basis}`. Density config consumed by the `credibility_insistence` checker finding (`src/checker/insistence.py` via `loader.load_credibility_insistence`); fires `must_clear` when a token recurs `same_token_min` times or the set rate exceeds `rate_per_words`. Not severity-bearing, so the `risk_level` filter does not touch it. |
+| `terms_of_art` | object | `{description, items[]{phrase, protects, field}}`. Added 2026-11-09. Multi-word domain terms that contain a flagged word but have no plainer equivalent ("differentiated instruction"). `loader.load_terms_of_art` feeds the phrases to `find_flagged_terms`, which drops any occurrence of a flagged word that falls inside one, in every content type. Add a term only when every suggested alternative would make the sentence wrong. |
 
 The `risk_level` filter on `humanizer_get_lexical_patterns` filters by `severity` across `flagged_verbs`, `flagged_adjectives`, `flagged_nouns`, `flagged_transitions`, `flagged_qualifiers.items`, and `adverb_patterns.flagged_ai_adverbs`.
 
@@ -154,7 +155,7 @@ Top-level keys: `meta`, `profiles`.
 
 | Field | Type | Description |
 |---|---|---|
-| `profiles` | object | Keyed by content type: `academic`, `marketing`, `technical`, `general_prose`, `creative`. |
+| `profiles` | object | Keyed by content type: `academic`, `marketing`, `technical`, `general_prose`, `creative`, `case_study` and `resume` (the last two added 2026-11-09). Aliases live in `CONTENT_TYPE_ALIASES` in `src/tools/read.py`. `resume` also changes `humanizer_check_text` (no length or rule-of-three measures, via `RESUME_TYPES` in `src/checker/metrics.py`); every other profile is guidance only. |
 | `profiles.<type>.label` | string | Display name (e.g., "Academic and research writing"). |
 | `profiles.<type>.description` | string | When this profile applies. |
 | `profiles.<type>.perplexity_target` | string | Target perplexity band for this type. |

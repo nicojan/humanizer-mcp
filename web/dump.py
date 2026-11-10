@@ -17,6 +17,7 @@ from src.checker.loader import (
     load_hard_phrases,
     load_regex_structures,
     load_self_review,
+    load_terms_of_art,
 )
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -28,6 +29,7 @@ data = {
     "flagged_terms": load_flagged_terms(),
     "credibility": load_credibility_insistence(),
     "self_review": load_self_review(),
+    "terms_of_art": load_terms_of_art(),
 }
 with open(os.path.join(HERE, "src", "data.json"), "w", encoding="utf-8") as f:
     json.dump(data, f, ensure_ascii=False, indent=2)
@@ -214,6 +216,16 @@ crafted = [
     ("document_budget_bs053", "prose", "Tutoring stays. I cut the gym. Piano stays."),
     # --- adversarial: content_type="label" suppresses burstiness/uniformity ---
     ("label_content_type", "label", "Eight words to carry. Your answer first. Section three."),
+    # --- 2026-11-09: content_type="resume" and lexical_patterns.terms_of_art ---
+    ("resume_skills_block", "resume",
+     "Design: user research, journey mapping, and usability testing.\n"
+     "Prototyping: Figma, Framer, and HTML, CSS and JavaScript.\n"
+     "Teaching: curriculum design, assessment, and differentiated instruction."),
+    ("skills_block_as_prose_control", "prose",
+     "Design: user research, journey mapping, and usability testing.\n"
+     "Prototyping: Figma, Framer, and HTML, CSS and JavaScript.\n"
+     "Teaching: curriculum design, assessment, and differentiated instruction."),
+    ("terms_of_art_partial", "prose", "I use differentiated instruction. Our product differentiates itself."),
 ]
 
 # --- 3. Real text: the eval corpus (human + AI) ------------------------------

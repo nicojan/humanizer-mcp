@@ -1390,5 +1390,50 @@
       "Do not apply the substitution lists as a find-and-replace. A long word chosen for rhythm at the end of a sentence can be the right word, and rule 6 covers it."
     ],
     "research_basis": "Orwell, 'Politics and the English Language' (1946). Added 2026-08-10 from the Day One case-study writing gate, which ran an Orwell layer by hand after this server's loop for the length of a 39-page document and kept catching the same three classes: stale figures, padding, and jargon substituted where a definition was wanted."
+  },
+  "terms_of_art": {
+    "description": "Multi-word domain terms that contain a flagged word but have no plainer equivalent. A flagged word inside one of these is not reported, in any content type, because replacing it would change the claim (caveats.jargon_substitution_loses_meaning). Added 2026-11-09 after a portfolio project excused 'differentiated instruction' by hand on every audit. Add a term only when every suggested alternative would make the sentence wrong, never to quiet a word that is merely common in a field.",
+    "items": [
+      {
+        "phrase": "differentiated instruction",
+        "protects": "differentiate",
+        "field": "education"
+      },
+      {
+        "phrase": "differentiated learning",
+        "protects": "differentiate",
+        "field": "education"
+      },
+      {
+        "phrase": "differentiated teaching",
+        "protects": "differentiate",
+        "field": "education"
+      },
+      {
+        "phrase": "differentiated lesson",
+        "protects": "differentiate",
+        "field": "education"
+      },
+      {
+        "phrase": "differentiated lessons",
+        "protects": "differentiate",
+        "field": "education"
+      },
+      {
+        "phrase": "differentiated assessment",
+        "protects": "differentiate",
+        "field": "education"
+      },
+      {
+        "phrase": "differentiated diagnosis",
+        "protects": "differentiate",
+        "field": "medicine"
+      },
+      {
+        "phrase": "differentiated cells",
+        "protects": "differentiate",
+        "field": "biology"
+      }
+    ]
   }
 }

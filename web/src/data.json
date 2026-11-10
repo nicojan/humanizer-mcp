@@ -2185,5 +2185,15 @@
     "Cause-to-benefit 'so' tail: a sentence that states a mechanism and then appends ', so' plus the payoff it promises the reader ('Quip updates itself, so a fix reached people within a day of shipping.', 'Only the width changes, so the window stays under the menu-bar icon and nothing jumps away from the pointer.'). It reads as a product brochure explaining its own value. A reviewer flagged both as AI-coded; the shape is too common in plain prose to detect, so read for it. Keep the 'so' when the reader needs the causal link; cut it when the second half only tells them the first half was good. Often the fix is to keep one half: the fact, or the user's experience of it.",
     "Backstory order and self-portrait flourish: lines that tell the writer's history as a tidy sequence or describe their own habits approvingly. Attested, all flagged as AI-coded in a 2026 portfolio and résumé review: 'Ten years of teaching neurodivergent and multilingual learners came first, and so did the habit of watching where people get stuck.', 'Before them came two web tools for English learners.', 'The job was watching someone try to make sense of something complicated...', 'I design the screens, build them in code, and keep the Figma files behind them tidy.', 'People I've never met use it'. Each sounds like a voice performing modesty or craft. State the fact with its date or number ('Teaching neurodivergent and multilingual learners since 2016.') and drop the adjective about yourself. 'X came first, and so did the habit of Y' could not be mechanized, because 'Prices rose, and so did the practice of haggling.' is the same construction.",
     "Cold-reader test for product, portfolio and case-study copy: could someone who has never used the product follow this sentence on first read? Three failures recur, all flagged in a 2026 portfolio review after passing the checker. (a) Mechanism in a chain of clauses instead of what the user gets: 'Show them in every space and they stay at the top of the sidebar, with one sign-in and one unread count, while the rest of the list changes.' (b) The product's own internal words, or verbs users never say: 'cut across all of them', 'Filing a GIF' (nobody files GIFs), 'nothing of the app is drawn inside Chorus'. (c) A slogan whose second half is clever and impossible to picture: 'Every chat and inbox in one Mac window, and only what's new turns red.' Also cut vague casual counts ('a dozen or so testers'), run-in labels ('The worst bug:'), and release-by-release history ('first release 13 July'). Write short sentences in plain words, use a UX term where it is the right term, and define any product concept before using it."
+  ],
+  "terms_of_art": [
+    "differentiated instruction",
+    "differentiated learning",
+    "differentiated teaching",
+    "differentiated lesson",
+    "differentiated lessons",
+    "differentiated assessment",
+    "differentiated diagnosis",
+    "differentiated cells"
   ]
 }

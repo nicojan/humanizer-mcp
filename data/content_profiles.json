@@ -171,6 +171,73 @@
         "Voice is the highest priority. If the creative text doesn't sound like a specific, opinionated, slightly imperfect human being, no amount of lexical substitution or structural variation will save it."
       ],
       "research_basis": "O'Sullivan (2025) applies Burrows' Delta and MDS clustering to short stories, finding clear and consistent stylistic distinctions between human and LLM creative texts."
+    },
+    "case_study": {
+      "label": "Case studies, portfolio and product copy",
+      "description": "Writing that explains a product or a piece of design work to someone who has never used it: portfolio case studies, landing pages, release notes and app-store text. Its reader is a stranger skimming for one decision and its payoff, often a hiring manager with a minute to spare. AI drafts here explain the mechanism in long chains, borrow the product's internal words, and close sections with brochure benefits or tidy maxims. A month of reviewer flags on one portfolio passed the checker clean (caveats.reviewed_copy_passes_the_checker), so the self-review items carry most of this profile.",
+      "perplexity_target": "moderate",
+      "burstiness_target": "moderate to high; short plain sentences, with a longer one only where a decision needs its reason",
+      "layer_adjustments": {
+        "lexical_patterns": {
+          "aggressiveness": "high",
+          "notes": "Use the words a first-time reader already has, someone who has never used the product. Cut the product's internal labels and any verb users never say ('filing a GIF', 'cut across all of them'). Use a real term of the field (mental model, onboarding, notification fatigue) where it is the right word, and define any product concept in plain words before using it. Marketing gloss ('seamless', 'effortless', 'powerful') reads as filler here, as in marketing copy."
+        },
+        "structural_patterns": {
+          "aggressiveness": "high",
+          "notes": "Lead each section with one UX decision under a heading that states the user insight in plain words, then the picture or clip that shows it, then a short why from real evidence. Keep sentences short; one subordinate clause is fine, three stacked onto a mechanism is not. Cut the cause-to-benefit 'so' tail ('Quip updates itself, so a fix reached people within a day of shipping.'), cute number-pair captions ('One count, four moments'), run-in labels ('The worst bug:'), and release-by-release history. Leave room: show the decision and the result, and hold back the step-by-step so a reader has something to ask about."
+        },
+        "sentiment_tone": {
+          "aggressiveness": "moderate",
+          "notes": "Plain and confident. No filler modesty or brag ('People I've never met use it'), no characterizing your own habits, and no tidy aphorism closing a section ('the developer is right to send it back'). Let the evidence carry the stance."
+        },
+        "discourse_cohesion": {
+          "aggressiveness": "moderate",
+          "notes": "Label sections plainly by what they are (Problem, Approach, Outcome) when a reader would otherwise have to guess. Do not narrate the page's structure or its audience to the reader ('Writing, for the two readers this site has')."
+        },
+        "psycholinguistic_texture": {
+          "aggressiveness": "moderate",
+          "notes": "Specifics a competitor could not paste onto their own site: the named app, the real number, the user quote, the constraint that shaped the decision. If the evidence is missing, say less rather than inventing a payoff."
+        }
+      },
+      "special_considerations": [
+        "Test every sentence on a stranger: could someone who has never used the product follow it on first read? If not, rewrite it before checking anything else.",
+        "Make at least one UX decision land per piece: a plain heading about the user, media that shows it, and a short why. One that lands beats five that are listed.",
+        "A clean humanizer_check_text report says little on this register. Read the self-review items for the 'so' tail, backstory order, the cold-reader test and the performative framing beat, because they hold what the regex layer cannot catch.",
+        "Credit and history belong where readers expect them (a repository, a changelog), not in the story of the design."
+      ]
+    },
+    "resume": {
+      "label": "Résumés and CVs",
+      "description": "A résumé is fragments and lists by design: a role label, dated facts and a Skills block that recruiters and parsers scan. Pass content_type 'resume' (or 'cv') to humanizer_check_text and the checker stops measuring sentence-length variance, segment uniformity and rule-of-three density, which are undefined or wrong for this format. Every other layer still runs. AI drafts here fail on voice, not structure: an adjective about the writer's own habits, a narrative-ordering closer, a lesson clause.",
+      "perplexity_target": "low to moderate",
+      "burstiness_target": "not applicable; fragments and lists are the format",
+      "layer_adjustments": {
+        "lexical_patterns": {
+          "aggressiveness": "high",
+          "notes": "Use the employer's and the field's real terms, since parsers and recruiters search for them. Keep terms of art intact: 'differentiated instruction' is not a flagged use of 'differentiate' (lexical_patterns.terms_of_art). Cut adjectives about yourself ('passionate', 'detail-oriented') and replace them with the fact that shows it."
+        },
+        "structural_patterns": {
+          "aggressiveness": "low",
+          "notes": "Lists, fragments and parallel bullets are correct here. A Skills block is a list, so rule-of-three density does not apply to it and the checker does not report it under content_type 'resume'. Start bullets with a verb or a noun phrase, give dates and numbers, and keep the summary to a role label plus facts: 'UX designer and creative technologist: user research, Figma, and front-end code in HTML, CSS, and JavaScript. Teaching neurodivergent and multilingual learners since 2016.'"
+        },
+        "sentiment_tone": {
+          "aggressiveness": "moderate",
+          "notes": "Neutral and factual. No characterizing flourish about how you work ('and keep the Figma files behind them tidy'), no modesty or performed craft."
+        },
+        "discourse_cohesion": {
+          "aggressiveness": "low",
+          "notes": "No transitions between bullets and no time-sequence framing in the summary: 'Ten years of teaching came first, and so did the habit of watching where people get stuck' reads as performed voice. State the dates instead."
+        },
+        "psycholinguistic_texture": {
+          "aggressiveness": "low",
+          "notes": "Human texture here is specificity, not voice: the named product, the number of users or students, the dates, the stack. Leave out 'taught me' and 'the habit of' clauses."
+        }
+      },
+      "special_considerations": [
+        "Run the check as content_type 'resume'. Under 'prose' the Skills block trips rule-of-three density and short bullets trip burstiness, and both findings are wrong for the format.",
+        "A cover letter is prose, not a résumé: check it as 'prose' and read the reader-contact self-review item.",
+        "Keep spelling consistent with the target market (Canadian 'colour', 'centre'), and do not mirror a job posting's spelling over your own document's."
+      ]
     }
   }
 }

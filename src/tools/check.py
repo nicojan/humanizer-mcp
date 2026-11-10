@@ -27,7 +27,11 @@ class CheckTextInput(BaseModel):
             "'marketing', 'tech'/'technical', or 'prose' (default). Pass "
             "'label' or 'notes' for headings, worksheet cells, UI strings or "
             "CEFR-pitched copy: burstiness and segment_uniformity are still "
-            "measured but not reported as findings, and every other layer runs."
+            "measured but not reported as findings, and every other layer runs. "
+            "Pass 'resume' (or 'cv') for a résumé: the same, and rule-of-three "
+            "density is also skipped, because a Skills block is a list. "
+            "'case_study' (or 'portfolio') runs as prose; its guidance is in "
+            "humanizer_get_content_profile."
         ),
     )
 
