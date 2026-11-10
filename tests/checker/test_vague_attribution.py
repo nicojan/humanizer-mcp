@@ -57,3 +57,34 @@ def test_surfaces_in_must_clear_never_hard():
     report = run_checks("Studies show the method works well.", "prose")
     assert any(f.get("id") == "BS-024" for f in report["must_clear"])
     assert report["prohibitions_clear"] is True
+
+
+# The headline attribution (2026-11-09, found by the terse-register set). A news
+# headline ends "..., economists say" with no full stop and names its sources in
+# the story, so "name the source" is the wrong fix there. Only that form is
+# declined: a comma, a group noun, say/says, then the end of the line.
+@pytest.mark.parametrize(
+    "text",
+    [
+        "Not a recession, but close, economists say",
+        "Rates to hold through spring, analysts say",
+        "Housing shortage to worsen, experts say\nDetails on page 4.",
+        "Rents fall again, economists say\r\n",
+    ],
+)
+def test_a_headline_attribution_is_not_flagged(text):
+    assert not _hits(text)
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        # The same frame in body prose, with a full stop, is the tell.
+        "Remote work boosts productivity, experts say.",
+        "Experts say remote work boosts productivity",
+        "Remote work, experts say, boosts productivity.",
+        "Remote work boosts productivity, experts argue",
+    ],
+)
+def test_the_body_attribution_still_is(text):
+    assert _hits(text)

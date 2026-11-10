@@ -1,0 +1,26 @@
+# Short messages, Slack replies and email one-liners.
+Sure! Here's the Zoom link.
+Running 10 min late, sorry.
+Can we push to 3?
+Not ready yet, but close.
+Sounds good, thanks!
+Here's the updated draft of the lease.
+Attached is the invoice for October.
+Quick question: is the deploy still on for tonight?
+Got it, will do.
+Fixed one, two to go.
+LGTM. Merging.
+Ping me when you're back.
+No rush on this.
+Out sick today, back tomorrow.
+Can you resend the file? The link expired.
+Thanks for the quick turnaround.
+Heads up: the printer on 3 is jammed again.
+Meeting moved to Thursday, same time.
+Happy birthday!! Hope it's a great one.
+Let me check and get back to you.
+Here's the thing: they still haven't paid October.
+Not urgent, but can you look today?
+Free tomorrow?
+Long story short, we're switching vendors.
+Not me, it was the cron job.

@@ -195,6 +195,12 @@ HARD_NEGATIVES = {
         "Looking ahead, x.\r\n\r\nThe next paragraph has content.",
         "Looking ahead, phase two opens on 3 March.",
         "Looking ahead, the vote is in March.",
+        # From the terse-register set (2026-11-09): a weekday or a relative
+        # day is as concrete as a month name.
+        "Looking ahead, the forecast calls for rain through Thursday.",
+        "Looking ahead, the site is down for maintenance tonight.",
+        "Looking ahead, tomorrow's session starts at nine.",
+        "Looking ahead, the trails close this weekend.",
         "As the plant continues to grow, move it to a larger pot.",
         "It remains to be seen whether the Senate will take up the bill.",
         "\"Only time will tell,\" the coach said.",
@@ -450,6 +456,11 @@ PATHOLOGICAL = [
     "One thing is clear: x. " * 4400,
     "One thing is clear: x.\n\n" * 4300,
     "It is as much about a as b. " * 3600,
+    # From the 2026-11-09 terse-register round: BS-062's date guard scanned to
+    # the end of the sentence and backtracked through every month and weekday
+    # name per candidate. 9.6 s at the 100k cap on main before the bound.
+    "Looking ahead, " * 6600,
+    ". Looking ahead, " * 5800,
 ]
 
 

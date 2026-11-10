@@ -1,0 +1,26 @@
+# Interface labels, buttons, errors and empty states.
+Forgot your password? Reset it here.
+Why am I seeing this ad?
+Not a member? Sign up.
+Save changes
+Your changes have been saved.
+Something went wrong. Try again.
+No results found.
+No messages yet.
+Are you sure you want to delete this file? This can't be undone.
+Password must be at least 12 characters.
+Upload failed: file is larger than 25 MB.
+Last edited 2 minutes ago.
+3 of 12 selected.
+Showing 1 to 20 of 148 results.
+Undo
+Copied!
+Connection lost. Reconnecting...
+Your session has expired. Please sign in again.
+Drag files here or click to browse.
+Unsaved changes will be lost.
+Need help? Contact support.
+Here's what's new in 4.2
+Not now
+Payment received. Receipt sent.
+At a glance

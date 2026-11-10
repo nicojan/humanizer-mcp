@@ -1,0 +1,23 @@
+# Plain figure captions, alt text and photo credits.
+Figure 3. Mean reaction time by condition, with 95 per cent confidence intervals.
+Table 2. Participant demographics.
+Fig. 1. Map of sampling sites along the Fraser River.
+Photo: City of Vancouver Archives.
+The north tower under construction, 1931.
+Left to right: Ana, Raj and Ming at the 2019 retreat.
+Screenshot of the settings page with dark mode turned on.
+A grey cat asleep on a stack of books.
+(a) Trial 1. (b) Trial 12.
+Source: Statistics Canada, Table 14-10-0287-01.
+Error bars show standard error.
+Courtesy of the artist.
+The dashboard after the redesign, in light mode.
+Map data © OpenStreetMap contributors.
+Detail of the mural on Commercial Drive.
+Drawing by the author.
+The same street in 1950 and today.
+Not to scale.
+Average monthly rainfall, 1991 to 2020.
+Image used with permission.
+Before and after.
+Top: 2019. Bottom: 2024.

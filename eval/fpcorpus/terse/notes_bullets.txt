@@ -1,0 +1,26 @@
+# Meeting notes, to-do lists and status updates.
+Action items: Sam to send the revised budget by Friday.
+Decision: go with vendor B.
+Blocked on legal review.
+Done: migrated the staging database.
+Next: load testing, then the security review.
+Venue booked. Caterer confirmed.
+Q3 hiring is frozen.
+Looking ahead: Q1 planning starts Jan 6.
+Cancelled Tue/Wed/Thu syncs (holiday week).
+Call the dentist. Renew passport. Pay hydro bill.
+Open question: who owns the onboarding docs?
+Risks: the vendor may not hit the March date.
+Still waiting on the quote from the plumber.
+Shipped the export fix to 20 per cent of users.
+Agenda: budget, hiring, office move.
+Notes from the call with the client.
+Out of scope for this sprint.
+Parking lot: rename the repo.
+Retro: standups ran long; try a 15-minute timer.
+Summary: on track for launch, two risks open.
+TL;DR: launch slips a week.
+Key takeaways: pricing page confusing, nobody found export.
+Bottom line: we need another engineer.
+Budget approved, contract signed.
+Q4: 18 hires, 3 departures.

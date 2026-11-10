@@ -1,0 +1,23 @@
+# Short method and results statements.
+Three groups (n = 20 each).
+No adverse events were reported in any of the five trials.
+All 10 chains converged (R-hat < 1.01).
+Participants were randomly assigned to one of two conditions.
+Samples were stored at -80°C until analysis.
+The difference was not significant (p = 0.21).
+Data are mean ± SD.
+Outliers beyond 3 SD were excluded.
+Response rate: 64 per cent.
+Missing data were handled by multiple imputation.
+All analyses used R 4.3.
+Two observers coded each video independently.
+Inter-rater agreement was high (κ = 0.86).
+The protocol was approved by the university ethics board.
+Sample size was set in advance at 120.
+Results held after controlling for age and income.
+Effect sizes are reported as Cohen's d.
+Raw data and code are available on request.
+Model fit was poor for the youngest cohort.
+We report all measures, conditions and exclusions.
+Not significant after correction (p = .08).
+Primary outcome: HbA1c at 12 weeks.

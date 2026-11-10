@@ -110,11 +110,48 @@ def tier2_sweep(hits: HitsFn) -> tuple[int, float, dict[str, int]]:
     return total, rate_per_10k(total), per_work
 
 
+# The terse-register hard-negative set (2026-11-09). Short functional writing
+# the two tiers cannot show: dosing labels, menus, listings, box scores,
+# headlines, UI strings, captions, notes and signs. It is committed, written
+# for the purpose rather than excerpted, and a standing bar rather than a tier:
+# no structural rule may fire on any line. See eval/fpcorpus/terse/README.md.
+TERSE_DIR = _REPO_ROOT / "eval" / "fpcorpus" / "terse"
+
+
+def terse_files() -> list[Path]:
+    return sorted(TERSE_DIR.glob("*.txt"))
+
+
+def terse_lines() -> list[tuple[str, str]]:
+    """(register, line) for every non-comment, non-blank line in the set."""
+    out: list[tuple[str, str]] = []
+    for path in terse_files():
+        for raw in path.read_text(encoding="utf-8").splitlines():
+            line = raw.strip()
+            if line and not line.startswith("#"):
+                out.append((path.stem, line))
+    return out
+
+
+def terse_findings(hits: HitsFn) -> list[tuple[str, str, object]]:
+    """Every (register, line, hit) where `hits` fires on a single line. Each line
+    is checked on its own, because each is a complete text in its register."""
+    return [(reg, line, hit) for reg, line in terse_lines() for hit in hits(line)]
+
+
+def assert_terse_clear(hits: HitsFn, rule: str) -> None:
+    """Terse-register bar: `rule` must return no hits on any line."""
+    found = terse_findings(hits)
+    assert not found, f"{rule} fires on the terse-register set: {found[:5]}"
+
+
 __all__ = [
     "TIER1_DIR",
     "TIER2_DIR",
     "TIER2_MAX_RATE",
     "TIER2_SENTENCES",
+    "TERSE_DIR",
+    "assert_terse_clear",
     "assert_tier1_clear",
     "rate_per_10k",
     "tier1_available",
@@ -124,4 +161,7 @@ __all__ = [
     "tier2_files",
     "tier2_sweep",
     "tier2_within_bar",
+    "terse_files",
+    "terse_findings",
+    "terse_lines",
 ]
