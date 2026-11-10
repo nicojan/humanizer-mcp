@@ -482,6 +482,13 @@
       "before": "Certainly! Here is a revised version of the history section. The tower's early construction is not widely documented, and claims about its foundations should be treated as local tradition rather than as engineering fact.",
       "after": "Local histories say the tower went up in the 1880s. No construction records survive.",
       "explanation": "Two kinds of residue: assistant meta-talk addressed to the requester (BS-058), and a corrective disclaimer that guards against a reading nobody proposed (BS-061). State what is known, and name a missing source only when its absence matters."
+    },
+    {
+      "id": "AP-069",
+      "category": "structural",
+      "before": "One count, four moments",
+      "after": "The badge turns red when a message arrives and grey once you've seen it.",
+      "explanation": "A caption built from two number phrases, one set against many. It sounds designed and tells the reader nothing they can picture. Say what happens on screen and to whom. Not mechanized: the same shape is ordinary in dosing, box scores and listings ('Two adults, one child.'), so it is a self_review item (performative framing)."
     }
   ]
 }
