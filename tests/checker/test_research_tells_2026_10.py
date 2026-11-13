@@ -425,14 +425,16 @@ def test_round_examples_exist_and_fire():
 def test_caveat_records_the_default_sample_finding():
     caveats = {c["id"]: c for c in json.loads((DATA / "caveats.json").read_text())["core_caveats"]}
     entry = caveats["default_model_prose_mostly_passes"]
-    assert "2026-10-30" in entry["explanation"] and "21 of the 32" in entry["explanation"]
+    # The measurement is maintainer history; the served text keeps the advice.
+    assert "2026-10-30" in entry["history"] and "21 of the 32" in entry["history"]
+    assert "self-review rubric" in entry["explanation"]
 
 
 def test_the_corrected_claims_stay_corrected():
     """Three statements in the data contradicted the literature or this
     server's own detectors until 2026-10-30. Pin the corrections."""
     lex = json.loads((DATA / "lexical_patterns.json").read_text())
-    adverbs = lex["adverb_patterns"]["human_adverbs_to_reintroduce"]
+    adverbs = lex["adverb_patterns"]["human_adverbs_to_keep"]
     for word in ("quietly", "actually", "honestly"):
         assert word not in adverbs, word
     assert "Human text scores higher" not in json.dumps(lex["vocabulary_diversity"])

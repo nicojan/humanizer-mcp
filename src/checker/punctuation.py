@@ -196,9 +196,10 @@ def find_comma_splices(text: str) -> list[dict]:
                 "excerpt": excerpt(text, ci, ci + 1),
                 "fix": (
                     "Two independent clauses are joined by only a comma. Use a "
-                    "period (two sentences), a semicolon, or a colon; or add a "
-                    "coordinating conjunction (and, but, so) after the comma. "
-                    "If the splice is a deliberate stylistic choice, justify it."
+                    "period (two sentences), or a semicolon when the clauses are "
+                    "closely joined; or add a coordinating conjunction (and, but, "
+                    "so) after the comma. If the splice is a deliberate stylistic "
+                    "choice, justify it."
                 ),
             }
         )

@@ -470,9 +470,13 @@ def test_bs066_is_budget_only_with_a_budget_of_one():
     assert budgets[BS066] == 1
 
 
-def test_bs066_text_says_it_counts_every_form_of_the_flip():
+def test_bs066_text_says_it_counts_both_forms_of_the_flip():
+    # Scoped to what the regex counts: a bare-noun flip ("They aren't
+    # competitors. They're collaborators.") is not counted, so "every form"
+    # overclaimed (Task 11).
     bs066 = next(s for s in load_json("banned_structures.json")["structures"] if s["id"] == BS066)
-    assert "every form" in bs066["description"].lower()
+    assert "contracted and uncontracted" in bs066["description"]
+    assert "every form" not in bs066["description"].lower()
     assert "contracted and semicolon forms" not in bs066["description"]
     assert "real" not in bs066["fix"].split()
 

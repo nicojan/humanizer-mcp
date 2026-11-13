@@ -22,7 +22,7 @@
         },
         "sentiment_tone": {
           "aggressiveness": "low to moderate",
-          "notes": "Academic writing is conventionally more neutral, so the neutral bias is less of a signal. However, human academic writers still express evaluation: 'This finding is surprising,' 'The methodology is questionable,' 'The effect was larger than we expected.' Reintroduce evaluative language where the author would naturally judge. Maintain author stance through hedging that signals expertise ('This likely reflects...') rather than AI-formulaic hedging ('Generally speaking...')."
+          "notes": "Academic writing is conventionally more neutral, so the neutral bias is less of a signal. However, human academic writers still express evaluation: 'This finding is surprising,' 'The methodology is questionable,' 'The effect was larger than we expected.' Keep the evaluations the source or the author makes, and add no judgment the source lacks (absolute_rules AR-001). Maintain author stance through hedging that signals expertise ('This likely reflects...') rather than AI-formulaic hedging ('Generally speaking...')."
         },
         "discourse_cohesion": {
           "aggressiveness": "moderate",
@@ -30,7 +30,7 @@
         },
         "psycholinguistic_texture": {
           "aggressiveness": "low",
-          "notes": "Academic writing is more polished than other types, so many cognitive load artifacts get edited out naturally. Focus on: uneven idea development (more space for important findings), field-specific vocabulary that reflects genuine expertise, and occasional evaluative language that signals the author's judgment."
+          "notes": "Academic writing is more polished than other types, so many cognitive load artifacts get edited out naturally. Focus on: uneven idea development (more space for important findings), field-specific vocabulary that reflects the author's expertise, and the evaluative language the source gives."
         }
       },
       "special_considerations": [
@@ -47,7 +47,7 @@
       "layer_adjustments": {
         "lexical_patterns": {
           "aggressiveness": "high",
-          "notes": "Marketing copy is where AI buzzwords are most damaging. 'Innovative,' 'cutting-edge,' 'seamless,' 'game-changing,' 'transformative': these are content-free filler in marketing. Replace with specific claims: not 'innovative technology' but 'the first system that can X.' Remove all flagged transitions. Keep the hedges the source has, and swap a formulaic one for a plain word that marks the same limit."
+          "notes": "Marketing copy is where AI buzzwords are most damaging. 'Innovative,' 'cutting-edge,' 'seamless,' 'game-changing,' 'transformative': these are content-free filler in marketing. Replace each with the specific claim the source makes, such as 'the first system that can X' in place of 'innovative technology'. Remove all flagged transitions. Keep the hedges the source has, and swap a formulaic one for a plain word that marks the same limit."
         },
         "structural_patterns": {
           "aggressiveness": "high",
@@ -55,7 +55,7 @@
         },
         "sentiment_tone": {
           "aggressiveness": "high",
-          "notes": "Marketing copy should have clear emotional valence: enthusiasm, urgency, confidence, empathy. The AI neutral tone is the biggest problem here. But avoid uniform enthusiasm; vary the emotional register. A moment of empathy ('We know this is frustrating') before the pitch reads as human."
+          "notes": "Marketing copy should have clear emotional valence: enthusiasm, urgency, confidence, empathy. The AI neutral tone is the biggest problem here. Uniform enthusiasm reads as generated, so keep the shifts in register the brief or the source calls for, such as a moment of empathy ('We know this is frustrating') before the pitch."
         },
         "discourse_cohesion": {
           "aggressiveness": "high",
@@ -125,7 +125,7 @@
         },
         "discourse_cohesion": {
           "aggressiveness": "moderate",
-          "notes": "Replace formulaic transitions with natural ones. Let some paragraphs start without a transition. Use conversational bridges where appropriate."
+          "notes": "Replace formulaic transitions with plain ones. Let some paragraphs start without a transition. Keep a conversational bridge the source has, and add none it lacks."
         },
         "psycholinguistic_texture": {
           "aggressiveness": "moderate",
@@ -141,7 +141,7 @@
     "creative": {
       "label": "Creative and literary prose",
       "description": "Fiction, short stories, personal essays, narrative non-fiction, poetry prose, and any text where voice, rhythm, and originality are the primary goals. This is the content type where AI is most detectable: LLM outputs cluster tightly while human texts scatter broadly in stylometric analysis.",
-      "perplexity_target": "high",
+      "perplexity_target": "set by the narrator's world and vocabulary; no number to aim for",
       "burstiness_target": "set by the scene, short in tension and long in reflection",
       "layer_adjustments": {
         "lexical_patterns": {
@@ -234,7 +234,7 @@
         }
       },
       "special_considerations": [
-        "Run the check as content_type 'resume'. Under 'prose' the Skills block trips rule-of-three density and short bullets trip burstiness, and both findings are wrong for the format.",
+        "Run the check as content_type 'resume'. Under 'prose' the Skills block trips rule-of-three density. The length numbers do not apply to short bullets either. The finding is wrong for the format, and the numbers are not a target.",
         "A cover letter is prose, not a résumé: check it as 'prose' and read the reader-contact self-review item.",
         "Keep spelling consistent with the target market (Canadian 'colour', 'centre'), and do not mirror a job posting's spelling over your own document's."
       ]

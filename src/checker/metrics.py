@@ -17,17 +17,6 @@ SEGMENT_INTERNAL_STDEV_MAX = 3.0
 MIN_SENTENCES_PER_SEGMENT = 3
 MIN_SEGMENTS = 3
 
-_TARGETS = {
-    "prose": 6.0,
-    "general_prose": 6.0,
-    "general": 6.0,
-    "academic": 5.0,
-    "marketing": 7.0,
-    "tech": 4.0,
-    "technical": 4.0,
-}
-
-
 # Content types whose caller declares the input is labels, worksheet cells or
 # notes, where sentence-length variance is undefined or deliberately flat
 # (caveats.metrics_do_not_apply_to_label_text). An explicit opt-in, never
@@ -49,8 +38,13 @@ def list_measures_apply(content_type: str | None) -> bool:
     return (content_type or "prose").lower() not in RESUME_TYPES
 
 
-def target_stdev(content_type: str | None) -> float:
-    return _TARGETS.get((content_type or "prose").lower(), 6.0)
+def sentence_length_stats(text: str) -> dict:
+    """Raw sentence-length numbers. Reported as measured; no target, no flag."""
+    full = burstiness(text, 0.0)
+    return {
+        k: v for k, v in full.items()
+        if k not in ("burstiness_target_stdev", "burstiness_flag")
+    }
 
 
 def burstiness(text: str, target: float) -> dict:

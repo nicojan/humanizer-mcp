@@ -20,7 +20,7 @@ const HARD_PHRASES: string[] = (DATA as any).hard_phrases;
 const REGEX_STRUCTURES: RegexStructure[] = (DATA as any).regex_structures;
 const FLAGGED_TERMS: FlaggedTerm[] = (DATA as any).flagged_terms;
 const CRED: any = (DATA as any).credibility;
-const SELF_REVIEW: string[] = (DATA as any).self_review;
+const SELF_REVIEW_RAW: unknown = (DATA as any).self_review;
 const TERMS_OF_ART: string[] = (DATA as any).terms_of_art ?? [];
 
 // ---------------------------------------------------------------------------
@@ -239,34 +239,204 @@ function splitSentences(text: string): string[] {
 // ---------------------------------------------------------------------------
 // emdash.py
 // ---------------------------------------------------------------------------
+// U+2014 fires everywhere, inside code included. A hyphen run inside code
+// (closed fenced blocks, same-line inline backtick spans) is code and is
+// skipped. Outside code, a double hyphen that begins a lowercase command-line
+// flag ('--force') is skipped; '--Dana' and '--No, I said.' are typed dashes.
 const EMDASH_FIX =
-  "Replace with a semicolon, colon, or period (two sentences); or parentheses " +
-  "for an aside. Use a comma only when it does not join two independent clauses " +
-  "— a comma between independent clauses is a comma splice (AR-003).";
+  "Replace it with a period (two sentences), or a semicolon when the two " +
+  "clauses are closely joined; use commas or parentheses for an aside. If " +
+  "the dash set up a reveal, put the point first. A comma between two " +
+  "independent clauses is a comma splice (AR-003).";
 
-// A line made only of hyphens, pipes, colons and spaces is markdown structure
-// (a table separator '|---|---|', a setext underline, a '---' horizontal rule
-// or front-matter fence), never an em-dash digraph. Checking the whole line
-// keeps a genuine inline 'word--word' flagged while markdown chrome passes.
-const STRUCTURAL_LINE = /^[\s\-|:]+$/;
+// A line made only of hyphens, pipes, colons and whitespace is markdown
+// structure (a table separator '|---|---|', a setext underline, a '---'
+// horizontal rule or front-matter fence), never an em-dash digraph. The class
+// spells out Python's str whitespace (JS \s lacks \x1c-\x1f and \x85, and has
+// U+FEFF, which Python does not).
+const STRUCTURAL_LINE =
+  /^[\t\n\v\f\r \x1c-\x1f\x85\xa0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\-|:]+$/;
+const FENCE_OPEN = /^ {0,3}(`{3,}|~{3,})/;
+const BACKTICK_RUN = /`+/g;
+const FLAG_PREFIX = " \t\r\n\f\v`(";
+// A quote before '--' is flag context only when the whole quoted thing is the
+// flag: the token after the hyphens runs straight to the matching closing
+// quote ('"--verbose"'). Otherwise '"--and when' is a typed em-dash.
+const CLOSING_QUOTES = new Map<string, string>([
+  ['"', '"\u201d'],
+  ["'", "'\u2019"],
+  ["\u201c", "\u201d"],
+  ["\u2018", "\u2019"],
+]);
+const FLAG_TOKEN = /[A-Za-z][A-Za-z0-9_-]*/y;
+
+type Span = [number, number];
+
+/** Python str.splitlines(keepends=True): \n, \r\n, \r, \v, \f, \x1c-\x1e, \x85, U+2028, U+2029. */
+function splitLinesKeepEnds(text: string): string[] {
+  const out: string[] = [];
+  const sep = /\r\n|[\n\r\v\f\x1c\x1d\x1e\x85\u2028\u2029]/g;
+  let pos = 0;
+  let m: RegExpExecArray | null;
+  while ((m = sep.exec(text)) !== null) {
+    out.push(text.slice(pos, m.index + m[0].length));
+    pos = m.index + m[0].length;
+  }
+  if (pos < text.length) out.push(text.slice(pos));
+  return out;
+}
+
+/** Python line.rstrip("\r\n"). */
+function rstripCrLf(s: string): string {
+  let b = s.length;
+  while (b > 0 && (s[b - 1] === "\r" || s[b - 1] === "\n")) b--;
+  return s.slice(0, b);
+}
+
+function inlineSpans(line: string, base: number): Span[] {
+  const spans: Span[] = [];
+  let openLen = 0;
+  let openAt = 0;
+  for (const m of finditer(BACKTICK_RUN, line)) {
+    const n = m.end - m.index;
+    if (openLen === 0) {
+      openLen = n;
+      openAt = m.index;
+    } else if (n === openLen) {
+      spans.push([base + openAt, base + m.end]);
+      openLen = 0;
+    }
+  }
+  return spans;
+}
+
+/** [char, length] when the line opens a fence. A backtick fence whose info
+ * string holds a backtick is not a fence (CommonMark); it is an inline span. */
+function fenceOpener(line: string): [string, number] | null {
+  const m = FENCE_OPEN.exec(line);
+  if (!m) return null;
+  const run = m[1];
+  if (run[0] === "`" && line.slice(m[0].length).includes("`")) return null;
+  return [run[0], run.length];
+}
+
+/** Length of the fence run when the line is a possible closer for `char`
+ * (only that char, 0-3 spaces of indent, trailing spaces allowed), else 0.
+ * Spaces only: a closer followed by a tab does not close. */
+function closerLength(line: string, char: string): number {
+  const stripped = stripChars(line, " ");
+  let lead = 0;
+  while (lead < line.length && line[lead] === " ") lead++;
+  if (lead > 3 || !stripped) return 0;
+  for (let i = 0; i < stripped.length; i++) if (stripped[i] !== char) return 0;
+  return stripped.length;
+}
+
+function findCloser(lines: string[], after: number, char: string, length: number): number {
+  for (let j = after; j < lines.length; j++) {
+    if (closerLength(rstripCrLf(lines[j]), char) >= length) return j;
+  }
+  return -1;
+}
+
+/** For each fence char, out[c][i] is the longest possible closer on any line
+ * >= i. One backward pass; lets an opener skip a search that cannot succeed,
+ * which keeps the whole scan linear. */
+function suffixMaxClosers(lines: string[]): Record<string, number[]> {
+  const out: Record<string, number[]> = {
+    "`": new Array(lines.length + 1).fill(0),
+    "~": new Array(lines.length + 1).fill(0),
+  };
+  for (let i = lines.length - 1; i >= 0; i--) {
+    const line = rstripCrLf(lines[i]);
+    for (const c of ["`", "~"]) out[c][i] = Math.max(out[c][i + 1], closerLength(line, c));
+  }
+  return out;
+}
+
+/** Half-open [start, end) ranges of closed fenced blocks and same-line inline
+ * spans. A fence with no closing line hides nothing. */
+function codeSpans(text: string): Span[] {
+  const lines = splitLinesKeepEnds(text);
+  const offsets = [0];
+  for (const raw of lines) offsets.push(offsets[offsets.length - 1] + raw.length);
+  const longestAfter = suffixMaxClosers(lines);
+  const spans: Span[] = [];
+  let i = 0;
+  while (i < lines.length) {
+    const line = rstripCrLf(lines[i]);
+    const opener = fenceOpener(line);
+    let closer = -1;
+    // Only search when a long enough closer exists below; the search then
+    // succeeds and consumes the block, so no line is scanned twice.
+    if (opener && longestAfter[opener[0]][i + 1] >= opener[1]) {
+      closer = findCloser(lines, i + 1, opener[0], opener[1]);
+    }
+    if (closer === -1) {
+      spans.push(...inlineSpans(line, offsets[i]));
+      i += 1;
+    } else {
+      spans.push([offsets[i], offsets[closer + 1]]);
+      i = closer + 1;
+    }
+  }
+  return spans;
+}
+
+/** '--' preceded by start/space/backtick/'(' (or a quote enclosing the whole
+ * flag) and followed by a lowercase ASCII letter. */
+function isCliFlag(text: string, start: number): boolean {
+  const after = start + 2;
+  if (!(after < text.length && text[after] >= "a" && text[after] <= "z")) return false;
+  if (start === 0 || FLAG_PREFIX.includes(text[start - 1])) return true;
+  const closers = CLOSING_QUOTES.get(text[start - 1]);
+  if (closers === undefined) return false;
+  FLAG_TOKEN.lastIndex = after;
+  const token = FLAG_TOKEN.exec(text);
+  if (!token) return false;
+  const end = after + token[0].length;
+  return end < text.length && closers.includes(text[end]);
+}
+
+/** Python bisect_right over a sorted array of numbers. */
+function bisectRight(a: number[], x: number): number {
+  let lo = 0, hi = a.length;
+  while (lo < hi) {
+    const mid = (lo + hi) >> 1;
+    if (x < a[mid]) hi = mid; else lo = mid + 1;
+  }
+  return lo;
+}
+
+function inSpans(starts: number[], spans: Span[], offset: number): boolean {
+  const i = bisectRight(starts, offset) - 1;
+  return i >= 0 && offset < spans[i][1];
+}
 
 function isMarkdownStructure(text: string, offset: number): boolean {
-  const start = text.lastIndexOf("\n", offset - 1) + 1;
+  const start = offset === 0 ? 0 : text.lastIndexOf("\n", offset - 1) + 1;
   const end = text.indexOf("\n", offset);
   const line = end === -1 ? text.slice(start) : text.slice(start, end);
   return STRUCTURAL_LINE.test(line);
 }
 
 function findEmdashes(text: string): Finding[] {
-  return finditer(/—|-{2,}/g, text)
-    .filter((m) => !isMarkdownStructure(text, m.index))
-    .map((m) => ({
+  const spans = codeSpans(text);
+  const starts = spans.map(([s]) => s);
+  const out: Finding[] = [];
+  for (const m of finditer(/—|-{2,}/g, text)) {
+    if (m.text !== "—" && inSpans(starts, spans, m.index)) continue;
+    if (m.text === "--" && isCliFlag(text, m.index)) continue;
+    if (isMarkdownStructure(text, m.index)) continue;
+    out.push({
       rule: "AR-002",
       type: "em_dash",
       offset: m.index,
       excerpt: excerpt(text, m.index, m.end),
       fix: EMDASH_FIX,
-    }));
+    });
+  }
+  return out;
 }
 
 // ---------------------------------------------------------------------------
@@ -394,9 +564,9 @@ function spanHasFiniteVerb(span: string): boolean {
 
 const COMMA_SPLICE_FIX =
   "Two independent clauses are joined by only a comma. Use a period (two " +
-  "sentences), a semicolon, or a colon; or add a coordinating conjunction " +
-  "(and, but, so) after the comma. If the splice is a deliberate stylistic " +
-  "choice, justify it.";
+  "sentences), or a semicolon when the clauses are closely joined; or add a " +
+  "coordinating conjunction (and, but, so) after the comma. If the splice is " +
+  "a deliberate stylistic choice, justify it.";
 
 function findCommaSplices(text: string): Finding[] {
   const out: Finding[] = [];
@@ -597,7 +767,7 @@ function copulaMaximCloser(text: string): Finding[] {
       confidence: "low",
       offset: sStart,
       excerpt: excerpt(text, sStart, sStart + last.length),
-      fix: "End on the concrete thing, not a distilled lesson about it. If the maxim is earned, attach it to a specific action rather than floating it as a closer.",
+      fix: "End on the concrete thing the passage is about. If the maxim is earned, attach it to a specific action rather than floating it as a closer.",
     });
   }
   return out;
@@ -680,7 +850,7 @@ function thisChain(text: string): Finding[] {
         confidence: "medium",
         offset: start,
         excerpt: excerpt(text, start, start + first.length),
-        fix: "Leave causal links implicit; vary sentence openings.",
+        fix: "Name what each 'This' refers to, or join the sentences so one leads into the next.",
       });
     }
   }
@@ -859,20 +1029,17 @@ function findCredibilityInsistence(text: string, config: any): Finding[] {
     offset: off,
     excerpt: excerpt(text, off, off + dominant.length),
     fix:
-      "You are repeatedly insisting the work is real/actual/genuine " +
-      `('${dominant}' x${dc}; ${total} across the set). A human rarely needs ` +
-      "to vouch that their own account is real. Cut the assertions and let the " +
-      "specifics carry the credibility; keep at most one if a contrast genuinely needs it.",
+      "The text keeps vouching for its own account " +
+      `('${dominant}' x${dc}; ${total} across the set), ` +
+      "which a writer rarely needs to do. Cut the " +
+      "assertions and let the specifics carry the credibility; keep " +
+      "at most one where a contrast needs it.",
   }];
 }
 
 // ---------------------------------------------------------------------------
 // metrics.py
 // ---------------------------------------------------------------------------
-const TARGETS: Record<string, number> = {
-  prose: 6.0, general_prose: 6.0, general: 6.0, academic: 5.0,
-  marketing: 7.0, tech: 4.0, technical: 4.0,
-};
 const SEGMENT_MEAN_SPREAD_MAX = 2.5;
 const SEGMENT_INTERNAL_STDEV_MAX = 3.0;
 const MIN_SENTENCES_PER_SEGMENT = 3;
@@ -896,11 +1063,8 @@ function lengthMetricsApply(contentType: string | null | undefined): boolean {
   return !SHORT_COPY_TYPES.has((contentType ?? "prose").toLowerCase());
 }
 
-function targetStdev(contentType: string | null | undefined): number {
-  return TARGETS[(contentType ?? "prose").toLowerCase()] ?? 6.0;
-}
-
-function burstiness(text: string, target: number): any {
+/** Raw sentence-length numbers (sentence_length_stats): no target, no flag. */
+function sentenceLengthStats(text: string): any {
   const lengths = splitSentences(text).map((s) => wordCount(s));
   if (lengths.length < 2) {
     return {
@@ -909,8 +1073,6 @@ function burstiness(text: string, target: number): any {
       length_stdev: 0.0,
       min: lengths.length ? Math.min(...lengths) : 0,
       max: lengths.length ? Math.max(...lengths) : 0,
-      burstiness_target_stdev: target,
-      burstiness_flag: false,
     };
   }
   const sd = pstdev(lengths);
@@ -920,8 +1082,6 @@ function burstiness(text: string, target: number): any {
     length_stdev: pyRound(sd, 1),
     min: Math.min(...lengths),
     max: Math.max(...lengths),
-    burstiness_target_stdev: target,
-    burstiness_flag: sd < target,
   };
 }
 
@@ -951,15 +1111,107 @@ function segmentUniformity(text: string): any {
 }
 
 // ---------------------------------------------------------------------------
+// content_types.py + rubric.py + loader.load_self_review (runtime path)
+// ---------------------------------------------------------------------------
+const CONTENT_TYPE_ALIASES = new Map<string, string>([
+  ["prose", "general_prose"],
+  ["general_prose", "general_prose"],
+  ["general", "general_prose"],
+  ["tech", "technical"],
+  ["technical", "technical"],
+  ["academic", "academic"],
+  ["marketing", "marketing"],
+  ["creative", "creative"],
+  ["case_study", "case_study"],
+  ["case-study", "case_study"],
+  ["case study", "case_study"],
+  ["portfolio", "case_study"],
+  ["product", "case_study"],
+  ["resume", "resume"],
+  ["résumé", "resume"],
+  ["cv", "resume"],
+  ["label", "label"],
+  ["labels", "label"],
+  ["notes", "label"],
+]);
+
+/** The canonical name for ct, or null when ct is missing or unknown. */
+function canonicalContentType(ct: string | null | undefined): string | null {
+  if (ct === null || ct === undefined) return null;
+  return CONTENT_TYPE_ALIASES.get(ct.trim().toLowerCase()) ?? null;
+}
+
+export type RubricMode = "short" | "full";
+
+interface RubricItem { id: string; short: string; detail: string; applies_to: string[]; }
+
+function nonEmptyString(v: unknown): v is string {
+  return typeof v === "string" && v.trim() !== "";
+}
+
+function validRubricItem(item: any): item is RubricItem {
+  return (
+    item !== null && typeof item === "object" && !Array.isArray(item) &&
+    nonEmptyString(item.id) && nonEmptyString(item.short) && nonEmptyString(item.detail) &&
+    Array.isArray(item.applies_to) && item.applies_to.length > 0 &&
+    item.applies_to.every((a: unknown) => typeof a === "string")
+  );
+}
+
+/**
+ * Runtime loader, matching loader.load_self_review: degrades rather than
+ * failing a check. A legacy string item becomes an all-scoped object and any
+ * other malformed item is skipped. A container that is not an array is an
+ * error, raised when a check runs (never read as a string of characters).
+ */
+function loadSelfReview(raw: unknown): RubricItem[] {
+  if (!Array.isArray(raw)) {
+    throw new Error("self_review needs an items list");
+  }
+  const out: RubricItem[] = [];
+  for (const item of raw) {
+    if (typeof item === "string" && item.trim()) {
+      const text = item.trim();
+      out.push({ id: "legacy", short: text, detail: text, applies_to: ["all"] });
+    } else if (validRubricItem(item)) {
+      out.push(item);
+    }
+  }
+  return out;
+}
+
+function rubricApplies(item: RubricItem, canonical: string | null): boolean {
+  if (canonical === null) return true; // a missing or unknown type gets every item
+  return item.applies_to.includes("all") || item.applies_to.includes(canonical);
+}
+
+/** Each applicable item's `short` line, or its `detail` when mode is "full". */
+function rubricLines(contentType: string | null | undefined, mode: RubricMode): string[] {
+  if (mode !== "short" && mode !== "full") {
+    throw new Error(`rubric mode must be one of short, full, got ${JSON.stringify(mode)}`);
+  }
+  const canonical = canonicalContentType(contentType);
+  const field = mode === "short" ? "short" : "detail";
+  return loadSelfReview(SELF_REVIEW_RAW)
+    .filter((item) => rubricApplies(item, canonical))
+    .map((item) => item[field]);
+}
+
+// ---------------------------------------------------------------------------
 // report.py + __init__.py orchestration
 // ---------------------------------------------------------------------------
 const NOTE =
   "prohibitions_clear means no hard prohibitions remain. It does NOT mean humanization is complete.";
 const NEXT_ACTION =
-  "Resolve every hard_violation (required). Rewrite or justify each must_clear " +
-  "item, and re-run humanizer_check_text until prohibitions_clear is true. Then " +
-  "run the self-review rubric (manual_review) against your own draft — rate each " +
-  "item and rewrite every weak spot — before returning.";
+  "Resolve every hard_violation. For each must_clear item, rewrite only the " +
+  "flagged span and keep the rest of the draft as it is, or justify the item. " +
+  "Re-run humanizer_check_text; stop after two fix rounds and justify any " +
+  "must_clear item left. A hard_violation is never justified, so keep fixing " +
+  "until prohibitions_clear is true. Then run one last check on the assembled " +
+  "document with rubric=\"full\" " +
+  "and do the self-review against your draft, changing only the spans an item " +
+  "points to. If the self-review changed anything, run humanizer_check_text " +
+  "once more and confirm prohibitions_clear is true before returning.";
 
 export interface Report {
   prohibitions_clear: boolean;
@@ -971,7 +1223,11 @@ export interface Report {
   next_action: string;
 }
 
-export function runChecks(text: string, contentType?: string | null): Report {
+export function runChecks(
+  text: string,
+  contentType?: string | null,
+  rubric: RubricMode = "short",
+): Report {
   const hard: Finding[] = findEmdashes(text);
   hard.push(...findStackedMarks(text));
   for (const [phrase, off] of findPhrases(text, HARD_PHRASES)) {
@@ -998,22 +1254,11 @@ export function runChecks(text: string, contentType?: string | null): Report {
   const must: Finding[] = rawMust.filter((f: any) => !(f.id && BUDGET_ONLY.has(f.id)));
   must.push(...overruns);
 
-  // Under content_type "label"/"notes" the numbers are still reported, but the
-  // flags are cleared so no consumer reads them as a failure.
+  // Sentence-length numbers are reported, never turned into a finding or a
+  // target. Under content_type "label"/"notes"/"resume" they are marked as not
+  // applying so no consumer reads them as a failure.
   const applies = lengthMetricsApply(contentType);
-  const rawMetrics = burstiness(text, targetStdev(contentType));
-  const metrics: any = {
-    ...rawMetrics,
-    burstiness_flag: applies && rawMetrics.burstiness_flag,
-    length_metrics_apply: applies,
-  };
-  if (metrics.burstiness_flag) {
-    must.push({
-      type: "burstiness",
-      detail: `low sentence-length variance (stdev ${pyFloatStr(metrics.length_stdev)} < target ${pyFloatStr(metrics.burstiness_target_stdev)})`,
-      fix: "Vary sentence lengths: mix short and long, add a fragment or a longer multi-clause sentence.",
-    });
-  }
+  const metrics: any = { ...sentenceLengthStats(text), length_metrics_apply: applies };
 
   const rawSegments = segmentUniformity(text);
   const segments = { ...rawSegments, uniformity_flag: applies && rawSegments.uniformity_flag };
@@ -1022,7 +1267,7 @@ export function runChecks(text: string, contentType?: string | null): Report {
     must.push({
       type: "segment_uniformity",
       detail: `style is flat across ${segments.segment_count} sections (mean sentence-length spread ${pyFloatStr(segments.segment_mean_spread)} words)`,
-      fix: "Humans modulate style between a document's sections; LLMs hold one flat fingerprint throughout. Make one section terse and another more flowing, varying rhythm and sentence length section to section. Or justify if the format genuinely requires uniform sections.",
+      fix: "Every section reads in the same rhythm and sentence length, which can mean the text was written to one template. Check each section against its own job and let its texture follow that job. Do not make sections differ for contrast. If the format needs uniform sections, say so and leave them.",
     });
   }
 
@@ -1032,7 +1277,7 @@ export function runChecks(text: string, contentType?: string | null): Report {
     hard_violations: hard,
     must_clear: must,
     metrics,
-    manual_review: SELF_REVIEW,
+    manual_review: rubricLines(contentType, rubric),
     next_action: NEXT_ACTION,
   };
 }
@@ -1040,7 +1285,7 @@ export function runChecks(text: string, contentType?: string | null): Report {
 // ---------------------------------------------------------------------------
 // UI helpers: compute the inline highlight span for a finding, using the exact
 // same patterns the detectors use. Document-level findings (rule-of-three,
-// credibility, burstiness, segment uniformity, heuristic structures) return
+// credibility, segment uniformity, heuristic structures) return
 // null and are shown in the findings list without an inline mark.
 // ---------------------------------------------------------------------------
 export function spanOf(text: string, f: any): [number, number] | null {

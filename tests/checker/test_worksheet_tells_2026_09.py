@@ -359,10 +359,14 @@ def test_rules_are_checklist_never_hard():
 
 
 def test_caveat_records_the_worksheet_finding_with_its_date():
-    caveats = {c["id"]: c for c in json.loads((DATA / "caveats.json").read_text())["core_caveats"]}
-    entry = caveats["worksheet_cells_hide_semantic_tells"]
-    assert "2026-09-29" in entry["explanation"]
-    assert "BS-052" in entry["explanation"]
+    data = json.loads((DATA / "caveats.json").read_text())
+    served = {c["id"]: c for c in data["core_caveats"]}["worksheet_cells_hide_semantic_tells"]
+    notes = {c["id"]: c for c in data["maintainer_notes"]}["worksheet_cells_hide_semantic_tells"]
+    # The served caveat keeps the families and the rule ids; the dated
+    # measurement half lives in maintainer_notes and is never served.
+    assert "BS-052" in served["explanation"]
+    assert "2026-09-29" not in served["explanation"]
+    assert "2026-09-29" in notes["explanation"]
 
 
 # ---------------------------------------------------------------------------
@@ -375,9 +379,14 @@ FLAT_CELLS = (
 )
 
 
-def test_prose_still_flags_flat_worksheet_cells():
-    types = {m.get("type") for m in run_checks(FLAT_CELLS, "prose")["must_clear"]}
-    assert "burstiness" in types
+def test_prose_reports_flat_worksheet_cells_as_a_number_only():
+    """Burstiness is no longer a finding in any content type; the stdev is
+    still reported."""
+    report = run_checks(FLAT_CELLS, "prose")
+    types = {m.get("type") for m in report["must_clear"]}
+    assert "burstiness" not in types
+    assert report["metrics"]["length_stdev"] < 6.0
+    assert report["metrics"]["length_metrics_apply"] is True
 
 
 @pytest.mark.parametrize("content_type", ["label", "notes", "LABEL"])
@@ -401,7 +410,7 @@ def test_label_content_type_also_silences_segment_uniformity():
     label = run_checks(SECTIONED_FLAT, "label")
     assert "segment_uniformity" not in {m.get("type") for m in label["must_clear"]}
     assert label["metrics"]["segment_variation"]["uniformity_flag"] is False
-    assert label["metrics"]["burstiness_flag"] is False
+    assert "burstiness_flag" not in label["metrics"]
 
 
 def test_label_content_type_keeps_every_other_layer():

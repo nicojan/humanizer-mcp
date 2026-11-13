@@ -3,7 +3,7 @@
     "layer": "discourse_cohesion",
     "priority": 2,
     "description": "Rules for varying transitions, discourse markers, and cohesive devices. AI text relies heavily on formulaic connective tissue and uses discourse markers less frequently and more repetitively than human text.",
-    "usage": "Fourth pass, after sentiment. Call humanizer_get_discourse_cohesion. The most common LLM tic this layer fights is paragraph-opening formulaic transitions ('Furthermore', 'Moreover', 'Additionally'); see flagged_transitions in lexical_patterns for the word-level list. Apply unevenly; do not replace every transition.",
+    "usage": "Fourth pass, after sentiment. Call humanizer_get_discourse_cohesion. The most common LLM tic this layer fights is paragraph-opening formulaic transitions ('Furthermore', 'Moreover', 'Additionally'); see flagged_transitions in lexical_patterns for the word-level list.",
     "research_basis": "Terčon & Dobrovoljc (2025) survey reports discourse markers are less frequent in AI text and more repetitive. Herbold et al. (2023) found AI text contains fewer modal expressions and epistemic markers. Wu (2025) found AI relies heavily on cohesive devices and formulaic syntactic constructions. Simon et al. (2023) confirmed fewer comparative/superlative structures in AI text."
   },
   "discourse_markers": {
@@ -30,7 +30,7 @@
   },
   "modal_and_epistemic_markers": {
     "ai_pattern": "AI text contains fewer modal expressions and epistemic markers than human text. It presents information with uniform confidence rather than signaling degrees of certainty.",
-    "human_pattern": "Human writers signal their certainty level. They use 'might,' 'could,' 'probably,' 'seems,' 'I think,' 'as far as I know', and they distribute these unevenly, being confident on some points and uncertain on others.",
+    "human_pattern": "Human writers signal their certainty level. They use 'might,' 'could,' 'probably,' 'seems,' 'I think,' 'as far as I know', and their confidence follows what they know, firm on some points and uncertain on others. Keep the certainty the source gives each point.",
     "rules": [
       {
         "rule": "Keep the epistemic markers the source puts on uncertain claims.",

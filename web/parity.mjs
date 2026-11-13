@@ -43,9 +43,14 @@ function eq(a, b, path, diffs) {
 let fails = 0;
 const failed = [];
 for (const t of golden) {
-  const got = runChecks(t.text, t.content_type);
+  const got = runChecks(t.text, t.content_type, t.rubric ?? "short");
   const diffs = [];
-  eq(t.report, got, t.name, diffs);
+  if (t.compare) {
+    // Cases that pin one part of the report (see HARD_ONLY_CASES in dump.py).
+    for (const k of t.compare) eq(t.report[k], got[k], `${t.name}.${k}`, diffs);
+  } else {
+    eq(t.report, got, t.name, diffs);
+  }
   if (diffs.length) {
     fails++;
     failed.push(t.name);

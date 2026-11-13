@@ -183,7 +183,6 @@ a{color:var(--accent);text-decoration:none;}
       case "banned_structure": return f.id + " · " + f.name.replace(/_/g, " ");
       case "rule_of_three_density": return "rule-of-three density";
       case "credibility_insistence": return "credibility insistence";
-      case "burstiness": return "burstiness · document";
       case "segment_uniformity": return "segment uniformity · document";
       default: return f.type;
     }
@@ -271,7 +270,7 @@ a{color:var(--accent);text-decoration:none;}
       '<span class="stat"><b>' + report.hard_violations.length + "</b> hard</span><span class=\"sep\">·</span>" +
       '<span class="stat"><b>' + report.must_clear.length + "</b> to clear</span><span class=\"sep\">·</span>" +
       '<span class="stat"><b>' + m.sentence_count + "</b> sentences</span><span class=\"sep\">·</span>" +
-      '<span class="stat">burstiness <b>' + fmt(m.length_stdev) + "</b>/" + fmt(m.burstiness_target_stdev) + "</span>" +
+      '<span class="stat">sentence-length stdev <b>' + fmt(m.length_stdev) + "</b></span>" +
       (truncated ? '<span class="sep">·</span><span class="stat" style="color:var(--sev-high)">checking first ' + MAX_CHARS.toLocaleString() + " chars</span>" : "");
 
     // Findings list: numbered findings (in placed order), then the rest as "—".

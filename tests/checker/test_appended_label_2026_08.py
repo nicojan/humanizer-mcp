@@ -186,5 +186,5 @@ def test_bs039_redos_safe():
 # --- the judgment-only sibling lives in the self-review rubric ---
 def test_appended_significance_label_is_a_self_review_item():
     items = json.loads((DATA / "self_review.json").read_text())["self_review"]["items"]
-    joined = " ".join(items).lower()
+    joined = " ".join(i["detail"] for i in items).lower()
     assert "appended" in joined and "label" in joined

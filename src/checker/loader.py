@@ -1,7 +1,12 @@
 """Assembles checker rule data from the JSON store. The only module in the
 checker package that knows the on-disk data shapes; detectors stay pure."""
 
+import hashlib
+import logging
+
 from src.storage.json_store import load_json
+
+logger = logging.getLogger(__name__)
 
 
 def load_hard_phrases() -> list[str]:
@@ -77,12 +82,101 @@ def load_terms_of_art() -> list[str]:
     return [str(it["phrase"]).lower() for it in block.get("items", []) if it.get("phrase")]
 
 
-def load_self_review() -> list[str]:
+_RUBRIC_TEXT_FIELDS = ("id", "short", "detail")
+
+
+def _raw_self_review_items() -> list:
+    """The raw `self_review.items` list. Raises ValueError when the file's
+    container is not an object holding an `items` list, so a broken container
+    is never read as a string of characters or an empty rubric."""
+    data = load_json("self_review.json")
+    section = data.get("self_review") if isinstance(data, dict) else None
+    items = section.get("items") if isinstance(section, dict) else None
+    if not isinstance(items, list):
+        raise ValueError("self_review.json needs a self_review object holding an items list")
+    return items
+
+
+def load_self_review_strict() -> list[dict]:
+    """Every self-review item, validated. Raises ValueError on a legacy string
+    or a malformed item. CI calls this so bad data fails the build; the runtime
+    path (`load_self_review`) degrades instead."""
+    return [_validated_rubric_item(i, n) for n, i in enumerate(_raw_self_review_items())]
+
+
+def _legacy_item(text: str) -> dict:
+    digest = hashlib.sha1(text.encode("utf-8")).hexdigest()[:8]
+    return {"id": f"legacy_{digest}", "short": text, "detail": text, "applies_to": ["all"]}
+
+
+def _lenient_item(item: object, index: int) -> dict | None:
+    if isinstance(item, str) and item.strip():
+        return _legacy_item(item.strip())
+    try:
+        return _validated_rubric_item(item, index)
+    except ValueError as exc:
+        logger.warning("skipping malformed self_review item: %s", exc)
+        return None
+
+
+def load_self_review() -> list[dict]:
     """The human-likeness self-review rubric the calling model runs against its
-    own draft (the texture half of write→check→fix). Surfaced as the report's
-    manual_review list. Lives in data so it can be edited and deployed by
-    git-push + restart without a code change."""
-    return load_json("self_review.json").get("self_review", {}).get("items", [])
+    own draft (the texture half of write→check→fix). Each item is an object with
+    `id`, a one-line `short`, the full `detail`, `applies_to` (["all"] or
+    canonical content types) and an optional `history` that is never served.
+    Lives in data so it can be edited and deployed by git-push + restart
+    without a code change. Degrades rather than failing a check: a legacy string
+    item (an old volume under a new image) becomes an all-scoped object, and any
+    other malformed item is skipped with a logged warning. Use
+    `load_self_review_strict` where bad data must fail."""
+    items = (_lenient_item(i, n) for n, i in enumerate(_raw_self_review_items()))
+    return [i for i in items if i is not None]
+
+
+def check_self_review_at_startup() -> int:
+    """Validate the rubric once at server start and log the outcome (stderr via
+    `logging`). Returns the number of items that will be served; never raises.
+    A broken container is logged as an error and counts as zero items; legacy
+    string items (an old data volume under a new image) are logged as a
+    warning, since they are served but mean the data may be stale."""
+    try:
+        raw = _raw_self_review_items()
+        served = load_self_review()
+    except Exception as exc:  # noqa: BLE001  (startup must never fail on data)
+        logger.error(
+            "self_review: the rubric cannot be loaded (%s); "
+            "check_text fails until the data is fixed",
+            exc,
+        )
+        return 0
+    legacy = sum(1 for i in raw if isinstance(i, str) and i.strip())
+    if legacy:
+        logger.warning(
+            "self_review: %d legacy string items mapped to all-scoped objects; "
+            "the data may be stale",
+            legacy,
+        )
+    if len(served) == len(raw):
+        logger.info("self_review: %d items loaded", len(served))
+    else:
+        logger.warning(
+            "self_review: %d of %d items will be served; the rest are malformed",
+            len(served),
+            len(raw),
+        )
+    return len(served)
+
+
+def _validated_rubric_item(item: object, index: int) -> dict:
+    if not isinstance(item, dict):
+        raise ValueError(f"self_review item {index} is not an object")
+    for field in _RUBRIC_TEXT_FIELDS:
+        if not isinstance(item.get(field), str) or not item[field].strip():
+            raise ValueError(f"self_review item {index} needs a non-empty {field!r}")
+    applies = item.get("applies_to")
+    if not isinstance(applies, list) or not applies or not all(isinstance(a, str) for a in applies):
+        raise ValueError(f"self_review item {item['id']!r} needs a non-empty applies_to list")
+    return dict(item)
 
 
 def load_document_budgets() -> tuple[dict[str, int], dict[str, str]]:

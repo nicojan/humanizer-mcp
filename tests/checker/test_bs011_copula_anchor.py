@@ -160,13 +160,14 @@ def test_entry_keeps_its_gate_and_records_the_accepted_false_positive():
 
 def test_self_review_carries_the_narrowed_away_frame():
     items = load_self_review()
-    matches = [i for i in items if "X, not Y" in i]
-    assert len(matches) == 1, items
-    assert "BS-011" in matches[0]
+    matches = [i for i in items if "X, not Y" in i["detail"]]
+    assert [i["id"] for i in matches] == ["contrastive_x_not_y"], items
+    assert "BS-011" in matches[0]["history"]
 
 
 def test_caveats_record_the_measurement():
-    caveats = json.loads((DATA / "caveats.json").read_text())["core_caveats"]
+    # Eval methodology, kept for maintainers in maintainer_notes (never served).
+    caveats = json.loads((DATA / "caveats.json").read_text())["maintainer_notes"]
     by_id = {c["id"]: c for c in caveats}
     assert "contrastive_scope_notes_are_the_same_shape" in by_id
     explanation = by_id["contrastive_scope_notes_are_the_same_shape"]["explanation"]

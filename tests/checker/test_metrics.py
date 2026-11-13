@@ -1,4 +1,5 @@
-from src.checker.metrics import burstiness, target_stdev
+from src.checker import metrics
+from src.checker.metrics import burstiness
 
 
 def test_uniform_sentences_flagged():
@@ -19,7 +20,6 @@ def test_single_sentence_not_flagged():
     assert m["burstiness_flag"] is False
 
 
-def test_target_stdev_defaults_and_overrides():
-    assert target_stdev(None) == 6.0
-    assert target_stdev("technical") == 4.0
-    assert target_stdev("unknown-type") == 6.0
+def test_the_dead_target_table_is_gone():
+    assert not hasattr(metrics, "target_stdev")
+    assert not hasattr(metrics, "_TARGETS")

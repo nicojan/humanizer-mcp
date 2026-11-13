@@ -7,6 +7,7 @@ import sys
 from mcp.server.fastmcp import FastMCP
 from mcp.server.transport_security import TransportSecuritySettings
 
+from src.checker.loader import check_self_review_at_startup
 from src.middleware import CFConnectingIPLogMiddleware
 from src.storage.json_store import init_storage
 from src.tools.check import register_check_tools
@@ -28,19 +29,26 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 SERVER_INSTRUCTIONS = (
-    "Rules and a deterministic checker for making written prose read as human, "
-    "not machine-generated. Use this whenever you are drafting or revising prose "
-    "for a human reader (articles, emails, marketing, cover letters, docs, "
-    "narrative) and it matters that the result not sound AI-generated.\n"
-    "Workflow (the loop is required, not optional polish): (1) call "
-    "humanizer_get_summary for a quick edit, or humanizer_get_guide for a major "
-    "writing task (about 40k tokens in full; if your client caps tool output, "
-    "page it with part='core', then 'lexical', 'anti_patterns' and 'caveats'); "
-    "(2) write or revise the draft; (3) call humanizer_check_text "
-    "on your draft and resolve every finding; (4) re-run humanizer_check_text "
-    "until prohibitions_clear is true, then self-attest the manual_review items. "
-    "Reading the rules alone leaves roughly half the violations in place; the "
-    "check->fix loop is what carries adherence (see foundation.primary_usage)."
+    "Rules and a deterministic checker for making prose read as if a person "
+    "wrote it. Use this whenever you are drafting or revising prose for a "
+    "human reader (articles, emails, marketing, cover letters, docs, narrative) "
+    "and it matters that the result does not sound AI-generated.\n"
+    "The loop below is required. (1) Call humanizer_get_summary for a quick "
+    "edit, or humanizer_get_guide for a major writing task (about 40k tokens in "
+    "full; if your client caps tool output, page it with part='core', then "
+    "'lexical', 'anti_patterns' and 'caveats'). (2) Write or revise the draft. "
+    "(3) Call humanizer_check_text on your draft. Resolve every hard_violation so "
+    "prohibitions_clear is true, and for each must_clear item rewrite only the "
+    "flagged span or justify the item. (4) Re-run humanizer_check_text; stop "
+    "after two fix rounds and justify any must_clear item left. A "
+    "hard_violation is never justified, so keep fixing until prohibitions_clear "
+    "is true. Then make one last "
+    "humanizer_check_text call on the assembled document with rubric=\"full\" "
+    "and do the self-review against your draft, changing only the spans an item "
+    "points to. If the self-review changed anything, run humanizer_check_text "
+    "once more and confirm prohibitions_clear is true before returning. "
+    "Reading the rules alone leaves violations in place. The check-fix "
+    "loop catches them."
 )
 
 mcp = FastMCP(
@@ -54,6 +62,8 @@ mcp = FastMCP(
 
 logger.info("Initializing storage layer")
 init_storage()
+
+check_self_review_at_startup()
 
 logger.info("Registering read tools")
 register_read_tools(mcp)

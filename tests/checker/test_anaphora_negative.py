@@ -130,17 +130,18 @@ def test_bs009_still_covers_the_this_chain_it_was_written_for():
 
 def test_self_review_carries_the_anaphora_item():
     items = load_self_review()
-    matches = [i for i in items if "Anaphora" in i]
-    assert len(matches) == 1, items
+    matches = [i for i in items if "Anaphora" in i["detail"]]
+    assert [i["id"] for i in matches] == ["anaphora"], items
     item = matches[0]
     # The definitional caveat must stay attached to the check: the form is
     # legitimate, and the tell is purposeless repetition.
-    assert "Thoreau" in item
-    assert "BS-009" in item
+    assert "Thoreau" in item["detail"]
+    assert "BS-009" in item["history"]
 
 
 def test_caveats_record_the_negative_and_the_corpus_limitation():
-    caveats = json.loads((DATA / "caveats.json").read_text())["core_caveats"]
+    # Eval methodology, kept for maintainers in maintainer_notes (never served).
+    caveats = json.loads((DATA / "caveats.json").read_text())["maintainer_notes"]
     ids = {c["id"] for c in caveats}
     assert "rhetorical_figures_defeat_shape_detection" in ids
     assert "short_corpus_cannot_validate_run_detectors" in ids

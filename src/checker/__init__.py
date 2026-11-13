@@ -10,19 +10,18 @@ from src.checker.loader import (
     load_flagged_terms,
     load_hard_phrases,
     load_regex_structures,
-    load_self_review,
     load_terms_of_art,
 )
 from src.checker.metrics import (
-    burstiness,
     length_metrics_apply,
     list_measures_apply,
     segment_uniformity,
-    target_stdev,
+    sentence_length_stats,
 )
 from src.checker.phrases import find_flagged_terms, find_phrases
 from src.checker.punctuation import find_comma_splices, find_stacked_marks, find_unterminated
 from src.checker.report import assemble_report
+from src.checker.rubric import RubricMode, rubric_lines
 from src.checker.structures import (
     find_heuristic_structures,
     find_regex_structures,
@@ -31,7 +30,9 @@ from src.checker.structures import (
 from src.checker.util import excerpt
 
 
-def run_checks(text: str, content_type: str | None = None) -> dict:
+def run_checks(
+    text: str, content_type: str | None = None, rubric: RubricMode = "short"
+) -> dict:
     hard: list[dict] = find_emdashes(text)
     hard.extend(find_stacked_marks(text))
     for phrase, off in find_phrases(text, load_hard_phrases()):
@@ -61,28 +62,12 @@ def run_checks(text: str, content_type: str | None = None) -> dict:
     must = [f for f in must if f.get("id") not in budget_only]
     must.extend(overruns)
 
-    # Under content_type "label"/"notes" the numbers are still reported, but the
-    # flags are cleared so no consumer reads them as a failure.
+    # Sentence-length numbers are reported, never turned into a finding or a
+    # target. Under content_type "label"/"notes"/"resume" they are marked as not
+    # applying so no consumer reads them as a failure.
     applies = length_metrics_apply(content_type)
-    raw = burstiness(text, target_stdev(content_type))
-    metrics = {
-        **raw,
-        "burstiness_flag": applies and raw["burstiness_flag"],
-        "length_metrics_apply": applies,
-    }
-    if metrics["burstiness_flag"]:
-        must.append(
-            {
-                "type": "burstiness",
-                "detail": (
-                    f"low sentence-length variance "
-                    f"(stdev {metrics['length_stdev']} < target "
-                    f"{metrics['burstiness_target_stdev']})"
-                ),
-                "fix": "Vary sentence lengths: mix short and long, add a fragment "
-                "or a longer multi-clause sentence.",
-            }
-        )
+    raw = sentence_length_stats(text)
+    metrics = {**raw, "length_metrics_apply": applies}
 
     raw_segments = segment_uniformity(text)
     segments = {**raw_segments, "uniformity_flag": applies and raw_segments["uniformity_flag"]}
@@ -97,16 +82,18 @@ def run_checks(text: str, content_type: str | None = None) -> dict:
                     f"{segments['segment_mean_spread']} words)"
                 ),
                 "fix": (
-                    "Humans modulate style between a document's sections; LLMs "
-                    "hold one flat fingerprint throughout. Make one section "
-                    "terse and another more flowing, varying rhythm and "
-                    "sentence length section to section. Or justify if the "
-                    "format genuinely requires uniform sections."
+                    "Every section reads in the same rhythm and sentence length, "
+                    "which can mean the text was written to one template. Check "
+                    "each section against its own job and let its texture follow "
+                    "that job. Do not make sections differ for contrast. If the "
+                    "format needs uniform sections, say so and leave them."
                 ),
             }
         )
 
-    return assemble_report(hard, must, metrics, manual_review=load_self_review())
+    return assemble_report(
+        hard, must, metrics, manual_review=rubric_lines(content_type, rubric)
+    )
 
 
 __all__ = ["run_checks"]

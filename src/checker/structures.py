@@ -114,9 +114,9 @@ def _copula_maxim_closer(text: str) -> list[dict]:
                 "offset": s_start,
                 "excerpt": excerpt(text, s_start, s_start + len(last)),
                 "fix": (
-                    "End on the concrete thing, not a distilled lesson about it. "
-                    "If the maxim is earned, attach it to a specific action "
-                    "rather than floating it as a closer."
+                    "End on the concrete thing the passage is about. If the "
+                    "maxim is earned, attach it to a specific action rather "
+                    "than floating it as a closer."
                 ),
             }
         )
@@ -267,7 +267,10 @@ def _this_chain(text: str) -> list[dict]:
                     "confidence": "medium",
                     "offset": start,
                     "excerpt": excerpt(text, start, start + len(first)),
-                    "fix": "Leave causal links implicit; vary sentence openings.",
+                    "fix": (
+                        "Name what each 'This' refers to, or join the sentences "
+                        "so one leads into the next."
+                    ),
                 }
             )
     return out

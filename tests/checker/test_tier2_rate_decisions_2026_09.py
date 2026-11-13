@@ -105,7 +105,8 @@ def test_bs006_entry_records_the_narrowing():
 
 
 def _caveat(caveat_id: str) -> dict:
-    caveats = json.loads((DATA / "caveats.json").read_text())["core_caveats"]
+    # Eval methodology, kept for maintainers in maintainer_notes (never served).
+    caveats = json.loads((DATA / "caveats.json").read_text())["maintainer_notes"]
     return {c["id"]: c for c in caveats}[caveat_id]
 
 

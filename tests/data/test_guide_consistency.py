@@ -1,9 +1,11 @@
 """The served guide must not recommend what its own checker flags.
 
 Every string a writing model reads (the full guide for each content type, plus
-the self-review rubric) is walked here. Quoted examples inside guidance fields
-either pass the checker or are listed below as deliberate counter-examples (the
-bad form the guidance warns against). Anti-pattern "after" texts and lexicon
+the self-review rubric's `short` and `detail` texts) is walked here. Quoted
+examples inside guidance fields, which include the rubric's `short` and
+`detail`, either pass the checker or are listed below as deliberate
+counter-examples (the bad form the guidance warns against). The rubric's
+`history` is never served and is skipped. Anti-pattern "after" texts and lexicon
 alternatives are what the guide tells the model to write, so they must pass.
 
 Later tasks extend this module and reuse its helpers.
@@ -42,6 +44,9 @@ GUIDANCE_FIELDS: tuple[str, ...] = (
     "directive",
     "explanation",
     "after",
+    "fix",
+    "short",
+    "detail",
 )
 
 # Finding types `fires` reads from must_clear. Length metrics, terminal marks,
@@ -109,7 +114,6 @@ COUNTER_EXAMPLES: frozenset[str] = frozenset({
     'Co-op hours were 9 to 5, so the Fridays survived.',
     'Fine. The dog stays.',
     'It does not keep the country free. It does not settle the West. It does not educate.',
-    'It reflects the brief. It reflects the budget. It reflects the deadline.',
     'Method, and why this one',
     'Seven to eight hours of sleep, and I want to keep it there.',
     'The Scouts books and the tutoring stay.',
@@ -159,7 +163,6 @@ COUNTER_EXAMPLES: frozenset[str] = frozenset({
     'plays a key role in',
     'plays a pivotal role',
     'the tension was palpable',
-    'unspoken',
     'unwavering commitment',
     'nestled',
     # lexical_patterns.flagged_nouns
@@ -189,6 +192,39 @@ COUNTER_EXAMPLES: frozenset[str] = frozenset({
     'utilize',
     # sentiment_tone.subjectivity
     'Generally speaking',
+    # self_review: the bad forms each rubric item tells the model to read for
+    'Billiards survives final year',
+    'Busy season eats the Fridays',
+    'Elara',
+    'It is X, not Y.',
+    'It is not a tool. It is a partner.',
+    'Work does not get to claim them',
+    'eight words to carry',
+    'moves the needle',
+    'the Fridays survived',
+    'the federal purse',
+    'the layout carries the weight',
+    'the tip of the iceberg',
+    # banned_structures fix texts: the bad form each fix quotes so the model can
+    # recognise it before rewriting. The recommended forms beside them pass.
+    'The point of X is',
+    'When it comes to pricing, we keep it simple',
+    'Monitoring plays a pivotal role in catching problems',
+    "if you've ever felt X",
+    'The layout carries the weight of the argument',
+    'Quiet confidence',
+    'Quietly reshaping the industry',
+    'Not because the person stopped mattering, but because the officer is reachable',
+    'Each board carries its own title, rule and legend',
+    'Slide 18 carries the business model',
+    'The margin rail carries the tags',
+    'It moves the needle on readiness',
+    'The federal purse would feel it',
+    "It shipped late, and I'm not going to pretend otherwise.",
+    'The report serves as a guide',
+    'The building stands as a monument to the era',
+    'It represents a shift in how the team works',
+    'Not a bug. Not a feature. A fundamental design flaw.',
     # structural_patterns.cross_segment_variation
     'The second draft is the real one.',
     # structural_patterns.syntactic_variety
@@ -217,13 +253,29 @@ def _walk(obj: Any, path: str) -> Iterator[tuple[str, str]]:
             yield from _walk(value, f"{path}[{i}]")
 
 
+def banned_fix_texts(data: dict | None = None) -> list[tuple[str, str]]:
+    """(path, text) for every `fix` string in banned_structures.json. These
+    ride inside every must_clear finding, so a model reads them as instructions
+    even though `build_guide_payload` never carries the layer."""
+    structures = (data or load_json("banned_structures.json"))["structures"]
+    return [
+        (f"banned_structures.structures[{i}].fix", entry["fix"])
+        for i, entry in enumerate(structures)
+        if isinstance(entry.get("fix"), str)
+    ]
+
+
 def served_texts() -> list[tuple[str, str]]:
     """(JSON path, string) for everything the guide serves, per content type,
-    plus the self-review rubric (strings or objects)."""
-    texts: list[tuple[str, str]] = []
+    every banned_structures `fix`, plus the `short` and `detail` of every
+    self-review rubric item (the parts a report serves; `id`, `applies_to` and
+    `history` are not served)."""
+    texts: list[tuple[str, str]] = banned_fix_texts()
     for ct in CONTENT_TYPES:
         texts.extend(_walk(build_guide_payload(ct), f"guide[{ct}]"))
-    texts.extend(_walk(load_self_review(), "self_review"))
+    for i, item in enumerate(load_self_review()):
+        for field in ("short", "detail"):
+            texts.append((f"self_review[{i}].{field}", item[field]))
     return texts
 
 
@@ -251,11 +303,13 @@ def _in_guidance_field(path: str) -> bool:
     return any(k in GUIDANCE_FIELDS for k in keys)
 
 
-def served_quotes() -> list[tuple[str, str]]:
+def served_quotes(
+    texts: list[tuple[str, str]] | None = None,
+) -> list[tuple[str, str]]:
     """(path, quote) for every quoted string inside a guidance field."""
     return [
         (path, quote)
-        for path, text in served_texts()
+        for path, text in (served_texts() if texts is None else texts)
         if _in_guidance_field(path)
         for quote in _quotes_in(text)
     ]
@@ -357,6 +411,21 @@ def test_quoted_guidance_examples_pass_or_are_listed_counter_examples():
     assert firing <= COUNTER_EXAMPLES, sorted(firing - COUNTER_EXAMPLES)
 
 
+def test_banned_structure_fix_texts_are_walked():
+    paths = [p for p, _ in banned_fix_texts()]
+    assert len(paths) > 50
+    assert set(paths) <= {p for p, _ in served_texts()}
+    assert any(_in_guidance_field(p) for p in paths)
+
+
+def test_a_firing_quote_planted_in_a_fix_text_fails_the_check():
+    planted = {"structures": [{"id": "BS-X", "fix": "Write 'It is not a hammer. It is a partner.' instead."}]}
+    texts = banned_fix_texts(planted)
+    firing = {q for _, q in served_quotes(texts) if fires(q)}
+    assert firing == {"It is not a hammer. It is a partner."}
+    assert not firing <= COUNTER_EXAMPLES
+
+
 def test_counter_example_list_has_no_stale_entries():
     assert COUNTER_EXAMPLES <= {q for _, q in served_quotes()}
 
@@ -413,6 +482,13 @@ REMOVED_PHRASES = (
     # BS-011 and BS-013 in the guide's own caveat prose
     "the specification, not a defect", "frames, not words",
     "so it is not the length-guessing heuristic",
+    # Task 11 sweep: targets, performances and AR-001 contradictions
+    "would misfire on real short-form prose", "The numbers don't lie, but they do omit",
+    "vary syntactic construction and punctuation", "punctuation choice varies across sections",
+    "Use conversational bridges where appropriate", "Reintroduce evaluative language",
+    "vary the emotional register", "distribute these unevenly", "Or make a direct claim",
+    "at least one needs restructuring", "Distribute adverbs unevenly",
+    "the only point in the system", "not 'innovative technology' but",
 )
 
 
@@ -529,9 +605,8 @@ def test_profiles_keep_source_specifics_rather_than_adding_them():
 
 
 def test_self_review_specifics_come_from_the_source_or_user():
-    items = load_self_review()
-    item = next(i for i in items if "Generic competence" in str(i))
-    assert "never invented" in str(item)
+    item = next(i for i in load_self_review() if i["id"] == "generic_competence")
+    assert "never invented" in item["detail"]
 
 
 def test_ap025_after_adds_no_fact_the_before_lacks():
@@ -638,6 +713,8 @@ PROTOCOL_EXCLUDED = {
     "foundation.application_protocol",
     "foundation.ecosystem_workflow",
     "foundation.primary_usage",
+    # Eval-methodology notes for data-file editors; never served.
+    "caveats.maintainer_notes",
 }
 
 # Data files that are not layers a writing model walks (checker data and the
@@ -738,7 +815,7 @@ def test_protocol_text_matches_the_priority_hierarchy_and_reported_metrics():
     text = json.dumps(_protocol_phases()).lower()
     assert "highest-impact" not in text
     assert "variance increased" not in text
-    assert "not just globally" not in json.dumps(load_json("foundation.json")["section_level_variation"])
+    assert "not just globally" not in json.dumps(load_json("structural_patterns.json")["cross_segment_variation"])
 
 
 def test_unvisited_sections_control_reports_an_unlisted_section():
@@ -777,3 +854,385 @@ def test_lexical_phase_purpose_states_low_impact_not_a_different_order():
     purpose = _protocol_phases()[1]["purpose"]
     assert "a low-impact layer" in purpose
     assert "lowest-impact" not in purpose
+
+
+# ---------------------------------------------------------------------------
+# Fix texts built into the checker (not in the data files)
+# ---------------------------------------------------------------------------
+
+_FIX_BATTERY: dict[str, str] = {
+    "em_dash": "The plan \u2014 bold \u2014 failed.",
+    "stacked_punctuation": "We shipped it,. It worked.",
+    "comma_splice": "We shipped the fix, it worked.",
+    "missing_terminal_mark": "We shipped the fix on Tuesday and the team was glad",
+    "run_on_without_terminal": " ".join(["word"] * 70) + ".",
+    "segment_uniformity": "\n\n".join(
+        [
+            " ".join(["The system processes each incoming record in the queue."] * 4),
+            " ".join(["The service handles every pending request in strict order."] * 4),
+            " ".join(["The program updates the relevant table after each change."] * 4),
+        ]
+    ),
+    "rule_of_three_density": (
+        "We cut cost, time, and risk. The team learned to plan, build, and ship."
+    ),
+    "credibility_insistence": (
+        "A real engagement, mid-build. Each board was detailed and real. "
+        "The second draft is the real one. But the design is real. "
+        "My first real service-design project. I mapped the real flow. "
+        "It runs when a real build has to run in reverse."
+    ),
+    "document_budget": (
+        "The work is judgement, not process. Teams ship early and often. "
+        "The answer is restraint, not addition. Reviews stay short. "
+        "Design is clarity, not decoration."
+    ),
+    "BS-009": "This is slow. This costs money. This hurts users.",
+    "BS-012": "The implementation of the optimization of the configuration of the system failed.",
+    "BS-018": "We tried three layouts and threw two away. The craft is mostly restraint.",
+    "BS-020": "AI carries the busywork. It never carries the judgment.",
+    "fixed_phrase": "It is worth noting that the team shipped on time.",
+}
+
+
+def _finding_key(finding: dict) -> str:
+    if finding.get("type") == "banned_structure":
+        return finding["id"]
+    return finding.get("type", "")
+
+
+def _battery_findings() -> dict[str, list[dict]]:
+    out: dict[str, list[dict]] = {}
+    for text in _FIX_BATTERY.values():
+        report = run_checks(text)
+        for f in (*report["hard_violations"], *report["must_clear"]):
+            out.setdefault(_finding_key(f), []).append(f)
+    return out
+
+
+def test_code_fix_battery_triggers_every_code_level_finding_type():
+    """Control: the checks below mean nothing unless each type fired."""
+    found = _battery_findings()
+    missing = [k for k in _FIX_BATTERY if k not in found]
+    assert not missing, missing
+
+
+def test_code_fix_texts_pass_the_checker():
+    """Every code-level fix text is served to the writing model inside the
+    check report, so it must pass the checker and must not recommend a colon
+    pivot."""
+    checked = 0
+    for key, findings in _battery_findings().items():
+        for f in findings:
+            fix = f.get("fix", "")
+            if not fix:
+                continue
+            checked += 1
+            assert run_checks(fix)["hard_violations"] == [], (key, fix)
+            assert not re.search(r"\bcolons?\b", fix, re.IGNORECASE), (key, fix)
+    assert checked >= len(_FIX_BATTERY)
+
+
+_CODE_FIX_TELLS = re.compile(
+    r"\b(?:actually|actual|genuinely|genuine|real|really|quietly|honestly)\b"
+    r"|,\s+not\b|\bvary sentence openings\b",
+    re.IGNORECASE,
+)
+
+
+def test_code_fix_tell_control():
+    from tests.checker.test_rubric import outside_quotes
+
+    assert _CODE_FIX_TELLS.search("End on the concrete thing, not a lesson.")
+    assert _CODE_FIX_TELLS.search("The text keeps asserting that the work is real.")
+    assert _CODE_FIX_TELLS.search("Leave causal links implicit; vary sentence openings.")
+    assert not _CODE_FIX_TELLS.search(outside_quotes("Cut it ('real' x3) and name the thing."))
+
+
+def test_code_fix_texts_carry_no_tell_words_or_contrast_reflex():
+    """The fix strings built into the checker read like the guidance: no
+    intensifier, no "X, not Y" and no ask to vary openings for their own sake.
+    Quoted tokens (the dominant credibility word) are excluded."""
+    from tests.checker.test_rubric import outside_quotes
+
+    bad = [
+        (key, f["fix"])
+        for key, findings in _battery_findings().items()
+        for f in findings
+        if f.get("fix") and _CODE_FIX_TELLS.search(outside_quotes(f["fix"]))
+    ]
+    assert bad == []
+
+
+# ---------------------------------------------------------------------------
+# Sentence-length spread is a reported number, never a finding or a target
+# ---------------------------------------------------------------------------
+
+_BURSTINESS_AS_FINDING = re.compile(
+    r"burstiness\W+(?:\w+\W+){0,6}?(?:finding|flag|target|trip|check)"
+    r"|(?:finding|flag|target|trip|check)\w*\W+(?:\w+\W+){0,6}?burstiness",
+    re.IGNORECASE,
+)
+
+
+def test_control_pattern_catches_burstiness_as_a_finding():
+    assert _BURSTINESS_AS_FINDING.search("short bullets trip burstiness")
+    assert _BURSTINESS_AS_FINDING.search("The burstiness check targets the stdev")
+    assert _BURSTINESS_AS_FINDING.search("a single finding, burstiness, at stdev 1.0")
+    assert not _BURSTINESS_AS_FINDING.search("High burstiness does not imply authenticity.")
+
+
+def test_no_served_string_presents_burstiness_as_a_finding_or_target():
+    bad = [
+        (path, text[:120])
+        for path, text in served_texts()
+        if _BURSTINESS_AS_FINDING.search(text)
+    ]
+    assert not bad, bad
+
+
+# ---------------------------------------------------------------------------
+# Served history out, one copy of each directive, the size annotation
+# ---------------------------------------------------------------------------
+
+MEASUREMENT = re.compile(
+    r"\bper 10k\b|\bTier [12]\b|Gutenberg|tests?/\w|\.py\b|\b20\d\d-\d\d-\d\d\b"
+)
+
+
+def keys_named(obj: Any, names: set[str], path: str = "") -> list[str]:
+    """Paths of dict keys in `names`, anywhere in obj."""
+    found: list[str] = []
+    if isinstance(obj, dict):
+        for key, value in obj.items():
+            here = f"{path}.{key}"
+            if key in names:
+                found.append(here)
+            found.extend(keys_named(value, names, here))
+    elif isinstance(obj, list):
+        for i, value in enumerate(obj):
+            found.extend(keys_named(value, names, f"{path}[{i}]"))
+    return found
+
+
+_CAVEAT_REF = re.compile(r"\bcaveats\.([a-z_]+)")
+
+
+def caveat_refs_in(texts: list[tuple[str, str]]) -> set[str]:
+    """Every id named after `caveats.` in the strings (section names such as
+    core_caveats and ethical_considerations are not caveat ids)."""
+    sections = {"core_caveats", "ethical_considerations", "maintainer_notes"}
+    return {
+        m.group(1)
+        for _, text in texts
+        for m in _CAVEAT_REF.finditer(text)
+        if m.group(1) not in sections
+    }
+
+
+def server_with_tools():
+    """A fresh server with the read and check tools registered."""
+    from mcp.server.fastmcp import FastMCP
+
+    from src.tools.check import register_check_tools
+    from src.tools.read import register_read_tools
+
+    server = FastMCP("t")
+    register_read_tools(server)
+    register_check_tools(server)
+    return server
+
+
+def test_part_a_helper_controls():
+    assert keys_named({"a": [{"history": 1}], "b": {"maintainer_notes": []}},
+                      {"history", "maintainer_notes"}) == [".a[0].history", ".b.maintainer_notes"]
+    assert keys_named({"a": {"b": 1}}, {"history"}) == []
+    refs = caveat_refs_in([("x", "see caveats.uniform_application_paradox and caveats.core_caveats")])
+    assert refs == {"uniform_application_paradox"}
+    for text in ("rates per 10k sentences", "on the Tier 2 corpus", "see tests/checker",
+                 "lives in budgets.py", "measured 2026-09-18", "Project Gutenberg"):
+        assert MEASUREMENT.search(text), text
+    assert not MEASUREMENT.search("Tier-1 prohibitions apply to the whole draft.")
+
+
+def test_history_keys_are_never_served():
+    for ct in CONTENT_TYPES:
+        assert not keys_named(build_guide_payload(ct), {"history", "maintainer_notes"}), ct
+
+
+def test_served_guide_carries_no_measurement_narrative():
+    assert [p for p, s in served_texts() if MEASUREMENT.search(s)] == []
+
+
+def test_every_served_caveat_reference_resolves():
+    served_ids = {c["id"] for c in build_guide_payload("prose")["caveats"]["core_caveats"]}
+    assert caveat_refs_in(served_texts()) <= served_ids
+
+
+def test_get_guide_declares_its_result_size():
+    import asyncio
+
+    tools = {t.name: t for t in asyncio.run(server_with_tools().list_tools())}
+    assert tools["humanizer_get_guide"].meta == {"anthropic/maxResultSizeChars": 80000}
+
+
+def test_every_page_fits_the_declared_size_and_the_full_guide_does_not():
+    """The gate: each page arrives inline in Claude Code, the full guide lands
+    in a file. Both sides are measured on the served (compact) JSON."""
+    from src.tools.read import GUIDE_PARTS, _compact_json, build_guide_part
+
+    limit = 80000
+    for ct in (*CONTENT_TYPES, "not-a-type"):
+        for part in GUIDE_PARTS:
+            size = len(_compact_json(build_guide_part(ct, part)))
+            assert size < limit, (ct, part, size)
+        assert len(_compact_json(build_guide_part(ct, None))) > limit, ct
+
+
+METHODOLOGY_CAVEATS = (
+    "rhetorical_figures_defeat_shape_detection",
+    "short_corpus_cannot_validate_run_detectors",
+    "contrastive_scope_notes_are_the_same_shape",
+    "lexicon_rate_is_not_a_detector_rate",
+)
+
+
+def test_methodology_caveats_are_maintainer_notes():
+    data = load_json("caveats.json")
+    served = {c["id"] for c in data["core_caveats"]}
+    notes = {n["id"] for n in data["maintainer_notes"]}
+    for cid in METHODOLOGY_CAVEATS:
+        assert cid not in served, cid
+        assert cid in notes, cid
+
+
+def test_the_non_uniformity_directive_is_not_restated_in_layer_usage():
+    restated = re.compile(r"non-?uniform|\buniform(?:ly)?\b|uniform application|unevenly", re.I)
+    for name in ("lexical_patterns", "structural_patterns", "sentiment_tone",
+                 "discourse_cohesion", "psycholinguistic_texture", "caveats"):
+        usage = build_guide_payload("prose")[name].get("usage", "")
+        assert not restated.search(usage), name
+
+
+def test_section_variation_is_served_once():
+    g = build_guide_payload("prose")
+    assert "section_level_variation" not in g["foundation"]
+    assert "cross_segment_variation" in g["structural_patterns"]
+
+
+def test_primary_usage_keeps_only_its_statement():
+    assert set(build_guide_payload("prose")["foundation"]["primary_usage"]) == {"statement"}
+
+
+_SINGLE_LAYER_CALLS = (
+    ("humanizer_get_summary", {"params": {}}),
+    ("humanizer_get_application_protocol", {}),
+    ("humanizer_get_foundation", {}),
+    ("humanizer_get_lexical_patterns", {"params": {}}),
+    ("humanizer_get_structural_patterns", {}),
+    ("humanizer_get_anti_patterns", {"params": {}}),
+    ("humanizer_get_caveats", {}),
+    ("humanizer_get_content_profile", {"params": {}}),
+)
+
+
+def _tool_payload(name: str, args: dict) -> Any:
+    import asyncio
+
+    result = asyncio.run(server_with_tools().call_tool(name, args))
+    blocks = result[0] if isinstance(result, tuple) else result
+    return json.loads(blocks[0].text)
+
+
+def test_no_tool_serves_history_or_maintainer_notes():
+    for name, args in _SINGLE_LAYER_CALLS:
+        payload = _tool_payload(name, args)
+        assert not keys_named(payload, {"history", "maintainer_notes"}), name
+
+
+# ---------------------------------------------------------------------------
+# Final-review fix wave: served data contradictions
+# ---------------------------------------------------------------------------
+
+
+def test_ar002_directive_does_not_offer_a_colon_as_a_substitute():
+    rule = next(r for r in load_json("foundation.json")["absolute_rules"]["rules"] if r["id"] == "AR-002")
+    assert not re.search(r"\bcolon\b", rule["directive"].lower())
+
+
+def test_worksheet_caveat_states_the_confidence_levels_accurately():
+    by_id = {s["id"]: s for s in load_json("banned_structures.json")["structures"]}
+    assert by_id["BS-053"]["detection"]["confidence"] == "medium"
+    caveat = next(c for c in load_json("caveats.json")["core_caveats"] if c["id"] == "worksheet_cells_hide_semantic_tells")
+    assert "BS-053 at medium" in caveat["statement"]
+    assert "all four" not in caveat["statement"]
+
+
+def test_credibility_rewrites_carry_no_contrast_reflex_or_insistence_token():
+    guidance = load_json("lexical_patterns.json")["credibility_insistence"]["rewriting_guidance"]
+    assert not re.search(r"\bnot '[^']+' but\b|\bactually\b", guidance[1])
+
+
+def test_adverb_list_is_framed_as_keep_and_the_old_key_is_gone():
+    adverbs = load_json("lexical_patterns.json")["adverb_patterns"]
+    assert "human_adverbs_to_reintroduce" not in adverbs
+    assert "human_adverbs_to_reintroduce_notes" not in adverbs
+    assert adverbs["human_adverbs_to_keep"]
+    notes = adverbs["human_adverbs_to_keep_notes"]
+    assert "add none" in notes and "AR-001" in notes
+    assert not re.search(r"\bnot to\b|,\s+not\b|rather than", notes)
+
+
+def test_bs042_fix_recommends_no_form_with_a_fact_absent_from_its_example():
+    fix = next(s for s in load_json("banned_structures.json")["structures"] if s["id"] == "BS-042")["fix"]
+    example = "It shipped late, and I'm not going to pretend otherwise."
+    assert example in fix
+    assert set(re.findall(r"\d+|\b(?:one|two|three|four|five|six|seven|eight|nine|ten)\b", fix.lower())) == set()
+    assert "six weeks" not in fix and "the cause was ours" not in fix
+    assert "rather than" not in fix
+    assert "states that instead" in fix
+
+
+def test_bs039_fix_keeps_the_sources_facts():
+    fix = next(s for s in load_json("banned_structures.json")["structures"] if s["id"] == "BS-039")["fix"]
+    assert "a design" not in fix.lower()
+
+
+def test_negation_flip_uncontracted_form_fires_bs013():
+    assert "BS-013" in fires("It is not a tool. It is a partner.")
+
+
+def test_anaphora_detail_does_not_leave_the_pronoun_reading_open():
+    item = next(i for i in load_self_review() if i["id"] == "anaphora")
+    assert "It catches only" not in item["detail"]
+    assert "pronoun it" in item["detail"]
+
+
+def test_strings_changed_in_the_final_wave_carry_no_contrast_shape():
+    from src.server import SERVER_INSTRUCTIONS
+
+    caveat = next(c for c in load_json("caveats.json")["core_caveats"] if c["id"] == "worksheet_cells_hide_semantic_tells")
+    ar002 = next(r for r in load_json("foundation.json")["absolute_rules"]["rules"] if r["id"] == "AR-002")
+    for name, text in (
+        ("caveat", caveat["statement"]),
+        ("ar002", ar002["directive"]),
+        ("server", SERVER_INSTRUCTIONS),
+    ):
+        assert "rather than" not in text, name
+    assert ", and the check-fix" not in SERVER_INSTRUCTIONS
+
+
+def test_worksheet_caveat_explanation_states_bs053_at_medium():
+    caveat = next(
+        c for c in load_json("caveats.json")["core_caveats"]
+        if c["id"] == "worksheet_cells_hide_semantic_tells"
+    )
+    assert "BS-053 at 'medium'" in caveat["explanation"]
+    assert "BS-052, BS-053, BS-054 and BS-055 (budget-only) cover them at confidence 'low'" not in caveat["explanation"]
+
+
+def test_design_flaw_rewrites_keep_the_source_strength_and_drop_the_contrast():
+    ap = next(p for p in load_json("anti_patterns.json")["patterns"] if p["id"] == "AP-059")
+    assert ap["after"] == "This is a fundamental design flaw."
+    bs = next(s for s in load_json("banned_structures.json")["structures"] if s["id"] == "BS-046")
+    assert "'This is a fundamental design flaw.'" in bs["fix"]

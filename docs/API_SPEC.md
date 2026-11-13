@@ -8,7 +8,7 @@ All responses have `meta` blocks stripped and use compact JSON for token efficie
 
 ### `humanizer_get_guide`
 
-**Full composite endpoint.** Returns all nine data dimensions for a given content type with meta blocks stripped. Use only for major writing tasks or full rewrites. The full payload is about 40k tokens (roughly 166k characters for prose), over some clients' tool-output cap.
+**Full composite endpoint.** Returns all nine data dimensions for a given content type with meta blocks stripped. Use only for major writing tasks or full rewrites. The full payload is about 40k tokens (roughly 157k characters for prose), over some clients' tool-output cap. Registered with `meta={"anthropic/maxResultSizeChars": 80000}`, so every page (`core` is about 63k characters at most) arrives inline in Claude Code and the full guide lands in a file.
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
@@ -26,20 +26,20 @@ All responses have `meta` blocks stripped and use compact JSON for token efficie
 
 ### `humanizer_get_summary`
 
-**Lightweight composite endpoint.** Returns core principle, priority hierarchy, section-level variation, and content profile. Use for quick edits and revision passes.
+**Lightweight composite endpoint.** Returns the absolute rules, the enforcement block, core principle, priority hierarchy, the `uniform_application_paradox` caveat and a compact content profile. Use for quick edits and revision passes.
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `content_type` | string | No | One of: `academic`, `marketing`, `tech`, `prose`, `creative`, `case_study` (aliases `portfolio`, `product`), `resume` (aliases `résumé`, `cv`). Defaults to `prose`. |
 | `response_format` | string | No | `json` (compact, default) or `markdown` (human-readable). |
 
-**Returns:** Compact JSON with core_principle, two_axes, priority_hierarchy, section_level_variation, and content_profile.
+**Returns:** Compact JSON with absolute_rules, enforcement, core_principle, priority_hierarchy, content_profile and uniform_application_paradox.
 
 ---
 
 ### `humanizer_get_foundation`
 
-Returns core principle, axes, and priority hierarchy.
+Returns the absolute rules, enforcement, primary usage, core principle, axes and priority hierarchy. Section-to-section variation is not here; it lives in `structural_patterns.cross_segment_variation`.
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
@@ -153,14 +153,15 @@ Returns ESL considerations, detector brittleness notes, and ethical boundaries.
 
 ### `humanizer_check_text`
 
-**Deterministic compliance checker.** Analyzes candidate text and returns a compliance report. No LLM; read-only with respect to server state; does not log input text. Run after revising, then fix and re-run until `prohibitions_clear`.
+**Deterministic compliance checker.** Analyzes candidate text and returns a compliance report. No LLM; read-only with respect to server state; does not log input text. Run after revising. Resolve every hard violation; for each `must_clear` item, rewrite only the flagged span or justify it, and stop after two fix rounds; a hard violation is never justified, so keep fixing until `prohibitions_clear` is true. Make the last check on the assembled document with `rubric="full"`, do the self-review, and if it changed anything, check once more and confirm `prohibitions_clear`.
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
 | `text` | string | Yes | Candidate text to check (1-100000 chars). |
-| `content_type` | string | No | Tunes the burstiness target: `academic`, `marketing`, `tech`/`technical`, or `prose` (default). Pass `label` or `notes` for headings, worksheet cells, UI strings or CEFR-pitched copy: burstiness and `segment_uniformity` are still measured and returned in `metrics` but not reported as findings in `must_clear` (since sentence-length variance is undefined at that length), and every other layer still runs. `resume` (also `résumé`, `cv`; added 2026-11-09) does the same and also skips `rule_of_three_density`, because a Skills block is a list. `case_study` runs exactly as `prose`; its guidance is served by `humanizer_get_content_profile`. In every content type, a flagged term inside an entry of `lexical_patterns.terms_of_art` ("differentiated instruction") is not reported. |
+| `content_type` | string | No | Content type: `academic`, `marketing`, `tech`/`technical`, or `prose` (default). Pass `label` or `notes` for headings, worksheet cells, UI strings or CEFR-pitched copy: sentence-length numbers are still shown in `metrics` with `length_metrics_apply: false`, and `segment_variation.uniformity_flag` reads false so `segment_uniformity` is not listed in `must_clear`. Every other layer runs unchanged. `resume` (also `résumé`, `cv`; added 2026-11-09) does the same and also skips `rule_of_three_density`, because a Skills block is a list. `case_study` runs exactly as `prose`; its guidance is served by `humanizer_get_content_profile`. In every content type, a flagged term inside an entry of `lexical_patterns.terms_of_art` ("differentiated instruction") is not reported. The report's `manual_review` is filtered by `content_type`; with none, or an unknown one, every rubric item is sent. |
+| `rubric` | string | No | `short` (default) or `full`. Selects what `manual_review` carries: one short line per self-review item for the content type, or each item's full text. The loop runs on `short`; the model makes one last call on the assembled document with `full` and does the self-review against its draft. Any other value is a validation error. |
 
-**Returns:** Compact JSON: `prohibitions_clear` (bool, true iff no hard violations), `note`, `hard_violations[]` (em-dashes, stacked punctuation marks, and fixed AI phrases, with offsets; the em-dash check covers U+2014 and the `--` digraph, but skips hyphen runs on a line made only of `-`, `|`, `:` and spaces, so markdown table separators, horizontal rules, setext underlines and front-matter fences do not block `prohibitions_clear`), `must_clear[]` (located findings to rewrite or justify: flagged terms; regex/heuristic banned structures (the `BS-*` tells); document-budget overruns for structures that carry a `document_budget` and appear more often than it in the text supplied; rule-of-three density; cross-section uniformity (`segment_uniformity`); reality-assertion density (`credibility_insistence`); low burstiness; and punctuation issues (missing terminal marks, run-on spans, comma splices)), `metrics` (burstiness stats, `length_metrics_apply`, plus `segment_variation`), `manual_review[]` (the human-likeness **self-review rubric** the calling model runs against its own draft: rhythm, reused rhetorical shape, section-to-section variation, generic competence/stance, abstraction-as-agent, performative framing beat, and more; the texture checks the server cannot verify; data-driven from `data/self_review.json`), `next_action` (sequences the self-review step after the mechanical fixes).
+**Returns:** Compact JSON: `prohibitions_clear` (bool, true iff no hard violations), `note`, `hard_violations[]` (em-dashes, stacked punctuation marks, and fixed AI phrases, with offsets; the em-dash check covers U+2014 and the `--` digraph, but skips hyphen runs on a line made only of `-`, `|`, `:` and spaces, so markdown table separators, horizontal rules, setext underlines and front-matter fences do not block `prohibitions_clear`; it also skips a `--` that is a lowercase command-line flag (`--verbose`, `--save-dev`, preceded by whitespace, the start of the text, a backtick, `(`, or a quote when the flag runs straight to the closing quote) and any `--` inside a closed fenced code block or an inline code span; U+2014 fires everywhere, code included, and a capitalised lead such as an attribution, a `--Dana` sign-off or `--No, I said.` fires; a dash glued to a quote and followed by more words, such as a quoted `--and when`, fires too, and an unclosed fence hides nothing), `must_clear[]` (located findings to rewrite or justify: flagged terms; regex/heuristic banned structures (the `BS-*` tells); document-budget overruns for structures that carry a `document_budget` and appear more often than it in the text supplied; rule-of-three density; cross-section uniformity (`segment_uniformity`); reality-assertion density (`credibility_insistence`); and punctuation issues (missing terminal marks, run-on spans, comma splices)), `metrics` (raw sentence-length numbers, `length_metrics_apply` and `segment_variation`; sentence-length variance is reported as a number, never as a finding or a target, and the former `burstiness_flag` and `burstiness_target_stdev` keys are gone), `manual_review[]` (the human-likeness **self-review rubric** the calling model runs against its own draft, the texture checks the server cannot verify; data-driven from `data/self_review.json`, filtered by `content_type`, as short lines by default or full texts with `rubric="full"`), `next_action` (rewrite only flagged spans, stop after two fix rounds on `must_clear` items while a hard violation is fixed until `prohibitions_clear` is true, then one last check on the assembled document with `rubric="full"` and the self-review, and one more check confirming `prohibitions_clear` if the self-review changed anything).
 
 ---
 

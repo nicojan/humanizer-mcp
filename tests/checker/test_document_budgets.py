@@ -92,4 +92,6 @@ def test_caveat_records_that_the_mechanical_half_now_exists():
     caveats = json.loads((DATA / "caveats.json").read_text())["core_caveats"]
     entry = {c["id"]: c for c in caveats}["per_section_checks_miss_document_budgets"]
     assert "document_budget" in entry["explanation"]
-    assert "2026-09-18" in entry["explanation"]
+    # The date and the build narrative are maintainer history, never served.
+    assert "2026-09-18" in entry["history"]
+    assert "2026-09-18" not in entry["explanation"]

@@ -102,11 +102,11 @@ def find_credibility_insistence(text: str, config: dict) -> list[dict]:
             "offset": off,
             "excerpt": excerpt(text, off, off + len(dominant)),
             "fix": (
-                "You are repeatedly insisting the work is real/actual/genuine "
-                f"('{dominant}' x{counts[dominant]}; {total} across the set). A "
-                "human rarely needs to vouch that their own account is real. Cut "
-                "the assertions and let the specifics carry the credibility; keep "
-                "at most one if a contrast genuinely needs it."
+                "The text keeps vouching for its own account "
+                f"('{dominant}' x{counts[dominant]}; {total} across the set), "
+                "which a writer rarely needs to do. Cut the "
+                "assertions and let the specifics carry the credibility; keep "
+                "at most one where a contrast needs it."
             ),
         }
     ]

@@ -30,3 +30,20 @@ def test_input_strips_and_accepts_content_type():
     m = CheckTextInput(text="  hello  ", content_type="tech")
     assert m.text == "hello"
     assert m.content_type == "tech"
+
+
+def test_input_accepts_the_full_rubric():
+    assert CheckTextInput(text="x", rubric="full").rubric == "full"
+    assert CheckTextInput(text="x").rubric == "short"
+
+
+def test_input_rejects_an_unknown_rubric_mode():
+    with pytest.raises(ValidationError):
+        CheckTextInput(text="x", rubric="long")
+
+
+def test_handler_passes_the_rubric_mode_through():
+    short = json.loads(check_text_handler("We shipped on Tuesday.", "prose"))
+    full = json.loads(check_text_handler("We shipped on Tuesday.", "prose", "full"))
+    assert len(short["manual_review"]) == len(full["manual_review"])
+    assert sum(map(len, full["manual_review"])) > sum(map(len, short["manual_review"]))

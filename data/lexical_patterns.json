@@ -3,8 +3,8 @@
     "layer": "lexical_patterns",
     "priority": 5,
     "description": "Words, phrases, and constructions that statistical detectors and human readers associate with machine generation. Removing or replacing them is necessary hygiene; the structural and discourse layers carry more of the signal.",
-    "application_rule": "Replace contextually; the substitute depends on what the sentence actually means. Do not replace every instance; leave some formal words standing where they genuinely fit. Uniform replacement is itself a signal. This contextual, leave-some-standing rule is Tier 2 and applies to flagged words/phrases only. It never applies to Tier 1 prohibitions (em-dashes, banned structures); see foundation.enforcement.",
-    "usage": "First pass of the application protocol. Call humanizer_get_lexical_patterns(risk_level=...) to filter by severity. Apply the application_rule above for every substitution decision: contextual, non-uniform, leaving some formal words standing.",
+    "application_rule": "Replace contextually; the substitute depends on what the sentence means. Do not replace every instance; leave some formal words standing where they fit. Uniform replacement is itself a signal. This contextual, leave-some-standing rule is Tier-2 and applies to flagged words/phrases only. It never applies to Tier-1 prohibitions (em-dashes, banned structures); see foundation.enforcement.",
+    "usage": "First pass of the application protocol. Call humanizer_get_lexical_patterns(risk_level=...) to filter by severity. Apply the application_rule above for every substitution decision.",
     "research_basis": "Drawn from Przystalski et al. (2024) SHAP analysis, Grammarly common AI words corpus, Terčon & Dobrovoljc (2025) survey of 44 studies, and Wikipedia AI writing guidelines."
   },
   "flagged_verbs": [
@@ -357,25 +357,29 @@
         "hit home"
       ],
       "severity": "moderate",
-      "notes": "On the arXiv:2412.11385 focal-word list. 'Resonate with' is near-universal in AI marketing copy."
+      "notes": "'Resonate with' is near-universal in AI marketing copy.",
+      "history": "On the arXiv:2412.11385 focal-word list."
     },
     {
       "ai_word": "commence",
       "alternatives": ["start", "begin", "open"],
       "severity": "moderate",
-      "notes": "Orwell rule 2 (2026-08-10). Officialese rather than AI register, and there is no context where 'start' will not do. Zero occurrences in the human eval corpus."
+      "notes": "Orwell rule 2. Officialese rather than AI register, and there is no context where 'start' will not do.",
+      "history": "Added 2026-08-10. Zero occurrences in the human eval corpus."
     },
     {
       "ai_word": "ascertain",
       "alternatives": ["find out", "check", "confirm", "work out"],
       "severity": "moderate",
-      "notes": "Orwell rule 2 (2026-08-10). Zero occurrences in the human eval corpus."
+      "notes": "Orwell rule 2.",
+      "history": "Added 2026-08-10. Zero occurrences in the human eval corpus."
     },
     {
       "ai_word": "necessitate",
       "alternatives": ["need", "require", "force", "mean"],
       "severity": "moderate",
-      "notes": "Orwell rule 2 (2026-08-10). Usually a nominalized 'need'; the fix is often to name who needs what. Zero occurrences in the human eval corpus."
+      "notes": "Orwell rule 2. Usually a nominalized 'need'; the fix is often to name who needs what.",
+      "history": "Added 2026-08-10. Zero occurrences in the human eval corpus."
     }
   ],
   "flagged_adjectives": [
@@ -660,7 +664,8 @@
         "or name what people could see or hear"
       ],
       "severity": "low",
-      "notes": "Added 2026-10-30. Reinhart et al. (PNAS 2025): 95 times the human rate in GPT-4o, 145 in GPT-4o Mini. 1.7 per 10k sentences on long-form human prose, inside the bar; usually 'the tension was palpable'."
+      "notes": "Usually 'the tension was palpable'.",
+      "history": "Added 2026-10-30. Reinhart et al. (PNAS 2025): 95 times the human rate in GPT-4o, 145 in GPT-4o Mini. 1.7 per 10k sentences on long-form human prose, inside the bar."
     },
     {
       "ai_word": "unspoken",
@@ -669,7 +674,8 @@
         "or cut"
       ],
       "severity": "low",
-      "notes": "Added 2026-10-30. Chakrabarty, Laban and Wu (CHI 2025): 'unspoken' appears in about 15 percent of LLM fiction responses. 0.2 per 10k on long-form human prose."
+      "notes": "Common in model-written fiction.",
+      "history": "Added 2026-10-30. Chakrabarty, Laban and Wu (CHI 2025): 'unspoken' appears in about 15 percent of LLM fiction responses. 0.2 per 10k on long-form human prose."
     }
   ],
   "flagged_nouns": [
@@ -910,7 +916,7 @@
         "or show it"
       ],
       "severity": "low",
-      "notes": "Added 2026-10-30. Reinhart et al. (PNAS 2025): 162 times the human rate in GPT-4o, 171 in GPT-4o Mini. 0 in long-form human prose, pre-2022 essays and pre-2022 Wikipedia (121,527 sentences)."
+      "history": "Added 2026-10-30. Reinhart et al. (PNAS 2025): 162 times the human rate in GPT-4o, 171 in GPT-4o Mini. 0 in long-form human prose, pre-2022 essays and pre-2022 Wikipedia (121,527 sentences)."
     },
     {
       "ai_word": "unease",
@@ -920,7 +926,8 @@
         "or show what the person does"
       ],
       "severity": "low",
-      "notes": "Added 2026-10-30. Reinhart et al. (PNAS 2025): 101 times the human rate in Llama 3 8B, 63 in Llama 3 70B. 'uneasiness' is a different word and is not flagged; Victorian prose uses it constantly. 1 in 39,891 sentences of pre-2022 Wikipedia."
+      "notes": "'uneasiness' is a different word and is not flagged.",
+      "history": "Added 2026-10-30. Reinhart et al. (PNAS 2025): 101 times the human rate in Llama 3 8B, 63 in Llama 3 70B. Victorian prose uses 'uneasiness' constantly. 1 in 39,891 sentences of pre-2022 Wikipedia."
     }
   ],
   "flagged_transitions": [
@@ -1141,8 +1148,7 @@
         "ai_phrase": "Arguably",
         "alternatives": [
           "On balance",
-          "Or name who holds the view, if the source names them",
-          "Or make a direct claim"
+          "Or name who holds the view, if the source names them"
         ],
         "severity": "moderate"
       },
@@ -1167,9 +1173,10 @@
     "rule": "Human writers commit firmly to some claims and hedge others. When rewriting, keep the source's own hedges, because each one marks how sure the writer is, and dropping it hardens the claim (absolute_rules AR-001). 'The drug probably reduces symptoms in most patients.' keeps its 'probably'. The phrases in this list are stock wordings of a limit. Where the source uses one, swap it for a plain alternative that marks the same limit, so 'Typically' becomes 'Usually'. Cut one only where it marks no limit the source states, and where several qualifiers stack on one claim, keep the one that marks the source's limit. If every paragraph carries a formulaic qualifier, the text reads as AI-generated."
   },
   "vocabulary_diversity": {
-    "description": "Corrected 2026-10-30: the direction of whole-text lexical diversity is model-dependent, so it is not a reliable tell and this server does not measure it. Herbold et al. (2023) found ChatGPT essays MORE lexically diverse than student essays, and Kendro, Maloney and Jarvis (2025) found newer models more diverse than older ones while still reading as less human. What does carry over is narrower: AI text recycles the same distinctive expressions and generic nouns across a piece (the flagged lexicon, the stock frames in banned_structures) and favors the expected word over the one the context calls for. Repetition of a marked expression is the signal, not the type-token ratio.",
+    "description": "The direction of whole-text lexical diversity is model-dependent, so it is not a reliable tell and this server does not measure it. AI text does recycle the same distinctive expressions and generic nouns across a piece (the flagged lexicon, the stock frames in banned_structures) and favors the expected word over the one the context calls for, so look for a marked expression that repeats.",
+    "history": "Corrected 2026-10-30. Herbold et al. (2023) found ChatGPT essays MORE lexically diverse than student essays, and Kendro, Maloney and Jarvis (2025) found newer models more diverse than older ones while still reading as less human.",
     "metrics": {
-      "ttr": "Type-Token Ratio. Not a usable signal: depending on the model, AI text scores lower, equal or higher than human text (Herbold et al. 2023; Kendro et al. 2025). Do not raise it by swapping in synonyms.",
+      "ttr": "Type-Token Ratio. Not a usable signal: depending on the model, AI text scores lower, equal or higher than human text. Do not raise it by swapping in synonyms.",
       "hapax_legomenon_rate": "Proportion of words used only once. Same caveat as the type-token ratio: model-dependent, so not a target.",
       "unique_word_count": "Not a target. A passage with many unique words can still read as machine-made if the words are the expected ones."
     },
@@ -1236,33 +1243,34 @@
     "research_basis": "Opara (2025) identifies AbstractNounCount as a discriminating stylometric feature in the StyloAI framework, linked to higher-level cognitive functions in human writing."
   },
   "adverb_patterns": {
-    "description": "AI text consistently underuses adverbs, particularly manner and degree adverbs. Reintroducing them adds the texture of a writer making fine-grained judgments.",
-    "ai_pattern": "Older and smaller models underuse degree and manner adverbs; when they do use adverbs, they tend to be generic intensifiers (significantly, effectively). The direction is model-specific for downtoners: Reinhart et al. (PNAS 2025) found GPT-4o overusing barely and nearly while the Llama 3 models avoid them. So the tell is the adverb that carries no judgment, not the presence or absence of adverbs.",
+    "description": "AI text consistently underuses adverbs, particularly manner and degree adverbs. Where the source has them, keeping them keeps the writer's fine-grained judgments.",
+    "ai_pattern": "Older and smaller models underuse degree and manner adverbs; when they do use adverbs, they tend to be generic intensifiers (significantly, effectively). The direction is model-specific for downtoners such as barely and nearly, which some models overuse and others avoid. The tell is an adverb that carries no judgment.",
     "human_pattern": "Human writers use adverbs to calibrate precision. 'It mostly works' says something different from 'it works', and the choice between them reflects a real judgment call.",
     "flagged_ai_adverbs": [
       { "ai_adverb": "significantly", "alternatives": ["meaningfully", "noticeably", "by a wide margin", "or quantify it"], "severity": "moderate" },
       { "ai_adverb": "effectively", "alternatives": ["well", "reliably", "in practice", "or describe what 'effective' looks like"], "severity": "moderate" },
       { "ai_adverb": "subsequently", "alternatives": ["then", "after that", "next", "later"], "severity": "moderate" }
     ],
-    "human_adverbs_to_reintroduce": [
+    "human_adverbs_to_keep": [
       "barely", "almost", "roughly", "entirely",
       "quickly", "reluctantly", "carefully", "deliberately",
       "apparently", "supposedly",
       "gradually", "suddenly", "consistently", "rarely", "occasionally"
     ],
-    "human_adverbs_to_reintroduce_notes": "Pruned 2026-10-30 because the list contradicted this server's own detectors: 'quietly' is the BS-033 / AP-046 tic, 'actually' is counted by credibility_insistence, and 'honestly' opens the AP-045 false-candour beat. A degree adverb belongs in the sentence only when it carries the writer's actual assessment; adding one to look human is the same move as adding a contraction to look human.",
+    "human_adverbs_to_keep_notes": "Keep one of these where the source already uses it, and where the source has none, add none (absolute_rules AR-001). 'quietly' (the BS-033 / AP-046 tic), 'actually' (counted by credibility_insistence) and 'honestly' (the AP-045 false-candour beat) are left off this list. A degree adverb belongs in the sentence only when it carries the writer's own assessment; adding one to look human is the same move as adding a contraction to look human.",
+    "history": "Pruned 2026-10-30 because the list contradicted this server's own detectors. Reinhart et al. (PNAS 2025) found GPT-4o overusing barely and nearly while the Llama 3 models avoid them.",
     "rules": [
       {
         "rule": "Keep the degree adverbs that calibrate a claim.",
         "guidance": "Where the source says how far a claim holds ('mostly', 'barely', 'roughly'), keep that adverb, because it carries the writer's assessment. Do not add one the source lacks, since that softens or hardens the claim (absolute_rules AR-001)."
       },
       {
-        "rule": "Use manner adverbs to reveal how something happened, not just that it did.",
-        "guidance": "'The team responded' → 'The team responded quickly' or 'The team reluctantly responded.' Manner tells the reader something about the human behind the action."
+        "rule": "Keep the manner adverbs the source gives.",
+        "guidance": "Where the source says how something happened ('The team reluctantly responded'), keep the adverb, because the manner tells the reader something about the people involved. Do not add a manner the source does not state (absolute_rules AR-001)."
       },
       {
-        "rule": "Distribute adverbs unevenly.",
-        "guidance": "Some paragraphs should be adverb-dense (reflecting careful qualification), others adverb-sparse (reflecting confident directness). Uniform adverb use is its own pattern."
+        "rule": "Let adverb density follow the source.",
+        "guidance": "A passage the source qualifies carefully keeps its adverbs, and a passage it states directly stays plain. Do not add or strip adverbs to change the density."
       }
     ],
     "research_basis": "Muñoz-Ortiz et al. (2024) UPOS frequency data shows ADV at 3.26% in human text vs. 2.61% in Falcon and 3.41-3.68% in LLaMA. Ardeshirifar (2025) confirms human text uses adverbs and adverbial modifiers more frequently."
@@ -1277,14 +1285,14 @@
     "exclusions": ["real-time", "real estate", "real number", "real-world", "in real terms", "really? (interrogative)", "one sentence-initial 'actually' as a discourse marker", "anything inside quotation marks"],
     "rewriting_guidance": [
       "If one of these tokens appears three or more times, cut all but at most one. The narrative detail should establish that the work is real; you should not have to say so.",
-      "Replace the assertion with the specific that justified it: not 'a real engagement' but 'a live, mid-build engagement'; not 'the real flow' but 'the flow the operators actually follow'.",
+      "Replace the assertion with the specific that justified it. Where the source says 'a real engagement', give the stage it is at, such as 'a mid-build engagement'; where it says 'the real flow', name the flow.",
       "Keep a single use only where it draws a genuine contrast (e.g. real versus hypothetical), and make that contrast explicit."
     ],
     "research_basis": "proposed-rules PR2-#1; in-the-wild audit of nicojan.com/work/art-studio-blueprint (2026-06-28), where seven uses of 'real' in ~1,500 words passed the checker clean."
   },
   "orwell": {
-    "description": "The plainness pass, from Orwell's 'Politics and the English Language' (1946). Adopted 2026-08-10 from a case-study copy gate that had been running it by hand after this server's own loop, on the finding that the two passes catch different things: the humanizer layers catch what marks text as machine-made, and this one catches what makes any prose flabby. It runs LAST, on copy that has already cleared the other phases, because cutting words changes rhythm and a cut is cheaper to make than to undo.",
-    "usage": "Guidance, not auto-flagged. Only rule 1 is mechanized, as banned_structures BS-041, and only over a closed list of figures. Rules 3 and 4 are judgment and live in the self_review rubric. The substitution lists below are for the calling model to apply contextually, per this layer's application_rule, and never uniformly.",
+    "description": "The plainness pass, from Orwell's 'Politics and the English Language' (1946). The humanizer layers catch what marks text as machine-made, and this pass catches what makes any prose flabby. It runs after the fix rounds of the verification loop and before its last check on the assembled document, because cutting words changes rhythm and a cut is cheaper to make than to undo.",
+    "usage": "The checker flags only rule 1, as banned_structures BS-041, and only over a closed list of figures. Rules 3 and 4 are judgment and live in the self_review rubric. The substitution lists below are for the calling model to apply contextually, per this layer's application_rule.",
     "rules": [
       {"rule": 1, "text": "Never use a metaphor, simile or other figure of speech which you are used to seeing in print.", "note": "Mechanized over a closed list as BS-041. The list is not the class: read the piece for any image you did not choose deliberately."},
       {"rule": 2, "text": "Never use a long word where a short one will do.", "note": "Partly mechanized: the flagged_verbs and flagged_adjectives lists already carry the AI-register half (utilize, facilitate, endeavor, subsequently), and the officialese half is in long_word_substitutions below."},
@@ -1325,14 +1333,15 @@
       "see_also": "caveats.jargon_substitution_loses_meaning"
     },
     "rewriting_guidance": [
-      "Run this pass last, after the lexical, structural and verification phases, then re-run humanizer_check_text: cutting words can create or expose findings such as a comma splice or a new run-on.",
+      "Run this pass after the fix rounds of the verification loop and before its last check with rubric=\"full\" on the assembled document. End it with humanizer_check_text and confirm prohibitions_clear is true, because cutting words can create or expose findings such as a comma splice or a new run-on.",
       "Rule 3 is the one to spend time on in anything longer than a page. Read each paragraph and ask which words the sentence needs.",
       "Do not apply the substitution lists as a find-and-replace. A long word chosen for rhythm at the end of a sentence can be the right word, and rule 6 covers it."
     ],
     "research_basis": "Orwell, 'Politics and the English Language' (1946). Added 2026-08-10 from the Day One case-study writing gate, which ran an Orwell layer by hand after this server's loop for the length of a 39-page document and kept catching the same three classes: stale figures, padding, and jargon substituted where a definition was wanted."
   },
   "terms_of_art": {
-    "description": "Multi-word domain terms that contain a flagged word but have no plainer equivalent. A flagged word inside one of these is not reported, in any content type, because replacing it would change the claim (caveats.jargon_substitution_loses_meaning). Added 2026-11-09 after a portfolio project excused 'differentiated instruction' by hand on every audit. Add a term only when every suggested alternative would make the sentence wrong, never to quiet a word that is merely common in a field.",
+    "description": "Multi-word domain terms that contain a flagged word but have no plainer equivalent. A flagged word inside one of these is not reported, in any content type, because replacing it would change the claim (caveats.jargon_substitution_loses_meaning). Add a term only when every suggested alternative would make the sentence wrong, never to quiet a word that is merely common in a field.",
+    "history": "Added 2026-11-09 after a portfolio project excused 'differentiated instruction' by hand on every audit.",
     "items": [
       {
         "phrase": "differentiated instruction",

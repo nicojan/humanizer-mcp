@@ -250,7 +250,7 @@
       "category": "structural",
       "before": "in 200 words",
       "after": "the direction problem",
-      "explanation": "Meta label: a heading or standalone line that names the artifact's own format or length ('in 200 words', 'in brief', 'the short version', 'at a high level', 'to put it simply') instead of its subject. A self-aware flourish that performs concision rather than saying one more specific thing, and it is topic-agnostic, since the same label could head almost any piece. Replace it with a phrase about the content, or cut it and let the content name the section. The standalone-label form is detected deterministically as BS-022; the judgment forms (self-satisfied closers, first-person meta-commentary, paradox-substitution headlines) are a self_review rubric item."
+      "explanation": "Meta label: a heading or standalone line that names the artifact's own format or length ('in 200 words', 'in brief', 'the short version', 'at a high level', 'to put it simply') instead of its subject. The label is a self-aware flourish that performs concision in place of one more specific thing. It is topic-agnostic, since the same label could head almost any piece. Replace it with a phrase about the content, or cut it and let the content name the section. The standalone-label form is detected deterministically as BS-022; the judgment forms (self-satisfied closers, first-person meta-commentary, paradox-substitution headlines) are a self_review rubric item."
     },
     {
       "id": "AP-036",
@@ -368,7 +368,7 @@
       "id": "AP-052",
       "category": "structural",
       "before": "The handoff is where it breaks. Not because the released person stopped mattering, but because the officer is where a design can reach.",
-      "after": "The handoff is where it breaks, because the officer is the only point in the system a design can reach.",
+      "after": "It breaks at the handoff, because a design can reach the officer.",
       "explanation": "Antithesis fragment. The rejected half answers a charge nobody made, so it exists to give the real clause a running start. Cut it and the sentence loses nothing but the drum roll. Fragment sibling of the two-sentence copula flip in AP-029; detected as BS-039."
     },
     {
@@ -417,7 +417,7 @@
       "id": "AP-059",
       "category": "structural",
       "before": "Not a bug. Not a feature. A fundamental design flaw.",
-      "after": "This is a design flaw, not a bug.",
+      "after": "This is a fundamental design flaw.",
       "explanation": "The staccato negation run. Detected as BS-046, which requires a determiner in both fragments so ordinary human emphasis ('Not now. Not ever.') is left alone."
     },
     {
@@ -432,14 +432,14 @@
       "category": "structural",
       "before": "Let's break this down step by step.",
       "after": "There are three steps.",
-      "explanation": "Announcing the procedure instead of performing it. Detected as BS-048. Sibling of BS-022; scoped to procedural announcements, so the stance markers rejected in 2026-07-25 stay unflagged."
+      "explanation": "Announcing the procedure instead of performing it. Detected as BS-048. Sibling of BS-022; scoped to procedural announcements, so stance markers stay unflagged."
     },
     {
       "id": "AP-062",
       "category": "structural",
       "before": "Co-op hours were 9 to 5, so the Fridays survived. Busy season eats the Fridays.",
       "after": "My summer co-op term ends at 5 most days, so I still make it to billiards on Fridays. No billiards from January to April.",
-      "explanation": "A time or calendar noun made into a creature that survives, eats or claims: the schedule acts and the person who chose disappears. Hard to hear because it reads as a lively figure. Name the person and state what happens. Detected as BS-052; the '[time] back' refrain it tends to travel with is budgeted as BS-055. From a reviewed B2 worksheet exemplar, 2026-09-29."
+      "explanation": "A time or calendar noun made into a creature that survives, eats or claims: the schedule acts and the person who chose disappears. Hard to hear because it reads as a lively figure. Name the person and state what happens. Detected as BS-052; the '[time] back' refrain it tends to travel with is budgeted as BS-055."
     },
     {
       "id": "AP-063",
@@ -467,14 +467,16 @@
       "category": "structural",
       "before": "Knowing which type you have matters more than most beginners realize. Gardening is as much about patience as technique. As the hobby grows, the future of home gardening looks bright.",
       "after": "Check the seed packet for 'determinate' before you prune anything. The council's frost date this year is May 12.",
-      "explanation": "Three closer habits at once: an importance flag (BS-063) that announces a point matters, an 'as much about A as B' maxim (BS-064), and an optimistic forecast in the last paragraph (BS-062). Expert readers cite tidy, upbeat endings as a leading AI clue (Russell et al., ACL 2025); human endings stop on the last fact."
+      "explanation": "Three closer habits at once: an importance flag (BS-063) that announces a point matters, an 'as much about A as B' maxim (BS-064), and an optimistic forecast in the last paragraph (BS-062). Expert readers cite tidy, upbeat endings as a leading AI clue; human endings stop on the last fact.",
+      "history": "Russell et al., ACL 2025."
     },
     {
       "id": "AP-067",
       "category": "lexical",
       "before": "Her voice was barely above a whisper, her heart hammering against her ribs. She felt a mix of pride and sadness as the air hung thick with the scent of rain.",
       "after": "She could hardly get the words out. He had done it without her, and she was proud of him for that, and it was the worst thing she'd felt all year. It had rained.",
-      "explanation": "Stock fiction phrases that most current models over-produce (Antislop, 2025: 'voice barely whisper' is among the top over-represented trigrams of 68.7 percent of 67 models), plus an emotion named as an inventory (Chakrabarty et al., CHI 2025). Detected as BS-059 and BS-060. The fix is the specific thing this character does or notices."
+      "explanation": "Stock fiction phrases that most current models over-produce, plus an emotion named as an inventory. Detected as BS-059 and BS-060. The fix is the specific thing this character does or notices.",
+      "history": "Antislop, 2025: 'voice barely whisper' is among the top over-represented trigrams of 68.7 percent of 67 models. Chakrabarty et al., CHI 2025, for the emotion inventory."
     },
     {
       "id": "AP-068",

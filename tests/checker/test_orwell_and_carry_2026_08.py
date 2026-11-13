@@ -219,12 +219,15 @@ def test_orwell_is_a_protocol_phase_after_verification():
 def test_orwell_phase_requires_a_recheck_after_trimming():
     phases = json.loads((DATA / "foundation.json").read_text())["application_protocol"]["phases"]
     orwell = next(p for p in phases if "orwell" in p["name"].lower())
-    assert "re-run" in orwell["stop_condition"].lower()
+    # Task 11: the trim ends with its own check, then phase 9's last
+    # rubric="full" check follows on the assembled document.
+    assert "humanizer_check_text runs on the trimmed text" in orwell["stop_condition"]
+    assert "prohibitions_clear" in orwell["stop_condition"]
 
 
 def test_plainness_is_a_self_review_item():
     items = json.loads((DATA / "self_review.json").read_text())["self_review"]["items"]
-    joined = " ".join(items).lower()
+    joined = " ".join(i["detail"] for i in items).lower()
     assert "orwell" in joined and "passive" in joined
 
 

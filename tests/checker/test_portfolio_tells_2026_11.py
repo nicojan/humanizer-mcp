@@ -73,7 +73,7 @@ def test_the_caption_rule_stays_rejected():
 def test_self_review_carries_the_flagged_shapes():
     """Each shape lives in the rubric with at least one flagged line as its
     attested example."""
-    rubric = "\n".join(load_self_review())
+    rubric = "\n".join(i["detail"] for i in load_self_review())
     for attested in (
         "so a fix reached people within a day of shipping",
         "came first, and so did the habit of",
@@ -87,14 +87,10 @@ def test_self_review_carries_the_flagged_shapes():
         assert attested in rubric, attested
 
 
-def test_new_rubric_items_lead_with_their_names():
-    rubric = load_self_review()
-    for name in (
-        "Cause-to-benefit 'so' tail:",
-        "Backstory order and self-portrait flourish:",
-        "Cold-reader test for product, portfolio and case-study copy:",
-    ):
-        assert sum(item.startswith(name) for item in rubric) == 1, name
+def test_new_rubric_items_are_present_once():
+    ids = [item["id"] for item in load_self_review()]
+    for item_id in ("so_tail", "backstory_and_self_portrait", "cold_reader_test"):
+        assert ids.count(item_id) == 1, item_id
 
 
 def test_ap069_is_the_caption_example():
@@ -102,11 +98,13 @@ def test_ap069_is_the_caption_example():
     ap = aps["AP-069"]
     assert ap["before"] == "One count, four moments"
     assert "Not mechanized" in ap["explanation"]
-    assert "AP-069" in "\n".join(load_self_review())
+    assert "AP-069" in "\n".join(i.get("history", "") for i in load_self_review())
 
 
 def test_caveat_records_that_the_flagged_lines_passed():
     caveats = {c["id"]: c for c in json.loads((DATA / "caveats.json").read_text())["core_caveats"]}
     entry = caveats["reviewed_copy_passes_the_checker"]
-    assert "2026-11-09" in entry["explanation"] and "31" in entry["explanation"]
-    assert "none survived" in entry["explanation"]
+    # The measurement is maintainer history; the served text keeps the advice.
+    assert "2026-11-09" in entry["history"] and "31" in entry["history"]
+    assert "none survived" in entry["history"]
+    assert "self_review" in entry["explanation"]

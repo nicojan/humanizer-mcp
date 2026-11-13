@@ -26,18 +26,18 @@
         "id": "AR-002",
         "title": "Never use em-dashes (—).",
         "priority": "highest",
-        "directive": "The em-dash (Unicode U+2014, the long dash, also typed as '--' in some editors) has become one of the most reliable AI tells in current detector landscapes and informal human reading. Do not use em-dashes under any circumstance, including for parenthetical asides, pivots, emphasis, ranges, or attributions. For parenthetical asides, use commas, parentheses, or restructure into two sentences. For pivots between two independent clauses, use a period, or a semicolon when the clauses are closely joined, never a bare comma (a comma joining two independent clauses is a comma splice, AR-003); if the em-dash staged a reveal, put the point first. For ranges, use 'to' or an en-dash (–) where typographically appropriate. When revising source text that already contains em-dashes, replace every one with a valid substitute mark (period, comma, semicolon, colon, or parenthesis per AR-003); never delete the em-dash and leave the surrounding text unpunctuated. When the em-dash joined two independent clauses, substitute a period or a semicolon rather than a comma, which would create a comma splice. This rule overrides any other guidance in this dataset that suggests, models, or demonstrates em-dash use. Historical examples elsewhere in this data that still contain em-dashes are bugs, not patterns to imitate."
+        "directive": "The em-dash (Unicode U+2014, the long dash, also typed as '--' in some editors) has become one of the most reliable AI tells in current detector landscapes and informal human reading. Do not use em-dashes under any circumstance, including for parenthetical asides, pivots, emphasis, ranges, or attributions. For parenthetical asides, use commas, parentheses, or restructure into two sentences. For pivots between two independent clauses, use a period, or a semicolon when the clauses are closely joined, never a bare comma (a comma joining two independent clauses is a comma splice, AR-003); if the em-dash staged a reveal, put the point first. For ranges, use 'to' or an en-dash (–) where typographically appropriate. When revising source text that already contains em-dashes, replace every one with a valid substitute mark (period, comma, semicolon, or parenthesis per AR-003); never delete the em-dash and leave the surrounding text unpunctuated. When the em-dash joined two independent clauses, substitute a period or a semicolon, since a comma there would create a comma splice. This rule overrides any other guidance in this dataset that suggests, models, or demonstrates em-dash use. Historical examples elsewhere in this data that still contain em-dashes are bugs, not patterns to imitate."
       },
       {
         "id": "AR-003",
         "title": "Punctuation must be grammatically correct and complete.",
         "priority": "highest",
-        "directive": "All punctuation in the output must conform to standard English usage. Every sentence ends with a terminal mark (period, question mark, or exclamation point). Commas separate clauses and items where required and do not produce comma splices. Semicolons join only independent clauses or separate complex list items. Colons introduce a list, a quotation, or an explanation the reader needs, never a staged reveal. Parentheses and quotation marks are balanced. Do not drop required punctuation, do not stack marks (e.g. '.,' or ';.'), and do not introduce run-ons or accidental fragments while restructuring. A fragment is allowed only where it answers a question, renders speech, or in fiction marks where a scene breaks off; it still ends with a terminal mark. The 'punctuation drift' guidance elsewhere in this dataset (structural_patterns.punctuation_diversity rule on drift, psycholinguistic_texture.self_monitoring_traces) governs the CHOICE among valid options (Oxford comma on/off, semicolon vs. period to join related clauses, parentheses vs. commas for an aside), not the presence or correctness of marks. Drift is never license to omit required punctuation or to use a mark incorrectly. AR-002 em-dash replacement must always SUBSTITUTE a valid mark, never delete one."
+        "directive": "All punctuation in the output must conform to standard English usage. Every sentence ends with a terminal mark (period, question mark, or exclamation point). Commas separate clauses and items where required and do not produce comma splices. Semicolons join only independent clauses or separate complex list items. Colons introduce a list, a quotation, or an explanation the reader needs, never a staged reveal. Parentheses and quotation marks are balanced. Do not drop required punctuation, do not stack marks (e.g. '.,' or ';.'), and do not introduce run-ons or accidental fragments while restructuring. A fragment is allowed only where it answers a question, renders speech, or in narrative marks where a scene breaks off; it still ends with a terminal mark. The 'punctuation drift' guidance elsewhere in this dataset (structural_patterns.punctuation_diversity rule on drift, psycholinguistic_texture.self_monitoring_traces) governs the CHOICE among valid options (Oxford comma on/off, semicolon vs. period to join related clauses, parentheses vs. commas for an aside), not the presence or correctness of marks. Drift is never license to omit required punctuation or to use a mark incorrectly. AR-002 em-dash replacement must always SUBSTITUTE a valid mark, never delete one."
       }
     ]
   },
   "enforcement": {
-    "description": "Two-tier enforcement model. Tier 1 prohibitions must be eliminated; Tier 2 stylistic moves are applied non-uniformly.",
+    "description": "Two-tier enforcement model. Tier-1 prohibitions must be eliminated; Tier-2 stylistic moves are applied non-uniformly.",
     "zero_tolerance": {
       "description": "Tier-1 prohibitions. Must not appear in output. Non-uniformity does NOT apply to these.",
       "members": [
@@ -47,23 +47,22 @@
       ]
     },
     "non_uniformity_scope": "The directive 'do not apply changes uniformly' (core_principle, application_protocol.uniformity_directive, caveats.uniform_application_paradox) governs Tier-2 stylistic moves ONLY, namely word substitution, transitions, closers, contrasts and texture. It is never a license to leave a Tier-1 prohibition (em-dash or banned structure) in the text.",
-    "verification": "After revising, call humanizer_check_text with the candidate output. Resolve every hard_violation, rewrite or justify each must_clear item, and re-run until prohibitions_clear is true. This loop is mandatory, not optional polish; see primary_usage."
+    "verification": "After revising, call humanizer_check_text with the candidate output. Resolve every hard_violation so prohibitions_clear is true. For each must_clear item, rewrite only the flagged span and keep the rest of the draft as it is, or justify the item. Re-run humanizer_check_text; stop after two fix rounds and justify any must_clear item left. A hard_violation is never justified, so keep fixing until prohibitions_clear is true. Then run one last check on the assembled document with rubric=\"full\" and do the self-review against your draft, changing only the spans an item points to. If the self-review changed anything, run humanizer_check_text once more and confirm prohibitions_clear is true before returning. This loop is mandatory; see primary_usage."
   },
   "primary_usage": {
-    "statement": "The write -> check -> fix loop is the primary, required path to adherence, not optional polish. Read the rules, draft, then call humanizer_check_text and resolve every finding, re-running until prohibitions_clear is true.",
-    "why": "Reading the rules is necessary but insufficient. In deterministic evaluation (see eval/FINDINGS.md, 2026-06-29), reading the full rule payload roughly halved house-style violations (-47% to -67% weighted findings per 1k words, across a strong and a weak writer), yet single-pass output still carried em-dashes, comma splices, and banned structures. The verification loop drove the remaining violations to zero. The effect was larger for the weaker writer, so the loop matters most for the 'any LLM' consumer.",
-    "evidence_scope": "Direction-finding only (small benchmark, Claude-family writers). The loop's value is established for ADHERENCE, not as a human-likeness improver: the eval's texture proxies are unvalidated against human judgment, and a 2026-06-29 re-scoring found the loop's lexical-diversity texture trends toward the AI side, not toward human, so no human-likeness gain is claimed. All rules are retained; this concerns how to use the MCP, not what it bans."
+    "statement": "The write -> check -> fix loop is the primary, required path to adherence. Read the rules and draft. Then call humanizer_check_text, resolve every hard_violation so prohibitions_clear is true, and for each must_clear item rewrite only the flagged span or justify the item. Re-run humanizer_check_text; stop after two fix rounds and justify any must_clear item left. A hard_violation is never justified, so keep fixing until prohibitions_clear is true. Make one last check on the assembled document with rubric=\"full\" and do the self-review against your draft, changing only the spans an item points to. If the self-review changed anything, run humanizer_check_text once more and confirm prohibitions_clear is true before returning.",
+    "history": "Reading the rules is necessary but insufficient. In deterministic evaluation (see eval/FINDINGS.md, 2026-06-29), reading the full rule payload roughly halved house-style violations (-47% to -67% weighted findings per 1k words, across a strong and a weak writer), yet single-pass output still carried em-dashes, comma splices, and banned structures. The verification loop drove the remaining violations to zero. The effect was larger for the weaker writer, so the loop matters most for the 'any LLM' consumer. Direction-finding only (small benchmark, Claude-family writers). The loop's value is established for ADHERENCE, not as a human-likeness improver: the eval's texture proxies are unvalidated against human judgment, and a 2026-06-29 re-scoring found the loop's lexical-diversity texture trends toward the AI side, not toward human, so no human-likeness gain is claimed. All rules are retained; this concerns how to use the MCP, not what it bans."
   },
   "core_principle": {
     "statement": "Do not apply changes uniformly.",
-    "explanation": "AI-generated text gives itself away most through a repeated shape, such as the same closer ending every section, the same contrast pair, the same transition or the same hedge. Human text is locally inconsistent while remaining globally coherent. Every rule in this system should be applied selectively and unevenly. If a rule says 'use contractions,' that means use them in some places and not others. This non-uniformity applies to Tier 2 stylistic moves only; see enforcement.non_uniformity_scope. Tier 1 prohibitions (em-dashes, banned structures) are never subject to it.",
+    "explanation": "AI-generated text gives itself away most through a repeated shape, such as the same closer ending every section, the same contrast pair, the same transition or the same hedge. Human text is locally inconsistent while remaining globally coherent. Every rule in this system should be applied selectively and unevenly. If a rule says 'use contractions,' that means use them in some places and not others. This non-uniformity applies to Tier-2 stylistic moves only; see enforcement.non_uniformity_scope. Tier-1 prohibitions (em-dashes, banned structures) are never subject to it.",
     "research_basis": "Stylometric analysis confirms that LLM outputs cluster tightly and uniformly, while human texts form broader, more heterogeneous clusters reflecting diversity of individual expression. Uniform application of human-patterning rules is itself an AI signal."
   },
   "two_axes": {
     "perplexity": {
       "definition": "How predictable individual word choices are to a probabilistic language model.",
       "low": "Every token is the most probable next token. Example: 'It is important to consider the various factors.'",
-      "high": "Contextually appropriate but statistically surprising. Example: 'The numbers don't lie, but they do omit.'",
+      "high": "Contextually appropriate but less expected. Example: 'The receipts sat in a shoebox under the desk.'",
       "human_tendency": "Higher perplexity. Human writers draw on semantic memory, lived experience, and personal vocabulary, producing word choices that are locally motivated rather than globally optimized."
     },
     "burstiness": {
@@ -118,31 +117,6 @@
       "risk": "moderate"
     }
   ],
-  "section_level_variation": {
-    "principle": "Human writing varies by section. Different parts of a document should read differently.",
-    "profiles": {
-      "instructions_or_tutorials": {
-        "burstiness": "lower",
-        "perplexity": "lower",
-        "priority": "Clarity. Short, direct sentences. Uniform structure is acceptable here."
-      },
-      "narrative_or_creative": {
-        "burstiness": "higher",
-        "perplexity": "higher",
-        "priority": "Rhythm that follows the scene, with sentence length and word choice set by what each moment needs."
-      },
-      "academic_or_technical": {
-        "burstiness": "moderate, clustered within sections",
-        "perplexity": "moderate to high",
-        "priority": "Domain-specific terminology used precisely. Burstiness appears through clustered jargon that relaxes elsewhere."
-      },
-      "opinion_or_argumentation": {
-        "burstiness": "moderate to high",
-        "perplexity": "moderate to high",
-        "priority": "A clear position argued from evidence. A question or a repeated phrase belongs only where the argument needs it."
-      }
-    }
-  },
   "application_protocol": {
     "description": "Ordered traversal that visits every rule path in the data set. An LLM client that walks this protocol phase-by-phase, retrieves the payloads at the listed paths, and considers each rule in turn is guaranteed to have surveyed the complete rule set. 'Survey' is not 'apply uniformly'; see uniformity_directive below.",
     "uniformity_directive": "Walking this protocol does NOT mean applying every rule. The single most detectable property of AI-generated text is consistency. For every rule visited, the LLM must decide whether the current passage warrants the intervention. Some passages should remain barely touched even when many rules technically apply. Some paragraphs should receive heavy intervention. The distribution of interventions across the document must itself be irregular. See caveats.uniform_application_paradox. NOTE: this directive governs Tier-2 stylistic moves only (see enforcement.non_uniformity_scope). It is never a reason to leave a Tier-1 prohibition in place.",
@@ -187,7 +161,7 @@
       {
         "phase": 2,
         "name": "Structural pass",
-        "purpose": "Remove the stock shapes (closers, contrast pairs, framing beats) and vary syntactic construction and punctuation. Sentence length follows the content.",
+        "purpose": "Remove the stock shapes (closers, contrast pairs, framing beats) and break up any run of sentences built on one construction. Sentence length follows the content.",
         "tools": [{"name": "humanizer_get_structural_patterns"}],
         "rule_paths": [
           "structural_patterns.sentence_length.rules[*]",
@@ -196,10 +170,9 @@
           "structural_patterns.n_gram_patterns",
           "structural_patterns.enumeration_patterns",
           "structural_patterns.dependency_proximity",
-          "structural_patterns.cross_segment_variation",
-          "foundation.section_level_variation"
+          "structural_patterns.cross_segment_variation"
         ],
-        "stop_condition": "The repeated shapes are broken up and syntactic variety is introduced; punctuation choice varies across sections without being uniform; rules applied unevenly across sections; all output punctuation grammatically correct per AR-003 (every sentence has a terminal mark, no stacked marks, no comma splices)."
+        "stop_condition": "The repeated shapes are broken up, and no run of sentences shares one construction; each punctuation choice is the source's or fits its sentence, with none varied for its own sake; all output punctuation grammatically correct per AR-003 (every sentence has a terminal mark, no stacked marks, no comma splices)."
       },
       {
         "phase": 3,
@@ -233,7 +206,7 @@
       {
         "phase": 5,
         "name": "Content-type adjustment",
-        "purpose": "Modulate the prior passes by the content type. Different content needs different perplexity/burstiness targets and different layer aggressiveness.",
+        "purpose": "Modulate the prior passes by the content type. Different content needs different layer aggressiveness and different habits of sentence length.",
         "tools": [{"name": "humanizer_get_content_profile", "params": {"content_type": "academic|marketing|tech|prose|all"}}],
         "rule_paths": [
           "content_profiles.profiles.<resolved-type>.layer_adjustments",
@@ -281,18 +254,18 @@
         "phase": 9,
         "name": "Verification loop",
         "purpose": "Close the loop on mechanical prohibitions and surface remaining misses. Deterministic; no judgment skipped silently.",
-        "tools": [{"name": "humanizer_check_text", "params": {"text": "the candidate output", "content_type": "academic|marketing|tech|prose"}}],
+        "tools": [{"name": "humanizer_check_text", "params": {"text": "the candidate output", "content_type": "academic|marketing|tech|prose", "rubric": "short (every fix round) | full (the last check on the assembled document)"}}],
         "rule_paths": [
           "checker.hard_violations[*]",
           "checker.must_clear[*]",
           "checker.manual_review[*]"
         ],
-        "stop_condition": "humanizer_check_text returns prohibitions_clear=true; every must_clear item has been rewritten or justified; manual_review items self-attested. On a multi-section document the LAST run of this phase is on the assembled whole, not on the section edited last: the one-per-piece budgets (the antithesis, the appended significance label, the aphorism) cannot be enforced from per-section calls, because each call sees one instance and reports a finding the writer can reasonably justify. See caveats.per_section_checks_miss_document_budgets."
+        "stop_condition": "humanizer_check_text returns prohibitions_clear=true. For every must_clear item the flagged span has been rewritten or the item justified, within two fix rounds. A hard_violation is never justified and has no round limit. The last check ran on the assembled document with rubric=\"full\", and the self-review was done against the draft, changing only the spans an item points to. If the self-review changed anything, humanizer_check_text ran once more and returned prohibitions_clear=true before the draft was returned. On a multi-section document that last check covers the assembled whole, because the one-per-piece budgets (the antithesis, the appended significance label, the aphorism) cannot be enforced from per-section calls. Each call sees one instance and reports a finding the writer can reasonably justify. See caveats.per_section_checks_miss_document_budgets. The plainness pass (phase 10) runs before that last check."
       },
       {
         "phase": 10,
         "name": "Plainness pass (Orwell)",
-        "purpose": "Cut the flab the human-likeness layers do not look for: stale figures, words that can go, the passive where the active will do. The other phases ask whether the prose reads as machine-made; this one asks whether it reads as anything at all. Runs last, on copy that has already cleared phases 0 to 9, because cutting words changes rhythm and a cut is cheaper to make than to undo.",
+        "purpose": "Cut the flab the human-likeness layers do not look for: stale figures, words that can go, the passive where the active will do. The other phases ask whether the prose reads as machine-made; this one asks whether it reads as anything at all. It runs after the fix rounds of phase 9 and before phase 9's last check with rubric=\"full\" on the assembled document, because cutting words changes rhythm and a cut is cheaper to make than to undo.",
         "tools": [{"name": "humanizer_get_lexical_patterns"}, {"name": "humanizer_check_text", "params": {"text": "the trimmed output"}}],
         "rule_paths": [
           "lexical_patterns.orwell.rules[*]",
@@ -301,7 +274,7 @@
           "lexical_patterns.orwell.jargon_carve_out",
           "lexical_patterns.orwell.rewriting_guidance[*]"
         ],
-        "stop_condition": "Every stale figure either cut or deliberately justified; every word that can go is gone; the passive kept only where the agent is unknown or irrelevant; every domain term defined in plain words at first use and then used plainly, never substituted (caveats.jargon_substitution_loses_meaning). Then phase 9 is re-run, because cutting words can create or expose findings such as a comma splice or a new run-on."
+        "stop_condition": "Every stale figure either cut or deliberately justified; every word that can go is gone; the passive kept only where the agent is unknown or irrelevant; every domain term defined in plain words at first use and then used plainly, never substituted (caveats.jargon_substitution_loses_meaning). Then humanizer_check_text runs on the trimmed text and returns prohibitions_clear=true, because cutting words can create or expose findings such as a comma splice or a new run-on. Phase 9's last check with rubric=\"full\" follows on the assembled document."
       }
     ]
   },

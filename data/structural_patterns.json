@@ -2,8 +2,8 @@
   "meta": {
     "layer": "structural_patterns",
     "priority": 1,
-    "description": "Rules for removing the stock shapes (closers, contrast pairs, framing beats) and for varying syntactic construction and punctuation. Sentence length follows the content.",
-    "usage": "Second pass of the application protocol, after lexical. Call humanizer_get_structural_patterns to retrieve. Apply the rules non-uniformly across sections; uniform application is itself an AI signal (see caveats.uniform_application_paradox).",
+    "description": "Rules for removing the stock shapes (closers, contrast pairs, framing beats) and for breaking up runs of one construction. Sentence length follows the content.",
+    "usage": "Second pass of the application protocol, after lexical. Call humanizer_get_structural_patterns to retrieve.",
     "research_basis": "Ardeshirifar (2025) showed human texts have wider sentence-length distributions with higher standard deviation. Muñoz-Ortiz et al. (2024) documented POS distribution differences across six LLMs. Terčon & Dobrovoljc (2025) survey synthesized 44 studies on syntactic complexity, sentence length, and structural patterns."
   },
   "sentence_length": {
@@ -46,7 +46,8 @@
       },
       {
         "rule": "Use passive voice selectively.",
-        "guidance": "Corrected 2026-10-30: instruction-tuned models use the agentless passive LESS than humans, not more (GPT-4o at about half the human rate, Reinhart et al., PNAS 2025). So do not strip passives to sound human. Use the passive where the object matters more than the actor ('The bridge was closed for two days'), and the active where the actor is the news. Human writers are uneven here; an even, all-active surface is its own pattern."
+        "guidance": "Instruction-tuned models use the agentless passive less often than human writers do, so do not strip passives to sound human. Use the passive where the object matters more than the actor ('The bridge was closed for two days'), and the active where the actor is the news. Human writers are uneven here; an even, all-active surface is its own pattern.",
+        "history": "Corrected 2026-10-30: instruction-tuned models use the agentless passive LESS than humans, not more (GPT-4o at about half the human rate, Reinhart et al., PNAS 2025)."
       },
       {
         "rule": "Keep a sentence-initial 'And' or 'But' where the link is additive or contrastive.",
@@ -78,7 +79,7 @@
       },
       {
         "rule": "Reduce copula constructions ('is', 'are', 'was') when a stronger verb is available.",
-        "guidance": "AI defaults to 'X is a Y that Z' structure. 'The platform is a tool that enables collaboration' → 'The platform lets teams collaborate.' Not every copula should be replaced, but if three sentences in a row use 'is/are/was' as the main verb, at least one needs restructuring."
+        "guidance": "AI defaults to 'X is a Y that Z' structure. 'The platform is a tool that enables collaboration' → 'The platform lets teams collaborate.' Not every copula should be replaced. When three sentences in a row use 'is/are/was' as the main verb, check whether one of them has a stronger verb available."
       }
     ]
   },
@@ -172,6 +173,12 @@
         "guidance": "A common LLM tic is closing each section on a short, abstract copula maxim ('They are the product.', 'The second draft is the real one.'). Each is fine alone; as a per-section habit it reads as a machine landing every passage on a profound one-liner. End each section on its last substantive point, which is often a concrete detail."
       }
     ],
-    "research_basis": "Kuznetsov et al. (arXiv:2501.19301, EMNLP 2025): humans exhibit more variation across text segments than LLMs, which maintain a consistent stylistic fingerprint throughout. This is the structural complement to foundation.section_level_variation and is enforced by the segment_uniformity check in humanizer_check_text."
+    "section_types": {
+      "instructions_or_tutorials": "Clarity first. Short, direct sentences, and an even structure where the steps are even.",
+      "narrative_or_creative": "Rhythm that follows the scene, with sentence length and word choice set by what each moment needs.",
+      "academic_or_technical": "Domain terms used precisely and the same way each time. Sentences run longer where the reasoning is dense and plainer where it relaxes.",
+      "opinion_or_argumentation": "A clear position argued from evidence. A question or a repeated phrase belongs only where the argument needs it."
+    },
+    "research_basis": "Kuznetsov et al. (arXiv:2501.19301, EMNLP 2025): humans exhibit more variation across text segments than LLMs, which maintain a consistent stylistic fingerprint throughout. Its section_types carry what used to be foundation.section_level_variation. It is enforced by the segment_uniformity check in humanizer_check_text."
   }
 }

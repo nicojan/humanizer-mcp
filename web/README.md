@@ -12,12 +12,16 @@ as the Python `run_checks`. `dump.py` runs the real checker over a battery of
 texts (crafted edge cases plus a corpus of AI-written samples) and writes the
 results to `golden.json`. `parity.mjs` runs the compiled port over the same
 battery and diffs every finding, offset, count, metric, and fix string. Current
-status: **150/150 texts match exactly**, plus 779/779 `pyRound` cases.
+status: **186/186 texts match exactly**, plus 779/779 `pyRound` cases.
 
 The battery includes one adversarial case per regex banned structure, each with
 its negative control, so a rule that silently stopped firing (or started firing
 on its FP guard) fails parity rather than passing quietly. Add a case here
 whenever a rule is added, or the run passes vacuously.
+
+Rubric cases are in the battery too. Each battery entry carries a `rubric` (`short` or `full`) that `dump.py` passes to `run_checks` and `parity.mjs` passes to `runChecks`, so the content-type filter, the canonical aliases (`content_types.py` in the port), the short/full switch and the report's `manual_review` lines are compared line for line. A case may also carry `compare` (a list of report keys); parity then diffs only those keys. Two `ar002_nel_*` cases use it, because U+0085 is whitespace to Python's `str.split()` and `\s` but not to JS, so the sentence metrics differ on it while the AR-002 findings must not.
+
+The AR-002 port (closed fences, inline backtick spans, the command-flag rule, the structural-line skip) has cases for each edge, including the Python line-splitting semantics: `str.splitlines` breaks on `\n`, `\r\n`, `\r`, `\v`, `\f`, U+001C to U+001E, U+0085, U+2028 and U+2029, and a closer line is stripped of spaces only, so a closer followed by a tab, or terminated by U+2028, does not close its fence.
 
 The same run also dumps the flattened rule data (`src/data.json`) straight from
 the server's loaders, so the port consumes the identical banned phrases, flagged
@@ -28,7 +32,7 @@ terms, and structure patterns. There is no second copy of the rules to drift.
 | File | Role |
 |---|---|
 | `src/checker.ts` | the port (detectors + `runChecks`) |
-| `src/data.json` | flattened rule data, dumped from the server loaders |
+| `src/data.json` | flattened rule data, dumped from the server loaders (the self-review rubric as objects, without the maintainer-only `history`) |
 | `ui-template.html` | the demo page (UI and styles), with placeholders for the bundle and fonts |
 | `fonts-embed.css` | IBM Plex Serif/Mono, base64-embedded so the page needs no font CDN |
 | `build.mjs` | bundles the port and inlines it and the fonts into `../index.html` |
@@ -42,7 +46,7 @@ terms, and structure patterns. There is no second copy of the rules to drift.
 # from web/, with the parent server's Python deps available
 python3 dump.py     # regenerate src/data.json + golden.json from the Python checker
 node build.mjs      # build ../index.html and the parity bundle
-node parity.mjs     # verify 150/150 against the Python checker
+node parity.mjs     # verify 186/186 against the Python checker
 ```
 
 ## Parity scope

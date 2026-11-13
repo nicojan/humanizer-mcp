@@ -17,17 +17,9 @@ EM_DASH = "—"
 # Naming the character is how the guide forbids it ("Never use em-dashes (—).").
 _NAMES_THE_CHARACTER = f"({EM_DASH})"
 
-_ANAPHORA_CAVEAT = next(
-    i for i, c in enumerate(load_json("caveats.json")["core_caveats"])
-    if c["id"] == "rhetorical_figures_defeat_shape_detection"
-)
-
-# Served strings that still carry an em-dash and move in PR 2: the rubric
-# (self_review, Task 10) and the anaphora caveat, which leaves served text.
-_EM_DASH_DEFERRED_TO_PR2 = (
-    "self_review[",
-    f".caveats.core_caveats[{_ANAPHORA_CAVEAT}].",
-)
+# The anaphora caveat that carried an em-dash moved to caveats.maintainer_notes
+# in PR 2 and is no longer served, so nothing is deferred.
+_EM_DASH_DEFERRED_TO_PR2: tuple[str, ...] = ()
 
 
 def _ap(ap_id: str) -> dict:
@@ -61,7 +53,7 @@ def test_em_dash_guard_control():
     assert em_dash_offenders([("guide[x].a.explanation", f"One {EM_DASH} two.")])
     assert not em_dash_offenders([("guide[x].a.before", f"One {EM_DASH} two.")])
     assert not em_dash_offenders([("guide[x].a.title", f"Never use em-dashes ({EM_DASH}).")])
-    assert not em_dash_offenders([("self_review[3]", f"One {EM_DASH} two.")])
+    assert em_dash_offenders([("self_review[3].detail", f"One {EM_DASH} two.")])
 
 
 def test_no_em_dash_in_served_prose():
@@ -93,9 +85,9 @@ def test_conditioned_guidance_names_the_source():
 
 
 def test_rubric_items_4_and_8_keep_texture_to_the_job_and_the_source():
-    items = [str(i) for i in load_json("self_review.json")["self_review"]["items"]]
-    item4 = next(i for i in items if i.startswith("Section-to-section variation"))
-    item8 = next(i for i in items if i.startswith("Excessive coherence"))
+    items = {i["id"]: i["detail"] for i in load_json("self_review.json")["self_review"]["items"]}
+    item4 = items["section_variation"]
+    item8 = items["excessive_coherence"]
     assert "do not make sections differ for contrast" in item4
     assert "add none it lacks (AR-001)" in item8
 
@@ -160,9 +152,11 @@ def test_cross_references_name_the_right_entries():
 
 
 def test_copula_rule_offers_no_short_abstract_verdict():
-    rules = load_json("structural_patterns.json")
-    text = str(rules)
-    assert "'This is a significant development'" not in text
+    # The served strings themselves, not a dict repr (whose escaping of quotes
+    # could hide the phrase).
+    blob = " ".join(s for _, s in served_texts())
+    assert "This is a significant development" not in blob
+    assert "lets teams collaborate" in blob  # control: the copula rule is served
 
 
 # ---------------------------------------------------------------------------
@@ -170,10 +164,10 @@ def test_copula_rule_offers_no_short_abstract_verdict():
 # ---------------------------------------------------------------------------
 
 
-def test_ar003_names_the_fiction_fragment_the_creative_profile_allows():
+def test_ar003_names_the_narrative_fragment_the_creative_profile_allows():
     rules = load_json("foundation.json")["absolute_rules"]["rules"]
     d = next(r for r in rules if r["id"] == "AR-003")["directive"]
-    assert "fiction" in d and "scene breaks off" in d
+    assert "narrative" in d and "scene breaks off" in d
     creative = load_json("content_profiles.json")["profiles"]["creative"]
     assert "scene breaks off" in creative["layer_adjustments"]["structural_patterns"]["notes"]
 
@@ -200,5 +194,7 @@ def test_alternatives_do_not_lead_into_other_rules():
 
 def test_new_served_strings_ask_for_no_beats():
     for needle in ("Keep the friction the source has", "Let each section's texture"):
-        for path, text in _strings_containing(needle):
+        found = _strings_containing(needle)
+        assert found, f"control: {needle!r} is no longer served"
+        for path, text in found:
             assert not asks_for_beats(text), path

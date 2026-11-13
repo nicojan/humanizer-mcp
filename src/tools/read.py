@@ -7,6 +7,7 @@ from typing import Any, Literal, Optional
 from mcp.server.fastmcp import FastMCP
 from pydantic import BaseModel, ConfigDict, Field
 
+from src.content_types import CONTENT_TYPE_ALIASES
 from src.storage.json_store import load_json
 
 logger = logging.getLogger(__name__)
@@ -14,24 +15,6 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 # Shared types & helpers
 # ---------------------------------------------------------------------------
-
-CONTENT_TYPE_ALIASES = {
-    "prose": "general_prose",
-    "general_prose": "general_prose",
-    "general": "general_prose",
-    "tech": "technical",
-    "technical": "technical",
-    "academic": "academic",
-    "marketing": "marketing",
-    "case_study": "case_study",
-    "case-study": "case_study",
-    "case study": "case_study",
-    "portfolio": "case_study",
-    "product": "case_study",
-    "resume": "resume",
-    "résumé": "resume",
-    "cv": "resume",
-}
 
 
 def _resolve_content_type(ct: str, profiles: dict) -> str:
@@ -45,22 +28,27 @@ def _resolve_content_type(ct: str, profiles: dict) -> str:
 
 
 _ESSENTIAL_META_KEYS = ("usage", "application_rule")
-# Provenance/justification-only keys dropped from every served payload. Both
-# are citation/exposition trails for data-file editors that add no signal to an
-# LLM mid-rewrite: `research_basis` is a citation list; `theory` is the
-# academic rationale paragraph behind a layer (the actionable content lives in
-# sibling rules/markers/guidance). NOTE: `notes` is deliberately NOT here — in
-# content_profiles.json the per-layer `notes` are the actionable payload.
-_DROP_KEYS = frozenset({"research_basis", "theory"})
+# Keys dropped from every served payload. `research_basis` is a citation list
+# and `theory` the academic rationale behind a layer; `history` holds the
+# measurement narrative behind a directive (rates, dates, corpus runs) and
+# `maintainer_notes` the eval-methodology notes in caveats.json. All four are
+# for data-file editors and add no signal to an LLM mid-rewrite. NOTE: `notes`
+# is deliberately NOT here; in content_profiles.json the per-layer `notes` are
+# the actionable payload.
+_DROP_KEYS = frozenset({"research_basis", "theory", "history", "maintainer_notes"})
+# Claude Code reads this to deliver a page of the guide inline rather than as
+# a file. Every page (core is about 63k characters at most) stays under it and
+# the full guide (about 157k) stays above it, so reference material that large
+# still lands in a file; tests/data/test_guide_consistency.py pins both sides.
+GUIDE_MAX_RESULT_CHARS = 80_000
+GUIDE_RESULT_META = {"anthropic/maxResultSizeChars": GUIDE_MAX_RESULT_CHARS}
 
 
 def _drop_keys(obj: Any) -> Any:
-    """Recursively drop provenance-only keys (research_basis, theory) anywhere
-    in the payload — including nested locations like
-    structural_patterns.pos_distribution_targets.research_basis or
-    psycholinguistic_texture.cognitive_load_artifacts.theory. They are citation
-    and rationale trails for data-file editors and add no signal to an LLM
-    mid-rewrite."""
+    """Recursively drop editor-only keys (research_basis, theory, history,
+    maintainer_notes) anywhere in the payload, including nested locations
+    such as psycholinguistic_texture.cognitive_load_artifacts.theory or a
+    lexicon entry's history."""
     if isinstance(obj, dict):
         return {k: _drop_keys(v) for k, v in obj.items() if k not in _DROP_KEYS}
     if isinstance(obj, list):
@@ -71,10 +59,14 @@ def _drop_keys(obj: Any) -> Any:
 def _strip_meta(data: dict[str, Any]) -> dict[str, Any]:
     """Return a copy of data with the 'meta' key stripped to save tokens, but
     preserve the essential meta keys (usage, application_rule) as top-level
-    fields on the result. Also applies _drop_keys recursively to remove
-    field-level provenance (research_basis) wherever it appears outside meta."""
+    fields on the result. Editor-only keys (_DROP_KEYS) are dropped at the top
+    level and, through _drop_keys, wherever they appear below it."""
     meta = data.get("meta", {}) if isinstance(data.get("meta"), dict) else {}
-    result = {k: _drop_keys(v) for k, v in data.items() if k != "meta"}
+    result = {
+        k: _drop_keys(v)
+        for k, v in data.items()
+        if k != "meta" and k not in _DROP_KEYS
+    }
     for key in _ESSENTIAL_META_KEYS:
         if key in meta:
             result[key] = _drop_keys(meta[key])
@@ -197,8 +189,8 @@ class ContentProfileInput(BaseModel):
 
 def build_foundation_payload() -> dict[str, Any]:
     """Foundation payload for humanizer_get_foundation: absolute_rules,
-    enforcement, core principle, two axes, priority hierarchy, and
-    section_level_variation — meta and provenance stripped.
+    enforcement, primary usage, core principle, two axes and the priority
+    hierarchy, with meta and provenance stripped.
 
     The application_protocol is intentionally excluded. It has its own tool
     (humanizer_get_application_protocol), and the 'minimum viable' usage mode
@@ -240,17 +232,25 @@ def build_guide_payload(content_type: Optional[str]) -> dict[str, Any]:
         "tool": "humanizer_check_text",
         "instruction": (
             "After revising, call humanizer_check_text with your output. Resolve "
-            "every hard_violation, rewrite or justify each must_clear item, and "
-            "re-run until prohibitions_clear is true. Then self-attest "
-            "manual_review before returning."
+            "every hard_violation so prohibitions_clear is true. For each "
+            "must_clear item, rewrite only the flagged span and keep the rest of "
+            "the draft as it is, or justify the item. Re-run "
+            "humanizer_check_text; stop after two fix rounds and justify any "
+            "must_clear item left. A hard_violation is never justified, so keep "
+            "fixing until prohibitions_clear is true. Then run one last check on "
+            "the assembled document with "
+            "rubric=\"full\" and do the self-review against your draft, changing "
+            "only the spans an item points to. If the self-review changed "
+            "anything, run humanizer_check_text once more and confirm "
+            "prohibitions_clear is true before returning."
         ),
     }
     return result
 
 
-# Pages of the guide, in reading order. Each one stays under 75k characters,
-# which fits a 25k-token tool-output cap even at a dense 3 characters a token;
-# the full payload (about 166k characters for prose) does not.
+# Pages of the guide, in reading order. Each one is sized to fit a 25k-token
+# tool-output cap even at a dense 3 characters a token; the full payload does
+# not. The size tests in tests/data/test_guide_consistency.py hold the numbers.
 GUIDE_PARTS: dict[str, tuple[str, ...]] = {
     "core": (
         "foundation",
@@ -305,8 +305,8 @@ def register_read_tools(mcp: FastMCP) -> None:
     )
     async def humanizer_get_summary(params: ContentTypeInput) -> str:
         """Lightweight entry point. Returns absolute_rules, the core principle,
-        priority hierarchy, the uniform_application_paradox caveat (the single
-        most load-bearing warning), and a compact content_profile. Use for
+        priority hierarchy, the uniform_application_paradox caveat (the most
+        important warning), and a compact content_profile. Use for
         quick edits, revision passes, or orientation before pulling a full
         layer.
 
@@ -352,7 +352,7 @@ def register_read_tools(mcp: FastMCP) -> None:
         caveats_data = load_json("caveats.json")
         for caveat in caveats_data.get("core_caveats", []):
             if caveat.get("id") == "uniform_application_paradox":
-                uniform_paradox = caveat
+                uniform_paradox = _drop_keys(caveat)
                 break
 
         result: dict[str, Any] = {
@@ -376,6 +376,7 @@ def register_read_tools(mcp: FastMCP) -> None:
 
     @mcp.tool(
         name="humanizer_get_guide",
+        meta=GUIDE_RESULT_META,
         annotations={
             "title": "Get Full Humanization Guide",
             "readOnlyHint": True,
@@ -385,7 +386,7 @@ def register_read_tools(mcp: FastMCP) -> None:
         },
     )
     async def humanizer_get_guide(params: GuideInput) -> str:
-        """Full composite endpoint — returns ALL data dimensions for a content type
+        """Full composite endpoint. Returns ALL data dimensions for a content type
         with meta blocks stripped for token efficiency. Use only for major writing
         tasks, new articles, or full rewrites. The whole guide is about 40k
         tokens; if your client caps tool output, page it with part='core', then
@@ -424,7 +425,7 @@ def register_read_tools(mcp: FastMCP) -> None:
         defines when the phase is complete.
 
         Walking this protocol guarantees coverage of every rule in the rule
-        set. Coverage does NOT mean uniform application — see the
+        set. Coverage does NOT mean uniform application; see the
         uniformity_directive in the response, which mirrors
         caveats.uniform_application_paradox: every rule visited must be
         considered, but applying every rule is itself an AI signal.
@@ -436,7 +437,7 @@ def register_read_tools(mcp: FastMCP) -> None:
         """
         foundation = load_json("foundation.json")
         protocol = foundation.get("application_protocol", {})
-        return _compact_json(protocol)
+        return _compact_json(_drop_keys(protocol))
 
     @mcp.tool(
         name="humanizer_get_foundation",
@@ -452,13 +453,13 @@ def register_read_tools(mcp: FastMCP) -> None:
         """Returns the foundation payload: absolute_rules (AR-001 preserve
         meaning, AR-002 em-dash ban, AR-003 punctuation correctness), the
         enforcement block (Tier-1 zero_tolerance members and verification
-        instructions), the core principle, two analytical axes (perplexity
-        and burstiness), the priority hierarchy, and section_level_variation.
+        instructions), the primary usage loop, the core principle, two
+        analytical axes (perplexity and burstiness) and the priority hierarchy.
         Lightest-weight tool that still carries the Tier-1 prohibitions; use
         this when an LLM only needs the non-negotiables.
 
-        The ordered phase plan (application_protocol) is NOT included here to
-        keep this payload minimal — call humanizer_get_application_protocol for
+        The ordered phase plan (application_protocol) is not included here, so
+        the payload stays small; call humanizer_get_application_protocol for
         the full traversal map.
 
         Returns:
@@ -480,8 +481,9 @@ def register_read_tools(mcp: FastMCP) -> None:
     async def humanizer_get_lexical_patterns(params: RiskLevelInput) -> str:
         """Returns flagged words (verbs, adjectives, nouns, transitions, qualifiers,
         adverbs), substitution lists, vocabulary diversity rules, word-length
-        patterns, nominalization rules, abstract/concrete balance, function-word
-        patterns, and adverb patterns. Top-level meta.usage and
+        patterns, nominalization rules, abstract/concrete balance, adverb
+        patterns, credibility insistence, terms of art and the Orwell plainness
+        rules. Top-level meta.usage and
         meta.application_rule are surfaced as top-level fields.
 
         Args:
@@ -549,8 +551,9 @@ def register_read_tools(mcp: FastMCP) -> None:
         },
     )
     async def humanizer_get_structural_patterns() -> str:
-        """Returns sentence length targets, syntactic variety rules, punctuation
-        diversity guidance, and part-of-speech distribution targets.
+        """Returns sentence-length guidance, syntactic variety rules, punctuation
+        guidance, n-gram and enumeration patterns, dependency proximity, and
+        cross-segment variation (how each kind of section reads).
 
         Returns:
             str: Structural patterns data with meta stripped.
@@ -630,7 +633,7 @@ def register_read_tools(mcp: FastMCP) -> None:
     )
     async def humanizer_get_content_profile(params: ContentProfileInput) -> str:
         """Returns per-content-type adjustments that modulate the base rules.
-        Profiles define perplexity/burstiness targets and layer-specific aggressiveness.
+        Profiles describe sentence-length habits, perplexity and layer-specific aggressiveness.
 
         Args:
             params: ContentProfileInput with optional content_type.
@@ -638,7 +641,7 @@ def register_read_tools(mcp: FastMCP) -> None:
         Returns:
             str: The matching profile, or all profiles if 'all' or omitted.
         """
-        profiles = load_json("content_profiles.json").get("profiles", {})
+        profiles = _drop_keys(load_json("content_profiles.json").get("profiles", {}))
         ct_input = params.content_type or "all"
 
         if ct_input == "all":

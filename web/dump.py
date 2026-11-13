@@ -28,7 +28,11 @@ data = {
     "regex_structures": load_regex_structures(),
     "flagged_terms": load_flagged_terms(),
     "credibility": load_credibility_insistence(),
-    "self_review": load_self_review(),
+    # The runtime (lenient) loader's objects. `history` is maintainer-only and
+    # never served, so it is left out of the browser bundle.
+    "self_review": [
+        {k: v for k, v in item.items() if k != "history"} for item in load_self_review()
+    ],
     "terms_of_art": load_terms_of_art(),
 }
 with open(os.path.join(HERE, "src", "data.json"), "w", encoding="utf-8") as f:
@@ -236,12 +240,80 @@ crafted = [
     ("lexicon_diverse_array", "prose", "The shop stocks a diverse array of teas."),
     ("lexicon_renowned_natural_beauty", "prose", "The renowned valley is known for its natural beauty."),
     ("lexicon_ok_nest_bird", "prose", "The wren built a nest in the shed."),
+    # --- 2026-11-12 repair round PR 2: AR-002 skips code and command flags ---
+    ("ar002_flag_in_backticks", "prose", "Run `git push --force` before you leave the office."),
+    ("ar002_bare_flag_in_prose", "prose", "Pass --force when the lock file is stale."),
+    ("ar002_emdash_in_fence", "prose",
+     "Here is the draft.\n\n```\nThe plan \u2014 as agreed \u2014 ships Friday.\n```\n\nThat is all."),
+    ("ar002_hyphen_run_in_fence_ok", "prose",
+     "Usage below.\n\n```\ntool -- verbose --Dana\n```\n\nThat is all."),
+    ("ar002_hyphen_run_in_tilde_fence_ok", "prose",
+     "Usage below.\n\n  ~~~~sh\ntool -- again\n~~~~~\n\nThat is all."),
+    ("ar002_backtick_fence_with_backtick_info", "prose",
+     "Look at ```tool -- one``` here.\nThen `x -- y` too."),
+    ("ar002_unclosed_fence_fires", "prose", "Usage below.\n\n```\ntool -- again\nNo closing fence."),
+    ("ar002_short_closer_fires", "prose", "Usage below.\n\n````\ntool -- again\n```\nStill open."),
+    ("ar002_tab_after_closer_fires", "prose", "Usage below.\n\n```\ntool -- again\n```\t\nNot closed."),
+    ("ar002_typed_dash_beside_code_span", "prose", "Call `run` -- it exits at once after that."),
+    ("ar002_typed_dash_upper_after_span", "prose", "Call `run`--Dana waits on the other end."),
+    ("ar002_attribution_line", "prose",
+     "Be yourself; everyone else is already taken.\n> --Oscar Wilde"),
+    ("ar002_quoted_flag_ok", "prose", 'Use "--verbose" or \u2018--dry-run\u2019 for more output.'),
+    ("ar002_quoted_typed_dash_fires", "prose", 'He said "--and then we left" and nothing more.'),
+    ("ar002_paren_flag_ok", "prose", "Pass the flag (--force) when the lock is stale."),
+    ("ar002_triple_hyphen_flag_fires", "prose", "Pass ---force when the lock is stale."),
+    ("ar002_unicode_letter_after_fires", "prose", "Pass --\u00e9tat when the lock is stale."),
+    ("ar002_crlf_fence", "prose", "Usage below.\r\n```\r\ntool -- again\r\n```\r\nThat is all -- done."),
+    # Only \r and \n are stripped from a line's end, so a closer terminated by
+    # another separator (U+2028, U+0085) is not a closer: the fence stays open.
+    ("ar002_u2028_terminated_fence_stays_open", "prose",
+     "Usage below.\u2028```\u2028tool -- again\u2028```\u2028That is all."),
+    # splitlines breaks on \f, U+2029 and U+0085, so a closer after one of them
+    # is on its own line and closes the fence; a \n-only split would miss it.
+    ("ar002_formfeed_before_closer_closes", "prose", "Usage below.\n```\ntool -- again\f```\nThat is all."),
+    ("ar002_u2029_before_closer_closes", "prose", "Usage below.\n```\ntool -- again\u2029```\nThat is all."),
+    ("ar002_vtab_before_closer_closes", "prose", "Usage below.\n```\ntool -- again\v```\nThat is all."),
+    ("ar002_nel_terminated_fence_stays_open", "prose", "Usage below.\x85```\x85tool -- again\x85```\x85Done."),
+    ("ar002_nel_before_closer_closes", "prose", "Usage below.\n```\ntool -- again\x85```\nThat is all."),
+    ("ar002_structural_line_control_chars", "prose", "Above.\n\x1c--\x1d\nBelow."),
+    ("ar002_structural_nbsp_line", "prose", "Above.\n\u00a0-- |\nBelow."),
+    ("ar002_emdash_inline_span_fires", "prose", "The `build \u2014 step` fails sometimes."),
+    # --- repair round PR 2: rubric (see crafted_rubric below) ---
+]
+
+# Rubric cases: (name, content_type, text, rubric). They compare manual_review
+# line for line, so the content-type filter, the aliases and the short/full
+# switch are all under parity.
+_RUBRIC_TEXT = (
+    "I spent the morning fixing the fence. The wood had warped over winter, so "
+    "two boards no longer met. My neighbour lent me a plane and we shaved them "
+    "down until they sat flush."
+)
+crafted_rubric = [
+    ("rubric_no_content_type_short", None, _RUBRIC_TEXT, "short"),
+    ("rubric_label_short", "label", _RUBRIC_TEXT, "short"),
+    ("rubric_case_study_short", "case_study", _RUBRIC_TEXT, "short"),
+    ("rubric_case_study_full", "case_study", _RUBRIC_TEXT, "full"),
+    ("rubric_no_content_type_full", None, _RUBRIC_TEXT, "full"),
+    ("rubric_unknown_type_short", "newsletter", _RUBRIC_TEXT, "short"),
+    ("rubric_alias_portfolio_padded_short", "  Portfolio ", _RUBRIC_TEXT, "short"),
+    ("rubric_alias_resume_accent_full", "R\u00e9sum\u00e9", _RUBRIC_TEXT, "full"),
+    ("rubric_tech_default", "tech", _RUBRIC_TEXT, "short"),
 ]
 
 # --- 3. Real text: the eval corpus (human + AI) ------------------------------
+# Cases whose non-AR-002 output differs from JS by a known whitespace edge (the
+# NEL cases: U+0085 is whitespace to Python's str.split() but not to JS, so the
+# sentence metrics differ on it); parity compares only the named report keys.
+HARD_ONLY_CASES = {"ar002_nel_terminated_fence_stays_open", "ar002_nel_before_closer_closes"}
 battery = []
 for name, ct, text in crafted:
-    battery.append({"name": name, "content_type": ct, "text": text})
+    entry = {"name": name, "content_type": ct, "text": text, "rubric": "short"}
+    if name in HARD_ONLY_CASES:
+        entry["compare"] = ["hard_violations"]
+    battery.append(entry)
+for name, ct, text, rubric in crafted_rubric:
+    battery.append({"name": name, "content_type": ct, "text": text, "rubric": rubric})
 
 corpus_root = os.path.join(REPO, "eval", "corpus")
 for pile in ("ai",):  # human pile removed from public repo; ai pile is present
@@ -253,12 +325,13 @@ for pile in ("ai",):  # human pile removed from public repo; ai pile is present
                     battery.append({
                         "name": f"{pile}/{fn}",
                         "content_type": "prose",
+                        "rubric": "short",
                         "text": fh.read().strip(),
                     })
 
 golden = []
 for item in battery:
-    report = run_checks(item["text"], item["content_type"])
+    report = run_checks(item["text"], item["content_type"], item["rubric"])
     golden.append({**item, "report": report})
 
 with open(os.path.join(HERE, "golden.json"), "w", encoding="utf-8") as f:
