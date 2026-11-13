@@ -890,6 +890,23 @@
         "AP-066"
       ],
       "research_basis": "Russell et al. (ACL 2025) on tidy, summarising conclusions. Observed closing a default-style Claude Sonnet sample generated for this round, with 0 matches in long-form human prose, pre-2022 essays and pre-2022 Wikipedia against an 'as much' control that fires in all three. Research round 2026-10-30 (docs/superpowers/specs/2026-10-30-research-round-academic-tells.md)."
+    },
+    {
+      "id": "BS-066",
+      "name": "contracted_negation_flip",
+      "description": "Every form of the negation flip, contracted or not and closed by a period or a semicolon, counted toward one budget, as in 'It's not a tool. It's a partner.', 'This isn't a bug. It's a feature.', 'It isn't about speed; it's about trust.' One instance is ordinary writing, because corrections, definitions and clarifications take the same shape ('That isn't the invoice. It's the receipt.'). The repeat is the tell. Budget-only: single instances are not reported, and a second flip in one piece is reported as a document_budget finding with every instance's excerpt. A single uncontracted flip is still reported as BS-013, and it also counts toward this budget.",
+      "detection": {
+        "method": "regex",
+        "pattern": "(?<!\\bthere)(?<!\\bthere\\s)(?<!\\bthere\\s\\w{2}\\s)(?<!\\bthere\\s\\w{3}\\s)(?<!\\bthere\\s\\w{4}\\s)(?<!\\bthere\\s\\w{5}\\s)(?<!\\bthere\\s\\w{6}\\s)(?<!\\bthere\\s\\w{7}\\s)(?<!\\bthere\\s\\w{8}\\s)(?<!\\bthere\\s\\w{9}\\s)(?<!\\bthere\\s\\w{10}\\s)(?<!\\bthere\\s\\w{11}\\s)(?<!\\bthere\\s\\w{12}\\s)(?<!\\bthere\\s\\s)(?<!\\blet)(?<!\\bwhat)(?<!\\bwho)\\b(?:(?:is|are|was|were)\\s+not|(?:is|are|was|were)n['’]t|['’](?:s|re)\\s+not)\\s+(?:just|only|merely|simply|a|an|the(?!\\s+only\\s+ones?\\b)|about|one(?!\\s+(?:for|to)\\b)|two|three|four|five|six|seven|eight|nine|ten|\\d+)\\s+(?=\\S)(?:(?!\\bbut\\b)(?!\\r?\\n[ \\t]*(?:\\r?\\n|[-*+>#|]|\\d+[.)]))(?!,\\s*(?:it|they|we|you|he|she|i|this|that|there)\\s+\\w)(?!\\b(?:is|are|was|were)\\s+(?:a|an|the)\\b)[^.?!;]){0,45}[.;]\\s+(?:(?:it|they|that|this)\\s+(?:is|are|was|were)|(?:it|that)['’]s|they['’]re)\\s+(?:just|only|merely|simply|a|an|the|about(?!\\s+(?:\\d|half\\b|a\\s+(?:third|quarter|half|dozen|hundred|thousand|million)\\b|(?:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred)\\b|the\\s+same\\b|as\\s+\\w+\\s+as\\b))|one|two|three|four|five|six|seven|eight|nine|ten)\\b(?!\\s+(?:[\\w'’]+\\s+)?(?:responsibility|duty|obligation|intention|condition|requirement|pleasure|privilege|offen[cs]e)\\s+(?:of|to|that)\\b)(?!\\s+(?:good|bad|great|better)\\s+(?:idea|time|practice)\\s+to\\b)",
+        "confidence": "low"
+      },
+      "document_budget": 1,
+      "budget_only": true,
+      "gate": "checklist",
+      "fix": "State the positive claim and let it stand: 'It's a partner.' Keep a flip only where it corrects a misreading, and use it once.",
+      "source_examples": [
+        "AP-029"
+      ]
     }
   ]
 }

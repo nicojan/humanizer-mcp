@@ -1,8 +1,8 @@
 {
   "meta": {
     "layer": "lexical_patterns",
-    "priority": 1,
-    "description": "Words, phrases, and constructions that statistical detectors and human readers associate with machine generation. Removing or replacing them is the highest-impact single intervention.",
+    "priority": 5,
+    "description": "Words, phrases, and constructions that statistical detectors and human readers associate with machine generation. Removing or replacing them is necessary hygiene; the structural and discourse layers carry more of the signal.",
     "application_rule": "Replace contextually; the substitute depends on what the sentence actually means. Do not replace every instance; leave some formal words standing where they genuinely fit. Uniform replacement is itself a signal. This contextual, leave-some-standing rule is Tier 2 and applies to flagged words/phrases only. It never applies to Tier 1 prohibitions (em-dashes, banned structures); see foundation.enforcement.",
     "usage": "First pass of the application protocol. Call humanizer_get_lexical_patterns(risk_level=...) to filter by severity. Apply the application_rule above for every substitution decision: contextual, non-uniform, leaving some formal words standing.",
     "research_basis": "Drawn from Przystalski et al. (2024) SHAP analysis, Grammarly common AI words corpus, Terčon & Dobrovoljc (2025) survey of 44 studies, and Wikipedia AI writing guidelines."
@@ -16,16 +16,16 @@
         "examine",
         "get into",
         "explore",
-        "pick apart",
-        {
-          "ai_word": "nestle",
-          "alternatives": ["sits", "stands", "is"],
-          "severity": "moderate",
-          "notes": "Travel-brochure register ('nestled in the heart of the valley'). Sibling of 'bustling' and 'hidden gem'."
-        }
+        "pick apart"
       ],
       "severity": "high",
       "notes": "One of the most-cited AI tells. Almost never used in natural human prose."
+    },
+    {
+      "ai_word": "nestle",
+      "alternatives": ["sits", "stands", "is"],
+      "severity": "moderate",
+      "notes": "Travel-brochure register ('nestled in the heart of the valley'). Sibling of 'bustling' and 'hidden gem'."
     },
     {
       "ai_word": "leverage",
@@ -163,7 +163,7 @@
         "improve",
         "fine-tune",
         "adjust",
-        "refine"
+        "speed up"
       ],
       "severity": "moderate"
     },
@@ -387,21 +387,15 @@
         "complete",
         "detailed",
         "in-depth",
-        "broad",
-        {
-          "ai_word": "profound",
-          "alternatives": ["deep", "far-reaching", "serious", "lasting"],
-          "severity": "moderate",
-          "notes": "Promotional intensifier from the Wikipedia signs-of-AI list (2026-09-17). Almost always reachable by a plainer word or by the fact itself."
-        },
-        {
-          "ai_word": "renowned",
-          "alternatives": ["well-known", "widely read", "respected", "named after"],
-          "severity": "moderate",
-          "notes": "Unearned prestige marker; pairs with 'boasts' and 'nestled' in generated travel and profile copy."
-        }
+        "broad"
       ],
       "severity": "moderate"
+    },
+    {
+      "ai_word": "renowned",
+      "alternatives": ["well-known", "widely read", "respected", "named after"],
+      "severity": "moderate",
+      "notes": "Unearned prestige marker; pairs with 'boasts' and 'nestled' in generated travel and profile copy."
     },
     {
       "ai_word": "robust",
@@ -458,7 +452,8 @@
         "important",
         "decisive"
       ],
-      "severity": "high"
+      "severity": "high",
+      "notes": "Inside 'plays a pivotal role', a synonym leaves the BS-028 frame in place ('plays a key role in' still fires). Say what the thing does instead."
     },
     {
       "ai_word": "multifaceted",
@@ -685,21 +680,21 @@
         "field",
         "domain",
         "space",
-        "world",
-        {
-          "ai_word": "diverse array",
-          "alternatives": ["range", "mix", "several kinds of", "list them"],
-          "severity": "moderate",
-          "notes": "Scoped to the collocation, not bare 'diverse', which is an ordinary word. Same discipline as 'hidden gem'."
-        },
-        {
-          "ai_word": "natural beauty",
-          "alternatives": ["the view", "the coastline", "name what is there"],
-          "severity": "moderate",
-          "notes": "Promotional cliche from the Wikipedia signs-of-AI list. Multi-word, matched verbatim."
-        }
+        "world"
       ],
       "severity": "high"
+    },
+    {
+      "ai_word": "diverse array",
+      "alternatives": ["range", "mix", "several kinds of", "list them"],
+      "severity": "moderate",
+      "notes": "Scoped to the collocation, not bare 'diverse', which is an ordinary word. Same discipline as 'hidden gem'."
+    },
+    {
+      "ai_word": "natural beauty",
+      "alternatives": ["the view", "the coastline", "name what is there"],
+      "severity": "moderate",
+      "notes": "Promotional cliche in travel and place copy. Multi-word, matched verbatim."
     },
     {
       "ai_word": "tapestry",
@@ -749,7 +744,7 @@
       "alternatives": [
         "key",
         "central piece",
-        "crucial part",
+        "main support",
         "anchor"
       ],
       "severity": "moderate"
@@ -944,17 +939,13 @@
       "alternatives": [
         "Fundamentally",
         "Essentially",
-        "At bottom",
-        "Really"
+        "At bottom"
       ],
       "severity": "high"
     },
     {
       "ai_phrase": "To put it simply",
       "alternatives": [
-        "Simply put",
-        "In short",
-        "Basically",
         "or just state it simply without the preamble"
       ],
       "severity": "moderate"
@@ -971,9 +962,8 @@
     {
       "ai_phrase": "A key takeaway is",
       "alternatives": [
-        "The main point is",
-        "One important lesson is",
-        "What matters here is"
+        "One lesson is",
+        "or state the lesson directly"
       ],
       "severity": "moderate"
     },
@@ -1046,7 +1036,6 @@
       "alternatives": [
         "So",
         "All told",
-        "What this means is",
         "or just conclude without announcing it"
       ],
       "severity": "moderate"
@@ -1055,8 +1044,6 @@
       "ai_phrase": "In summary",
       "alternatives": [
         "So",
-        "To sum up",
-        "The short version:",
         "or just summarize without announcing it"
       ],
       "severity": "moderate"
@@ -1103,8 +1090,8 @@
     {
       "ai_phrase": "Notably",
       "alternatives": [
-        "Worth flagging:",
-        "One standout:",
+        "also",
+        "in particular",
         "or just state the point"
       ],
       "severity": "low",
@@ -1113,8 +1100,7 @@
     {
       "ai_phrase": "Importantly",
       "alternatives": [
-        "What matters:",
-        "The key point:",
+        "or put the point first in the sentence",
         "or just state the point"
       ],
       "severity": "low",
@@ -1154,10 +1140,9 @@
       {
         "ai_phrase": "Arguably",
         "alternatives": [
-          "Some say",
-          "Many believe",
-          "By most accounts",
-          "or make a direct claim"
+          "On balance",
+          "Or name who holds the view, if the source names them",
+          "Or make a direct claim"
         ],
         "severity": "moderate"
       },
@@ -1165,8 +1150,7 @@
         "ai_phrase": "To some extent",
         "alternatives": [
           "Partly",
-          "In part",
-          "Somewhat"
+          "In part"
         ],
         "severity": "low"
       },
@@ -1180,49 +1164,7 @@
         "severity": "low"
       }
     ],
-    "rule": "The problem is not individual hedges but uniform hedging. Human writers commit firmly to some claims and hedge others. If every paragraph contains a qualifier, the text reads as AI-generated. Remove qualifiers from at least half the sentences that have them."
-  },
-  "function_word_patterns": {
-    "description": "AI text shows distinctive function word distribution patterns compared to human text. These are subtler signals but contribute to stylometric detection.",
-    "ai_tendencies": {
-      "overused_in_ai": [
-        "can",
-        "and",
-        "by",
-        "with",
-        "for",
-        "their"
-      ],
-      "underused_in_ai": [
-        "however",
-        "but",
-        "although",
-        "because",
-        "if",
-        "that",
-        "or",
-        "when",
-        "as",
-        "I",
-        "they",
-        "my",
-        "it",
-        "us",
-        "will",
-        "would",
-        "might",
-        "could",
-        "up",
-        "out"
-      ],
-      "notes": "AI text uses fewer personal pronouns (especially first-person), fewer subordinating conjunctions, and fewer modal verbs expressing uncertainty. Human text distributes these unevenly across paragraphs."
-    },
-    "rewriting_guidance": [
-      "Vary function word density by paragraph. Some paragraphs should lean heavily on conjunctions; others should be mostly declarative.",
-      "Reintroduce first-person pronouns where context allows, especially 'I', 'we', 'my', 'our'.",
-      "Use subordinating conjunctions ('because', 'although', 'when', 'if') more than coordinating ones ('and').",
-      "Mix modal verbs: 'could', 'might', 'would' add uncertainty that AI tends to smooth away."
-    ]
+    "rule": "Human writers commit firmly to some claims and hedge others. When rewriting, keep the source's own hedges, because each one marks how sure the writer is, and dropping it hardens the claim (absolute_rules AR-001). 'The drug probably reduces symptoms in most patients.' keeps its 'probably'. The phrases in this list are stock wordings of a limit. Where the source uses one, swap it for a plain alternative that marks the same limit, so 'Typically' becomes 'Usually'. Cut one only where it marks no limit the source states, and where several qualifiers stack on one claim, keep the one that marks the source's limit. If every paragraph carries a formulaic qualifier, the text reads as AI-generated."
   },
   "vocabulary_diversity": {
     "description": "Corrected 2026-10-30: the direction of whole-text lexical diversity is model-dependent, so it is not a reliable tell and this server does not measure it. Herbold et al. (2023) found ChatGPT essays MORE lexically diverse than student essays, and Kendro, Maloney and Jarvis (2025) found newer models more diverse than older ones while still reading as less human. What does carry over is narrower: AI text recycles the same distinctive expressions and generic nouns across a piece (the flagged lexicon, the stock frames in banned_structures) and favors the expected word over the one the context calls for. Repetition of a marked expression is the signal, not the type-token ratio.",
@@ -1232,10 +1174,8 @@
       "unique_word_count": "Not a target. A passage with many unique words can still read as machine-made if the words are the expected ones."
     },
     "rewriting_guidance": [
-      "Avoid repeating the same content word within three sentences unless for deliberate emphasis.",
+      "Use the same word for the same thing.",
       "Replace generic nouns with specific ones: 'factors' → name the factors; 'things' → name the things.",
-      "Use synonyms naturally but unevenly; not every instance needs replacing, which would itself be a pattern.",
-      "Introduce at least one low-frequency word per paragraph that is contextually precise but not common.",
       "Humans prefer shorter words when context is predictable. Mix in plain, short words alongside longer ones."
     ]
   },
@@ -1270,7 +1210,7 @@
       },
       {
         "rule": "Watch for 'the [noun] of' chains.",
-        "guidance": "Two or more 'the X of Y' phrases in a single sentence is a strong AI signal. 'The optimization of the utilization of resources' should become 'optimizing how we use resources' or simply 'using resources better.'"
+        "guidance": "Two or more 'the X of Y' phrases in a single sentence is a strong AI signal. 'The optimization of the utilization of resources' should become 'using resources better.'"
       },
       {
         "rule": "Apply unevenly; some nominalizations are natural.",
@@ -1305,16 +1245,16 @@
       { "ai_adverb": "subsequently", "alternatives": ["then", "after that", "next", "later"], "severity": "moderate" }
     ],
     "human_adverbs_to_reintroduce": [
-      "barely", "almost", "roughly", "somewhat", "entirely",
+      "barely", "almost", "roughly", "entirely",
       "quickly", "reluctantly", "carefully", "deliberately",
-      "frankly", "apparently", "supposedly",
+      "apparently", "supposedly",
       "gradually", "suddenly", "consistently", "rarely", "occasionally"
     ],
     "human_adverbs_to_reintroduce_notes": "Pruned 2026-10-30 because the list contradicted this server's own detectors: 'quietly' is the BS-033 / AP-046 tic, 'actually' is counted by credibility_insistence, and 'honestly' opens the AP-045 false-candour beat. A degree adverb belongs in the sentence only when it carries the writer's actual assessment; adding one to look human is the same move as adding a contraction to look human.",
     "rules": [
       {
-        "rule": "Include degree adverbs to calibrate claims.",
-        "guidance": "'The system handles edge cases' → 'The system mostly handles edge cases' or 'The system barely handles edge cases.' The adverb carries the writer's actual assessment. Without it, the sentence is AI-neutral."
+        "rule": "Keep the degree adverbs that calibrate a claim.",
+        "guidance": "Where the source says how far a claim holds ('mostly', 'barely', 'roughly'), keep that adverb, because it carries the writer's assessment. Do not add one the source lacks, since that softens or hardens the claim (absolute_rules AR-001)."
       },
       {
         "rule": "Use manner adverbs to reveal how something happened, not just that it did.",
@@ -1385,8 +1325,8 @@
       "see_also": "caveats.jargon_substitution_loses_meaning"
     },
     "rewriting_guidance": [
-      "Run this pass last, after the lexical, structural and verification phases, then re-run humanizer_check_text: cutting words changes sentence-length variance and can undo the burstiness work.",
-      "Rule 3 is the one to spend time on in anything longer than a page. Read each paragraph and ask which words are load-bearing.",
+      "Run this pass last, after the lexical, structural and verification phases, then re-run humanizer_check_text: cutting words can create or expose findings such as a comma splice or a new run-on.",
+      "Rule 3 is the one to spend time on in anything longer than a page. Read each paragraph and ask which words the sentence needs.",
       "Do not apply the substitution lists as a find-and-replace. A long word chosen for rhythm at the end of a sentence can be the right word, and rule 6 covers it."
     ],
     "research_basis": "Orwell, 'Politics and the English Language' (1946). Added 2026-08-10 from the Day One case-study writing gate, which ran an Orwell layer by hand after this server's loop for the length of a 39-page document and kept catching the same three classes: stale figures, padding, and jargon substituted where a definition was wanted."

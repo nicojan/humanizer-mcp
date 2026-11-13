@@ -226,6 +226,16 @@ crafted = [
      "Prototyping: Figma, Framer, and HTML, CSS and JavaScript.\n"
      "Teaching: curriculum design, assessment, and differentiated instruction."),
     ("terms_of_art_partial", "prose", "I use differentiated instruction. Our product differentiates itself."),
+    # --- 2026-11-12 repair round PR 1: BS-066 budget-only flip, four un-nested lexicon terms ---
+    ("bs066_contracted_flip_twice", "prose",
+     "It's not a tool. It's a partner. This isn't a bug. It's a feature."),
+    ("bs066_curly_semicolon_flip_twice", "prose",
+     "It\u2019s not about speed; it\u2019s about trust. This isn\u2019t a bug. It\u2019s a feature."),
+    ("bs066_ok_single_flip", "prose", "That isn't the invoice. It's the receipt."),
+    ("lexicon_nestled", "prose", "The cabin was nestled in the hills above the lake."),
+    ("lexicon_diverse_array", "prose", "The shop stocks a diverse array of teas."),
+    ("lexicon_renowned_natural_beauty", "prose", "The renowned valley is known for its natural beauty."),
+    ("lexicon_ok_nest_bird", "prose", "The wren built a nest in the shed."),
 ]
 
 # --- 3. Real text: the eval corpus (human + AI) ------------------------------

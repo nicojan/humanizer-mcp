@@ -56,7 +56,7 @@ Top-level keys: `meta`, `absolute_rules`, `enforcement`, `core_principle`, `two_
 
 Words, phrases, and constructions that statistical detectors over-associate with AI text. `meta.application_rule` is surfaced to consumers.
 
-Top-level keys: `meta`, `flagged_verbs`, `flagged_adjectives`, `flagged_nouns`, `flagged_transitions`, `flagged_qualifiers`, `function_word_patterns`, `vocabulary_diversity`, `word_length_patterns`, `nominalization`, `abstract_concrete_balance`, `adverb_patterns`, `credibility_insistence`.
+Top-level keys: `meta`, `flagged_verbs`, `flagged_adjectives`, `flagged_nouns`, `flagged_transitions`, `flagged_qualifiers`, `vocabulary_diversity`, `word_length_patterns`, `nominalization`, `abstract_concrete_balance`, `adverb_patterns`, `credibility_insistence`.
 
 | Field | Type | Description |
 |---|---|---|
@@ -65,7 +65,6 @@ Top-level keys: `meta`, `flagged_verbs`, `flagged_adjectives`, `flagged_nouns`, 
 | `flagged_nouns` | array of objects | `{ai_word, alternatives[], severity, notes?}`. |
 | `flagged_transitions` | array of objects | `{ai_phrase, alternatives[], severity, notes?}`. Note `ai_phrase` (not `ai_word`). |
 | `flagged_qualifiers` | object | `{description, items[]{ai_phrase, alternatives[], severity}, rule}`. Hedging phrases; the `rule` warns against uniform hedging, not individual hedges. |
-| `function_word_patterns` | object | `{description, ai_tendencies{overused_in_ai[], underused_in_ai[], notes}, rewriting_guidance[]}`. |
 | `vocabulary_diversity` | object | `{description, metrics{ttr, hapax_legomenon_rate, unique_word_count}, rewriting_guidance[]}`. |
 | `word_length_patterns` | object | `{description, rewriting_guidance[]}`. |
 | `nominalization` | object | `{description, ai_pattern, human_pattern, common_nominalizations[]{nominal, verbal}, rules[]{rule, guidance}, research_basis}`. |
@@ -76,20 +75,21 @@ Top-level keys: `meta`, `flagged_verbs`, `flagged_adjectives`, `flagged_nouns`, 
 
 The `risk_level` filter on `humanizer_get_lexical_patterns` filters by `severity` across `flagged_verbs`, `flagged_adjectives`, `flagged_nouns`, `flagged_transitions`, `flagged_qualifiers.items`, and `adverb_patterns.flagged_ai_adverbs`.
 
+**Term entries must be direct elements of their category list.** On 2026-09-17 `nestle`, `renowned`, `diverse array`, `natural beauty` and `profound` were added as `alternatives` of another entry, where no loader reads them, so they never fired. The repair round (2026-11-12) moved four of them to top-level entries (`nestle` in `flagged_verbs`, `renowned` in `flagged_adjectives`, `diverse array` and `natural beauty` in `flagged_nouns`) and dropped `profound` (8.49 per 10k on Tier 2, all legitimate). The test module `tests/checker/test_repair_round_2026_11.py` fails on a term-keyed dict that is nested or misplaced, and on any term in the data that the loader does not return (except the hard-promoted phrases). `alternatives` entries are plain strings, and each must pass the checker.
+
 ---
 
 ## `structural_patterns.json`
 
 Sentence- and paragraph-level structural targets (burstiness, syntactic variety, punctuation).
 
-Top-level keys: `meta`, `sentence_length`, `syntactic_variety`, `punctuation_diversity`, `pos_distribution_targets`, `n_gram_patterns`, `enumeration_patterns`, `dependency_proximity`.
+Top-level keys: `meta`, `sentence_length`, `syntactic_variety`, `punctuation_diversity`, `n_gram_patterns`, `enumeration_patterns`, `dependency_proximity`.
 
 | Field | Type | Description |
 |---|---|---|
 | `sentence_length` | object | `{ai_pattern, human_pattern, rules[]{rule, guidance}}`. |
 | `syntactic_variety` | object | `{ai_pattern, human_pattern, rules[]{rule, guidance}}` (11 rules). |
 | `punctuation_diversity` | object | `{ai_pattern, human_pattern, rules[]{rule, guidance}}`. First rule restates the AR-002 em-dash ban; remaining rules govern punctuation *drift* among valid options (never correctness; see AR-003). |
-| `pos_distribution_targets` | object | `{description, human_tendencies{more_in_human_text[], more_in_ai_text[], notes}, rewriting_guidance[]}`. |
 | `n_gram_patterns` | object | `{ai_pattern, rewriting_guidance[]}`. |
 | `enumeration_patterns` | object | `{ai_pattern, human_pattern, rules[]{rule, guidance}, research_basis}`. The rule-of-three / parallel-list tell. |
 | `dependency_proximity` | object | `{description, ai_pattern, human_pattern, rules[]{rule, guidance}, research_basis}`. |
@@ -108,7 +108,7 @@ Top-level keys: `meta`, `neutral_bias`, `emotional_layering`, `subjectivity`, `s
 | `emotional_layering` | object | `{ai_pattern, human_pattern, rules[]{rule, guidance}}`. |
 | `subjectivity` | object | `{ai_pattern, human_pattern, rules[]{rule, guidance}}`. |
 | `sensing_and_experience_language` | object | `{description, ai_underuses[], rewriting_guidance[]}`. |
-| `readability` | object | `{description, ai_pattern, human_pattern, rules[]{rule, guidance}, research_basis}`. |
+| `readability` | object | `{description, ai_pattern, human_pattern, rules[]{rule, guidance}, research_basis}`. The Flesch Reading Ease bands and the Gunning Fog wording were deleted on 2026-11-12: nothing in the checker measures them, and a score target degrades the text. The match-the-reader rule stays. |
 
 All tone changes are constrained by `foundation.absolute_rules` AR-001 (preserve meaning, stance, claims).
 
@@ -225,6 +225,8 @@ The research round (2026-10-30, `docs/superpowers/specs/2026-10-30-research-roun
 
 ---
 
+The repair round (2026-11-12) adds one `regex` entry, `BS-066` (`contracted_negation_flip`, `AP-029`), `gate=checklist`, `confidence=low`, `document_budget` 1, **`budget_only` true**: a single instance is never reported and two or more in one text are reported as the overrun with every excerpt attached. It counts every form of the "It's not X. It's Y." flip toward one budget, contracted or not, with a straight or curly apostrophe, closed by a period or a semicolon, behind eleven guards. `BS-013` is deliberately unchanged, because widening it per instance fired on 169 of 217 constructed modern items, 101 of them legitimate. `BS-065` is skipped (named by the rejected caption draft in `tests/support/test_terse_register.py`). Known misses ("The problem isn't speed; it's trust.", where the second half ends in a bare noun) are pinned unflagged in `tests/checker/test_repair_round_2026_11.py`. Auto-wired by `loader.load_regex_structures`, so data-only.
+
 ## `caveats.json`
 
 Limitations, detector brittleness, ESL sensitivity, and ethics.
@@ -248,3 +250,8 @@ Top-level key: `self_review`.
 | `self_review.items[]` | array of strings | 19 rubric lines: AR-001 meaning preservation, rhythm, reused rhetorical shape, the contrastive `X, not Y` form outside the mechanized copula frame, section-to-section variation, generic competence/stance, abstraction-as-agent, performative framing beat (self-satisfied closer / first-person meta-commentary / paradox headline), excessive coherence and tidiness, appended significance label, plainness (the Orwell pass, run last), a durable-signal note, anaphora / repeated sentence openings, over-explained subtext, reader contact, recognisable defaults, and (2026-11-09) the cause-to-benefit "so" tail, backstory order and self-portrait flourish, and the cold-reader test for product, portfolio and case-study copy. |
 
 `loader.load_self_review()` returns `self_review.items`, which `run_checks` passes to `assemble_report` as the report's `manual_review` list (sequenced by `next_action`). `assemble_report` keeps a static fallback list, so direct callers without the data layer still get a non-empty `manual_review`. Edit this file and git-push to update; no code change is needed. The abstraction-as-agent item is pinned by `tests/data/test_pr2_additions.py`, and the performative-framing-beat item by `tests/checker/test_self_review.py`.
+---
+
+## `tests/data/test_guide_consistency.py`: the served guidance obeys the checker
+
+Not a data file, but it constrains every one of them (added 2026-11-12). It builds the served payload for all seven content profiles (`build_guide_payload`) plus the self-review rubric, walks every string in the guidance fields (a `history` key is skipped), and extracts every quoted example. Each quote offered as a recommendation or a rewrite must not fire a hard violation, a `banned_structure` finding or a `flagged_term` finding; a quote that is a deliberate counter-example goes in `COUNTER_EXAMPLES`, under a comment that names the section it comes from. Every string `alternatives` entry in `lexical_patterns.json` must pass the same way. The module also pins the removed quotas and performed-trait phrases (`REMOVED_PHRASES`), checks that every path in `foundation.application_protocol` resolves to a section that exists and that every layer section is visited or deliberately excluded (`application_protocol`, `ecosystem_workflow`, `primary_usage`), and asserts that the burstiness wording is gone from every served file. The quote, alternative, path and section checks each have a control that fails on known-bad input, so a green run there is not a blind zero. The `REMOVED_PHRASES`, `ROUTED_TELLS` and quota checks are absence tests with no control of their own. A companion module, `tests/data/test_guide_pr1_fix_wave.py`, pins the guidance that the review's fix wave kept but conditioned on the source (`AR-001`), the rewritten anti-pattern afters, and a guard against em-dashes in served prose outside `before` fields and the form that names the character, whose control fires on a planted dash. Adding guidance with an example the checker flags fails here, not in a user's draft.

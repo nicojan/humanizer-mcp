@@ -12,7 +12,7 @@ as the Python `run_checks`. `dump.py` runs the real checker over a battery of
 texts (crafted edge cases plus a corpus of AI-written samples) and writes the
 results to `golden.json`. `parity.mjs` runs the compiled port over the same
 battery and diffs every finding, offset, count, metric, and fix string. Current
-status: **136/136 texts match exactly**, plus 779/779 `pyRound` cases.
+status: **150/150 texts match exactly**, plus 779/779 `pyRound` cases.
 
 The battery includes one adversarial case per regex banned structure, each with
 its negative control, so a rule that silently stopped firing (or started firing
@@ -42,7 +42,7 @@ terms, and structure patterns. There is no second copy of the rules to drift.
 # from web/, with the parent server's Python deps available
 python3 dump.py     # regenerate src/data.json + golden.json from the Python checker
 node build.mjs      # build ../index.html and the parity bundle
-node parity.mjs     # verify 136/136 against the Python checker
+node parity.mjs     # verify 150/150 against the Python checker
 ```
 
 ## Parity scope

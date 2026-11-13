@@ -63,11 +63,12 @@ def test_the_underlying_findings_are_still_reported_individually():
 def test_budgets_are_data_driven_and_cover_the_mechanized_shapes():
     """Four shapes at 2026-09-18; BS-053 and the budget-only BS-055 joined on
     2026-09-29 (tests/checker/test_worksheet_tells_2026_09.py), and the
-    budget-only BS-057 on 2026-10-30 (tests/checker/test_research_tells_2026_10.py)."""
+    budget-only BS-057 on 2026-10-30 (tests/checker/test_research_tells_2026_10.py),
+    and the budget-only BS-066 on 2026-11-12 (tests/checker/test_repair_round_2026_11.py)."""
     budgets, names = load_document_budgets()
     assert budgets == {
         "BS-011": 1, "BS-018": 1, "BS-038": 1, "BS-039": 1, "BS-053": 1, "BS-055": 1,
-        "BS-057": 1,
+        "BS-057": 1, "BS-066": 1,
     }
     assert names["BS-011"] == "x_not_y_contrastive"
     entries = json.loads((DATA / "banned_structures.json").read_text())["structures"]

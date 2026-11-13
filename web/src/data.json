@@ -907,6 +907,23 @@
         "AP-066"
       ],
       "research_basis": "Russell et al. (ACL 2025) on tidy, summarising conclusions. Observed closing a default-style Claude Sonnet sample generated for this round, with 0 matches in long-form human prose, pre-2022 essays and pre-2022 Wikipedia against an 'as much' control that fires in all three. Research round 2026-10-30 (docs/superpowers/specs/2026-10-30-research-round-academic-tells.md)."
+    },
+    {
+      "id": "BS-066",
+      "name": "contracted_negation_flip",
+      "description": "Every form of the negation flip, contracted or not and closed by a period or a semicolon, counted toward one budget, as in 'It's not a tool. It's a partner.', 'This isn't a bug. It's a feature.', 'It isn't about speed; it's about trust.' One instance is ordinary writing, because corrections, definitions and clarifications take the same shape ('That isn't the invoice. It's the receipt.'). The repeat is the tell. Budget-only: single instances are not reported, and a second flip in one piece is reported as a document_budget finding with every instance's excerpt. A single uncontracted flip is still reported as BS-013, and it also counts toward this budget.",
+      "detection": {
+        "method": "regex",
+        "pattern": "(?<!\\bthere)(?<!\\bthere\\s)(?<!\\bthere\\s\\w{2}\\s)(?<!\\bthere\\s\\w{3}\\s)(?<!\\bthere\\s\\w{4}\\s)(?<!\\bthere\\s\\w{5}\\s)(?<!\\bthere\\s\\w{6}\\s)(?<!\\bthere\\s\\w{7}\\s)(?<!\\bthere\\s\\w{8}\\s)(?<!\\bthere\\s\\w{9}\\s)(?<!\\bthere\\s\\w{10}\\s)(?<!\\bthere\\s\\w{11}\\s)(?<!\\bthere\\s\\w{12}\\s)(?<!\\bthere\\s\\s)(?<!\\blet)(?<!\\bwhat)(?<!\\bwho)\\b(?:(?:is|are|was|were)\\s+not|(?:is|are|was|were)n['’]t|['’](?:s|re)\\s+not)\\s+(?:just|only|merely|simply|a|an|the(?!\\s+only\\s+ones?\\b)|about|one(?!\\s+(?:for|to)\\b)|two|three|four|five|six|seven|eight|nine|ten|\\d+)\\s+(?=\\S)(?:(?!\\bbut\\b)(?!\\r?\\n[ \\t]*(?:\\r?\\n|[-*+>#|]|\\d+[.)]))(?!,\\s*(?:it|they|we|you|he|she|i|this|that|there)\\s+\\w)(?!\\b(?:is|are|was|were)\\s+(?:a|an|the)\\b)[^.?!;]){0,45}[.;]\\s+(?:(?:it|they|that|this)\\s+(?:is|are|was|were)|(?:it|that)['’]s|they['’]re)\\s+(?:just|only|merely|simply|a|an|the|about(?!\\s+(?:\\d|half\\b|a\\s+(?:third|quarter|half|dozen|hundred|thousand|million)\\b|(?:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred)\\b|the\\s+same\\b|as\\s+\\w+\\s+as\\b))|one|two|three|four|five|six|seven|eight|nine|ten)\\b(?!\\s+(?:[\\w'’]+\\s+)?(?:responsibility|duty|obligation|intention|condition|requirement|pleasure|privilege|offen[cs]e)\\s+(?:of|to|that)\\b)(?!\\s+(?:good|bad|great|better)\\s+(?:idea|time|practice)\\s+to\\b)",
+        "confidence": "low"
+      },
+      "document_budget": 1,
+      "budget_only": true,
+      "gate": "checklist",
+      "fix": "State the positive claim and let it stand: 'It's a partner.' Keep a flip only where it corrects a misreading, and use it once.",
+      "source_examples": [
+        "AP-029"
+      ]
     }
   ],
   "flagged_terms": [
@@ -919,17 +936,16 @@
         "examine",
         "get into",
         "explore",
-        "pick apart",
-        {
-          "ai_word": "nestle",
-          "alternatives": [
-            "sits",
-            "stands",
-            "is"
-          ],
-          "severity": "moderate",
-          "notes": "Travel-brochure register ('nestled in the heart of the valley'). Sibling of 'bustling' and 'hidden gem'."
-        }
+        "pick apart"
+      ]
+    },
+    {
+      "term": "nestle",
+      "severity": "moderate",
+      "alternatives": [
+        "sits",
+        "stands",
+        "is"
       ]
     },
     {
@@ -1062,7 +1078,7 @@
         "improve",
         "fine-tune",
         "adjust",
-        "refine"
+        "speed up"
       ]
     },
     {
@@ -1287,29 +1303,17 @@
         "complete",
         "detailed",
         "in-depth",
-        "broad",
-        {
-          "ai_word": "profound",
-          "alternatives": [
-            "deep",
-            "far-reaching",
-            "serious",
-            "lasting"
-          ],
-          "severity": "moderate",
-          "notes": "Promotional intensifier from the Wikipedia signs-of-AI list (2026-09-17). Almost always reachable by a plainer word or by the fact itself."
-        },
-        {
-          "ai_word": "renowned",
-          "alternatives": [
-            "well-known",
-            "widely read",
-            "respected",
-            "named after"
-          ],
-          "severity": "moderate",
-          "notes": "Unearned prestige marker; pairs with 'boasts' and 'nestled' in generated travel and profile copy."
-        }
+        "broad"
+      ]
+    },
+    {
+      "term": "renowned",
+      "severity": "moderate",
+      "alternatives": [
+        "well-known",
+        "widely read",
+        "respected",
+        "named after"
       ]
     },
     {
@@ -1583,28 +1587,26 @@
         "field",
         "domain",
         "space",
-        "world",
-        {
-          "ai_word": "diverse array",
-          "alternatives": [
-            "range",
-            "mix",
-            "several kinds of",
-            "list them"
-          ],
-          "severity": "moderate",
-          "notes": "Scoped to the collocation, not bare 'diverse', which is an ordinary word. Same discipline as 'hidden gem'."
-        },
-        {
-          "ai_word": "natural beauty",
-          "alternatives": [
-            "the view",
-            "the coastline",
-            "name what is there"
-          ],
-          "severity": "moderate",
-          "notes": "Promotional cliche from the Wikipedia signs-of-AI list. Multi-word, matched verbatim."
-        }
+        "world"
+      ]
+    },
+    {
+      "term": "diverse array",
+      "severity": "moderate",
+      "alternatives": [
+        "range",
+        "mix",
+        "several kinds of",
+        "list them"
+      ]
+    },
+    {
+      "term": "natural beauty",
+      "severity": "moderate",
+      "alternatives": [
+        "the view",
+        "the coastline",
+        "name what is there"
       ]
     },
     {
@@ -1653,7 +1655,7 @@
       "alternatives": [
         "key",
         "central piece",
-        "crucial part",
+        "main support",
         "anchor"
       ]
     },
@@ -1836,17 +1838,13 @@
       "alternatives": [
         "Fundamentally",
         "Essentially",
-        "At bottom",
-        "Really"
+        "At bottom"
       ]
     },
     {
       "term": "To put it simply",
       "severity": "moderate",
       "alternatives": [
-        "Simply put",
-        "In short",
-        "Basically",
         "or just state it simply without the preamble"
       ]
     },
@@ -1863,9 +1861,8 @@
       "term": "A key takeaway is",
       "severity": "moderate",
       "alternatives": [
-        "The main point is",
-        "One important lesson is",
-        "What matters here is"
+        "One lesson is",
+        "or state the lesson directly"
       ]
     },
     {
@@ -1913,7 +1910,6 @@
       "alternatives": [
         "So",
         "All told",
-        "What this means is",
         "or just conclude without announcing it"
       ]
     },
@@ -1922,8 +1918,6 @@
       "severity": "moderate",
       "alternatives": [
         "So",
-        "To sum up",
-        "The short version:",
         "or just summarize without announcing it"
       ]
     },
@@ -1961,8 +1955,8 @@
       "term": "Notably",
       "severity": "low",
       "alternatives": [
-        "Worth flagging:",
-        "One standout:",
+        "also",
+        "in particular",
         "or just state the point"
       ]
     },
@@ -1970,8 +1964,7 @@
       "term": "Importantly",
       "severity": "low",
       "alternatives": [
-        "What matters:",
-        "The key point:",
+        "or put the point first in the sentence",
         "or just state the point"
       ]
     },
@@ -2006,10 +1999,9 @@
       "term": "Arguably",
       "severity": "moderate",
       "alternatives": [
-        "Some say",
-        "Many believe",
-        "By most accounts",
-        "or make a direct claim"
+        "On balance",
+        "Or name who holds the view, if the source names them",
+        "Or make a direct claim"
       ]
     },
     {
@@ -2017,8 +2009,7 @@
       "severity": "low",
       "alternatives": [
         "Partly",
-        "In part",
-        "Somewhat"
+        "In part"
       ]
     },
     {
@@ -2166,19 +2157,19 @@
     "research_basis": "proposed-rules PR2-#1; in-the-wild audit of nicojan.com/work/art-studio-blueprint (2026-06-28), where seven uses of 'real' in ~1,500 words passed the checker clean."
   },
   "self_review": [
-    "AR-001 — meaning preserved: confirm claims, numbers, names, and stance are unchanged from the source, and the tone the user asked for is intact.",
-    "Rhythm: read the draft in your head — do sentence lengths and shapes vary, or march at one cadence? Break up runs of same-length sentences; add a short fragment or a longer multi-clause sentence. (Burstiness is auto-measured; this is the qualitative read.)",
+    "AR-001, meaning preserved: confirm claims, numbers, names, and stance are unchanged from the source, and the tone the user asked for is intact. In a new draft, confirm every name, number, date, quotation and first-person experience came from the user or the source, with a marked placeholder where one is missing.",
+    "Rhythm: read the draft in your head. Does a run of sentences march at one cadence, each the same length and shape? Look hardest at runs of short punchline fragments and one-line questions, because that is the cadence problem to find. Recombine or split those sentences by meaning until each carries one whole thought. (Burstiness is auto-measured; this is the qualitative read.)",
     "Reused rhetorical shape: the same construction — an antithesis ('not X, but Y'), a copula maxim, a rule-of-three — restated across the piece reads as a tic even when the words differ. Vary the constructions, not just the vocabulary. The budget for the shapes that carry one ('at most one antithesis', 'at most one appended label', 'at most one aphorism') is a budget for the WHOLE PIECE, and checking section by section cannot enforce it: four sections can each pass with one instance while the document holds four. Count these across every section, and run the last humanizer_check_text on the assembled document, not only on the part you edited last. The four mechanized shapes (BS-011, BS-018, BS-038, BS-039) are now counted automatically and reported as a document_budget finding, but only within the text handed to the checker, so the last run still has to be on the assembled document. The shapes in this item that no detector can find are yours to count. See caveats.per_section_checks_miss_document_budgets.",
     "Contrastive 'X, not Y' outside the copula frame: BS-011 fires only on a copula plus a clause-final Y, so \"We chose depth, not breadth.\" and \"The wordmark comes from paint on paper, not the polished apps she gave up on.\" are yours to judge. One contrast is ordinary writing; the tell is the reflex, the same binary reached for in section after section. Count them across the whole piece, and rewrite the repeats as a positive claim that stands on its own. See caveats.contrastive_scope_notes_are_the_same_shape.",
-    "Section-to-section variation: does the style shift between sections, or hold one flat fingerprint throughout? Humans modulate; LLMs stay even. Make one section terse and another more flowing. (Cross-section uniformity is auto-detected; this is the qualitative read.)",
-    "Generic competence and stance: could this have been written about almost any topic, by almost anyone? Cut smooth-but-empty phrasing, reflexive hedges, and motivational closers. Commit to a real point of view and at least one concrete, specific, checkable detail.",
+    "Section-to-section variation: does the style shift between sections, or hold one flat fingerprint throughout? Humans modulate; LLMs stay even. Let each section's texture follow its job, and do not make sections differ for contrast. (Cross-section uniformity is auto-detected; this is the qualitative read.)",
+    "Generic competence and stance: could this have been written about almost any topic, by almost anyone? Cut smooth-but-empty phrasing, reflexive hedges, and motivational closers. State the point of view the user or the source holds, and give at least one concrete, specific, checkable detail from the source or the user, never invented (see AR-001).",
     "Abstraction-as-agent: an abstract noun ('the gap', 'the work', 'the craft', 'the order') used as the subject of an agentive or experiential verb (mattered, decided, kept, taught, carries, carried, holds, demands) reads fluent but no one is actually doing anything. Metaphorical 'carry' is the most frequent instance and the hardest to hear ('the layout carries the weight', 'the silence carried the room', 'eight words to carry'): the verb performs gravity while the sentence names no actor and no effect. Prefer a human or concrete subject, and say what the thing actually does. The fixed collocations are auto-detected as BS-031; the open-ended abstract-subject cases are this rubric item (server cannot verify reliably; see AP-033, AP-044). Time and calendar nouns count too, and they are the hardest to hear because they read as a lively figure: 'the Fridays survived', 'Busy season eats the Fridays', 'Billiards survives final year', 'Work does not get to claim them'. The weekday, semester and season frames are mechanized as BS-052 at low confidence; read for the rest, such as a schedule, a job or an activity that 'decides', 'wins' or 'gives back'. Fix: name the person and say what happens ('I still make it to billiards on Fridays'). Ideas and artifacts slip in the same way, most often inside a maxim about the work: 'the answer usually costs you the design you arrived with', 'A design that ignores the build comes back', 'the only thing I do that asks me to stand still'. A reviewer flagged all three on a portfolio site in 2026; none has a lexical anchor the checker could use.",
     "Performative framing beat: a sentence or label whose real job is to perform insight, closure, or self-awareness rather than carry content. Three forms — (a) a self-satisfied closer: a neat aphorism ending a section that adds no new fact, name, or number, often crediting the author or pivoting on a tidy antithesis ('The data set is public; the reading of it is mine.'); (b) first-person meta-commentary on the work itself ('my take', 'the reading of it is mine', 'as I see it') in a piece meant to be evidence-led; (c) a clever paradox headline used to sound sharp where a plain statement of the point would do. Delete the beat and end on the last substantive point. Keep at most one aphoristic or paradox construction per piece, and only where it does analytical work — the device is human in moderation; the tell is repetition and substitution for content. The standalone meta-label form ('in 200 words', 'in brief') is auto-detected as BS-022; the closer overlaps BS-018; see AP-035, AP-033. Short cells and captions have their own versions: the clipped verdict that performs a decision ('Tutoring stays.', BS-053), the stance closer that points back at a number already given ('and I want to keep it there', BS-054), and the tidy aphoristic closer that rounds off a plain list ('four months is a long time to wait', 'tires me out more than any lecture did'). Replace each with the next concrete fact. Captions have a numeric version, the verbless pair that sets one against many ('One count, four moments', 'Three sizes, all the same height.', 'One app, every chat.'). It could not be mechanized: 'Two adults, one child.', 'Two tablets, every four hours.' and 'Three goals, one assist.' are the same shape in ordinary terse writing (see AP-069). A maxim that hands the verdict to a third party is the same beat ('and the developer is right to send it back').",
-    "Excessive coherence and tidiness: does every point line up too neatly — each example fitting perfectly, every thread resolved, no loose ends or tension left? Real human writing has friction: a caveat that complicates the thesis, a digression, an example that only mostly fits, a point left partly open. Seamless, frictionless argument is itself a tell. Add back the messiness the topic actually has.",
+    "Excessive coherence and tidiness: does every point line up too neatly — each example fitting perfectly, every thread resolved, no loose ends or tension left? Real human writing has friction: a caveat that complicates the thesis, a digression, an example that only mostly fits, a point left partly open. Seamless, frictionless argument is itself a tell. Keep the friction the source has (a caveat, an exception, a point left open) instead of smoothing it away, and add none it lacks (AR-001).",
     "Appended significance label: a heading, subtitle or dek that names its subject and then annexes a second element promising the subject matters — a reduced relative ('Reintegration support at the moment of release, and the officer the whole system turns on.'), an appositive that asserts a hinge, or a WH clause pre-defending a choice ('Method, and why this one'). Read every label in the piece: does the part after the comma add a fact, or does it only tell the reader this is important? Cut it and let the section earn it. One such label may be deliberate; two or more in one piece is the tell, because a repeated rhetorical shape is what reads as machine-made. The WH form is auto-detected as BS-038; the reduced-relative and appositive forms need a parser the server does not have, so they are this rubric item (see AP-051). Budget: one per document, counted across the assembled whole rather than section by section — the durable signal is the repeated shape, not any single instance, and check_text is stateless (see per_section_checks_miss_document_budgets). The WH form is mechanized as BS-038; the appositive form that appends a reduced relative is not, and three attempts to mechanize it are recorded in labels_are_where_the_tells_hide. Attested forms to read for: 'Reintegration support at the moment of release, and the officer the whole system turns on.', 'The rebuild, and the one decision that made it possible.', 'Nine months of rework, and the meeting that started it.'",
-    "Plainness (the Orwell pass, run last): after the other phases are clear, read the draft once more for the three things this server's own layers do not catch, because they are marks of flabby prose rather than of machine authorship. (a) Stale figures of speech: any image you did not choose deliberately ('moves the needle', 'the federal purse', 'the tip of the iceberg'). A closed list is auto-detected as BS-041; the class is open, so read for it. Replace the figure with the number or the name it stood in for, not with a fresher figure. (b) Words that can go: if a word can be cut, cut it. This is the rule that does the most work in anything longer than a page, and the padding phrases in lexical_patterns.orwell.padding_phrases are a starting point, not the rule. (c) The passive where the active will do: name who did it. Deliberately not mechanized, because the legitimate passive is common in method and regulatory writing. One carve-out, and it is not optional: a domain term with no everyday equivalent (statutory release, Protected B, an API, a subpoena) is DEFINED in plain words at first use and then used plainly. Do not substitute a vaguer everyday word for it; that loses the meaning the argument runs on. Then re-run humanizer_check_text, because cutting words changes sentence-length variance. See lexical_patterns.orwell and caveats.jargon_substitution_loses_meaning.",
+    "Plainness (the Orwell pass, run last): after the other phases are clear, read the draft once more for the three things this server's own layers do not catch, because they are marks of flabby prose rather than of machine authorship. (a) Stale figures of speech: any image you did not choose deliberately ('moves the needle', 'the federal purse', 'the tip of the iceberg'). A closed list is auto-detected as BS-041; the class is open, so read for it. Replace the figure with the number or the name it stood in for, not with a fresher figure. (b) Words that can go: if a word can be cut, cut it. This is the rule that does the most work in anything longer than a page, and the padding phrases in lexical_patterns.orwell.padding_phrases are a starting point, not the rule. (c) The passive where the active will do: name who did it. Deliberately not mechanized, because the legitimate passive is common in method and regulatory writing. One carve-out, and it is not optional: a domain term with no everyday equivalent (statutory release, Protected B, an API, a subpoena) is DEFINED in plain words at first use and then used plainly. Do not substitute a vaguer everyday word for it; that loses the meaning the argument runs on. Then re-run humanizer_check_text, because cutting words can create or expose findings such as a comma splice or a new run-on. See lexical_patterns.orwell and caveats.jargon_substitution_loses_meaning.",
     "Durable signal: local word-level unpredictability and section-to-section variation are the most human signals and are not measured server-side. Surface word swaps are necessary but not sufficient — do not stop at vocabulary.",
-    "Anaphora and repeated sentence openings: three or more consecutive sentences opening on the same word or the same two words ('They assume users will pay. They assume the market is ready. They assume nothing changes.'). Read the run and ask one question: is the repetition doing work, or is it filling space? **The form itself is legitimate and has a name.** Thoreau wrote 'It does not keep the country free. It does not settle the West. It does not educate.', and Melville 'Forty years of continual whaling! Forty years of privation, and peril, and storm-time!' — deliberate anaphora that builds. The tell is the same construction used without escalation, where each limb restates the first instead of advancing it, and where cutting the repetition would cost the passage nothing. That distinction is why this is a rubric item and not a detector: the abusive case and the figure are syntactically identical, and every formulation tried scored 0/15 precision on genuine human prose (see caveats.rhetorical_figures_defeat_shape_detection). Only the This/These/It chain is auto-detected, as BS-009. Budget: at most one deliberate anaphoric run per document, counted across the assembled whole rather than section by section, and it should be the strongest passage in the piece — if it is not, cut it (see caveats.per_section_checks_miss_document_budgets).",
+    "Anaphora and repeated sentence openings: three or more consecutive sentences opening on the same word or the same two words ('They assume users will pay. They assume the market is ready. They assume nothing changes.'). Read the run and ask one question: is the repetition doing work, or is it filling space? **The form itself is legitimate and has a name.** Thoreau wrote 'It does not keep the country free. It does not settle the West. It does not educate.', and Melville 'Forty years of continual whaling! Forty years of privation, and peril, and storm-time!' (deliberate anaphora that builds). The tell is the same construction used without escalation, where each limb restates the first instead of advancing it, and where cutting the repetition would cost the passage nothing. That distinction is why this is a rubric item and not a detector: the abusive case and the figure are syntactically identical, and every formulation tried scored 0/15 precision on genuine human prose (see caveats.rhetorical_figures_defeat_shape_detection). Only the This/These/It chain is auto-detected, as BS-009. Budget: at most one deliberate anaphoric run per document, counted across the assembled whole rather than section by section, and it should be the strongest passage in the piece; if it is not, cut it (see caveats.per_section_checks_miss_document_budgets).",
     "Over-explained subtext: does a sentence explain what the image, line or example before it already showed ('He slammed the door. He was angry.')? Professional writers cut this in about a fifth of their edits to LLM drafts, and it does not go away as models improve (Chakrabarty, Laban and Wu, CHI 2025). Cut the explanation and trust the reader.",
     "Reader contact (essays, blog posts, opinion pieces, cover letters, not reference or technical copy): is there a single I, you or question in the whole piece? LLM essays use markedly less interactional language, meaning stance, engagement and questions to the reader, than human ones (Jiang and Hyland, English for Specific Purposes, 2025). Add one only where it carries a real position; never inject it as decoration.",
     "Defaults a reader recognises: quote attributions that rotate through 'notes', 'explains' and 'emphasizes' where a reporter would write 'says' every time; every bullet opening with a bold label and a colon; emoji at the start of headings or bullets; stock names (Emily, Sarah, Dr. Chen, Elara). Expert annotators cite each of these (Russell, Karpinska and Iyyer, ACL 2025). Use the plain form unless the house style asks for the other one.",

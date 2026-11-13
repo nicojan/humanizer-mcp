@@ -20,19 +20,19 @@
         "id": "AR-001",
         "title": "Preserve the original meaning, intent, and content of the source text.",
         "priority": "highest",
-        "directive": "This ruleset describes HOW to rewrite, not WHAT to write. When applying any humanization rule, you MUST NOT change the inherent goal, meaning, claims, facts, argument, structure of reasoning, named entities, numbers, dates, quotations, or stance of the source text. This is a linguistic, grammatical, and stylistic revision only. Substitute words, restructure sentences, vary punctuation, and reshape rhythm. Do not add information that was not present, do not delete information that was present, do not invert claims, do not soften firm positions, and do not invent specifics (names, statistics, anecdotes) to make text 'feel more human'. If a humanization rule cannot be applied to a given passage without altering meaning, skip that rule for that passage."
+        "directive": "This ruleset shapes how the text is written; what it says comes from the source or the user. When rewriting, you MUST NOT change the inherent goal, meaning, claims, facts, argument, structure of reasoning, named entities, numbers, dates, quotations, or stance of the source text. This is a linguistic, grammatical, and stylistic revision only. Substitute words, restructure sentences, vary punctuation, and reshape rhythm. Do not add information that was not present, do not delete information that was present, do not invert claims, do not soften firm positions or harden hedged ones, and do not invent specifics (names, statistics, anecdotes) to make text 'feel more human'. If a humanization rule cannot be applied to a given passage without altering meaning, skip that rule for that passage. The same holds when drafting text that will be read as fact about a real person, organisation, product or source (a cover letter, a bio, a case study, a report, a citation). Every name, number, date, quotation, citation and first-person experience in it comes from the user or the source. When the piece needs one that is missing, leave a marked placeholder such as [number] so the draft still arrives, and ask only when the draft cannot stand without it. Never invent one to make the text feel specific. Fiction, and requests that ask for an invented example, are exempt."
       },
       {
         "id": "AR-002",
         "title": "Never use em-dashes (—).",
         "priority": "highest",
-        "directive": "The em-dash (Unicode U+2014, the long dash, also typed as '--' in some editors) has become one of the most reliable AI tells in current detector landscapes and informal human reading. Do not use em-dashes under any circumstance, including for parenthetical asides, pivots, emphasis, ranges, or attributions. For parenthetical asides, use commas, parentheses, or restructure into two sentences. For pivots between two independent clauses, use a period, semicolon, or colon, never a bare comma (a comma joining two independent clauses is a comma splice, AR-003). For ranges, use 'to' or an en-dash (–) where typographically appropriate. When revising source text that already contains em-dashes, replace every one with a valid substitute mark (period, comma, semicolon, colon, or parenthesis per AR-003); never delete the em-dash and leave the surrounding text unpunctuated. When the em-dash joined two independent clauses, substitute a period, semicolon, or colon rather than a comma, which would create a comma splice. This rule overrides any other guidance in this dataset that suggests, models, or demonstrates em-dash use. Historical examples elsewhere in this data that still contain em-dashes are bugs, not patterns to imitate."
+        "directive": "The em-dash (Unicode U+2014, the long dash, also typed as '--' in some editors) has become one of the most reliable AI tells in current detector landscapes and informal human reading. Do not use em-dashes under any circumstance, including for parenthetical asides, pivots, emphasis, ranges, or attributions. For parenthetical asides, use commas, parentheses, or restructure into two sentences. For pivots between two independent clauses, use a period, or a semicolon when the clauses are closely joined, never a bare comma (a comma joining two independent clauses is a comma splice, AR-003); if the em-dash staged a reveal, put the point first. For ranges, use 'to' or an en-dash (–) where typographically appropriate. When revising source text that already contains em-dashes, replace every one with a valid substitute mark (period, comma, semicolon, colon, or parenthesis per AR-003); never delete the em-dash and leave the surrounding text unpunctuated. When the em-dash joined two independent clauses, substitute a period or a semicolon rather than a comma, which would create a comma splice. This rule overrides any other guidance in this dataset that suggests, models, or demonstrates em-dash use. Historical examples elsewhere in this data that still contain em-dashes are bugs, not patterns to imitate."
       },
       {
         "id": "AR-003",
         "title": "Punctuation must be grammatically correct and complete.",
         "priority": "highest",
-        "directive": "All punctuation in the output must conform to standard English usage. Every sentence ends with a terminal mark (period, question mark, or exclamation point). Commas separate clauses and items where required and do not produce comma splices. Semicolons join only independent clauses or separate complex list items. Colons introduce explanations, lists, or quotations. Parentheses and quotation marks are balanced. Do not drop required punctuation, do not stack marks (e.g. '.,' or ';.'), and do not introduce run-ons or accidental fragments while restructuring. Stylistic fragments for emphasis are allowed only when clearly intentional and terminated with a period. The 'punctuation drift' guidance elsewhere in this dataset (structural_patterns.punctuation_diversity rule on drift, psycholinguistic_texture.self_monitoring_traces) governs the CHOICE among valid options (Oxford comma on/off, semicolon vs. period to join related clauses, parentheses vs. commas for an aside), not the presence or correctness of marks. Drift is never license to omit required punctuation or to use a mark incorrectly. AR-002 em-dash replacement must always SUBSTITUTE a valid mark, never delete one."
+        "directive": "All punctuation in the output must conform to standard English usage. Every sentence ends with a terminal mark (period, question mark, or exclamation point). Commas separate clauses and items where required and do not produce comma splices. Semicolons join only independent clauses or separate complex list items. Colons introduce a list, a quotation, or an explanation the reader needs, never a staged reveal. Parentheses and quotation marks are balanced. Do not drop required punctuation, do not stack marks (e.g. '.,' or ';.'), and do not introduce run-ons or accidental fragments while restructuring. A fragment is allowed only where it answers a question, renders speech, or in fiction marks where a scene breaks off; it still ends with a terminal mark. The 'punctuation drift' guidance elsewhere in this dataset (structural_patterns.punctuation_diversity rule on drift, psycholinguistic_texture.self_monitoring_traces) governs the CHOICE among valid options (Oxford comma on/off, semicolon vs. period to join related clauses, parentheses vs. commas for an aside), not the presence or correctness of marks. Drift is never license to omit required punctuation or to use a mark incorrectly. AR-002 em-dash replacement must always SUBSTITUTE a valid mark, never delete one."
       }
     ]
   },
@@ -46,7 +46,7 @@
         "banned_structures entries with gate=hard"
       ]
     },
-    "non_uniformity_scope": "The directive 'do not apply changes uniformly' (core_principle, application_protocol.uniformity_directive, caveats.uniform_application_paradox) governs Tier-2 stylistic moves ONLY: word substitution, hedging, burstiness, texture, and tone. It is never a license to leave a Tier-1 prohibition (em-dash or banned structure) in the text.",
+    "non_uniformity_scope": "The directive 'do not apply changes uniformly' (core_principle, application_protocol.uniformity_directive, caveats.uniform_application_paradox) governs Tier-2 stylistic moves ONLY, namely word substitution, transitions, closers, contrasts and texture. It is never a license to leave a Tier-1 prohibition (em-dash or banned structure) in the text.",
     "verification": "After revising, call humanizer_check_text with the candidate output. Resolve every hard_violation, rewrite or justify each must_clear item, and re-run until prohibitions_clear is true. This loop is mandatory, not optional polish; see primary_usage."
   },
   "primary_usage": {
@@ -56,7 +56,7 @@
   },
   "core_principle": {
     "statement": "Do not apply changes uniformly.",
-    "explanation": "The single most detectable property of AI-generated text is consistency: consistent sentence length, consistent transitions, consistent hedging, consistent tone. Human text is locally inconsistent while remaining globally coherent. Every rule in this system should be applied selectively and unevenly. If a rule says 'use contractions,' that means use them in some places and not others. If a rule says 'vary sentence length,' that means some paragraphs should vary dramatically and others barely at all. This non-uniformity applies to Tier 2 stylistic moves only; see enforcement.non_uniformity_scope. Tier 1 prohibitions (em-dashes, banned structures) are never subject to it.",
+    "explanation": "AI-generated text gives itself away most through a repeated shape, such as the same closer ending every section, the same contrast pair, the same transition or the same hedge. Human text is locally inconsistent while remaining globally coherent. Every rule in this system should be applied selectively and unevenly. If a rule says 'use contractions,' that means use them in some places and not others. This non-uniformity applies to Tier 2 stylistic moves only; see enforcement.non_uniformity_scope. Tier 1 prohibitions (em-dashes, banned structures) are never subject to it.",
     "research_basis": "Stylometric analysis confirms that LLM outputs cluster tightly and uniformly, while human texts form broader, more heterogeneous clusters reflecting diversity of individual expression. Uniform application of human-patterning rules is itself an AI signal."
   },
   "two_axes": {
@@ -67,27 +67,27 @@
       "human_tendency": "Higher perplexity. Human writers draw on semantic memory, lived experience, and personal vocabulary, producing word choices that are locally motivated rather than globally optimized."
     },
     "burstiness": {
-      "definition": "How varied sentence structure, length, and complexity are across a passage.",
+      "definition": "How much sentence length and structure vary across a passage. humanizer_check_text reports it as a diagnostic number; do not write toward a value.",
       "low": "Five consecutive sentences of 14–18 words, all Subject-Verb-Object.",
-      "high": "A 6-word sentence, then a 34-word sentence with two embedded clauses, then a fragment.",
-      "human_tendency": "Higher burstiness. Human writers show wider sentence-length distributions with greater standard deviation, reflecting natural variation in cognitive load, emphasis, and rhetorical intent."
+      "high": "A short sentence that states a plain fact, then a long one whose clauses depend on each other because the thought needed the room.",
+      "human_tendency": "Human writing usually measures higher, because its sentence length follows the content. A low reading points to a run of sentences built on one shape. Recombine or split them by meaning, and do not add short sentences to move the number."
     },
-    "summary": "Human writing trends toward higher perplexity and higher burstiness. AI-generated text trends toward uniformity in both. Rewriting is the process of introducing controlled irregularity along both axes without sacrificing clarity or intent."
+    "summary": "Human writing usually measures higher on both axes, while AI-generated text trends toward uniformity in both. Both numbers describe the result. Rewriting removes the repeated shapes that cause the uniformity and leaves the numbers to follow."
   },
   "priority_hierarchy": [
     {
       "order": 1,
-      "layer": "lexical_patterns",
-      "action": "Remove AI-correlated vocabulary",
+      "layer": "structural_patterns",
+      "action": "Remove the stock shapes: closers, contrast pairs and framing beats",
       "impact": "highest",
-      "risk": "lowest"
+      "risk": "moderate"
     },
     {
       "order": 2,
-      "layer": "structural_patterns",
-      "action": "Break structural uniformity",
+      "layer": "discourse_cohesion",
+      "action": "Vary transitions and cohesive devices",
       "impact": "high",
-      "risk": "moderate"
+      "risk": "low"
     },
     {
       "order": 3,
@@ -98,28 +98,28 @@
     },
     {
       "order": 4,
-      "layer": "discourse_cohesion",
-      "action": "Vary transitions and cohesive devices",
-      "impact": "moderate",
-      "risk": "low"
-    },
-    {
-      "order": 5,
       "layer": "content_profile",
       "action": "Apply content-type-specific adjustments",
       "impact": "refinement",
       "risk": "low"
     },
     {
+      "order": 5,
+      "layer": "lexical_patterns",
+      "action": "Remove AI-correlated vocabulary",
+      "impact": "hygiene",
+      "risk": "low"
+    },
+    {
       "order": 6,
       "layer": "psycholinguistic_texture",
-      "action": "Introduce cognitive load artifacts and human texture",
-      "impact": "subtle",
-      "risk": "lowest"
+      "action": "Keep the source's own texture and add none for show",
+      "impact": "restraint",
+      "risk": "moderate"
     }
   ],
   "section_level_variation": {
-    "principle": "Human writing varies by section, not just globally. Different parts of a document should read differently.",
+    "principle": "Human writing varies by section. Different parts of a document should read differently.",
     "profiles": {
       "instructions_or_tutorials": {
         "burstiness": "lower",
@@ -129,7 +129,7 @@
       "narrative_or_creative": {
         "burstiness": "higher",
         "perplexity": "higher",
-        "priority": "Rhythm and surprise. Varied sentence length, unexpected word choices, fragments for emphasis."
+        "priority": "Rhythm that follows the scene, with sentence length and word choice set by what each moment needs."
       },
       "academic_or_technical": {
         "burstiness": "moderate, clustered within sections",
@@ -139,7 +139,7 @@
       "opinion_or_argumentation": {
         "burstiness": "moderate to high",
         "perplexity": "moderate to high",
-        "priority": "Engagement and emphasis. Rhetorical questions, short emphatic sentences, deliberate repetition."
+        "priority": "A clear position argued from evidence. A question or a repeated phrase belongs only where the argument needs it."
       }
     }
   },
@@ -154,14 +154,18 @@
         "purpose": "Apply non-negotiable directives. Veto-style: any violation must be resolved before later phases. Overrides every other rule, example, or piece of guidance in the data set.",
         "tools": [{"name": "humanizer_get_foundation"}],
         "rule_paths": [
-          "foundation.absolute_rules.rules[*]"
+          "foundation.absolute_rules.rules[*]",
+          "foundation.enforcement",
+          "foundation.core_principle",
+          "foundation.two_axes",
+          "foundation.priority_hierarchy"
         ],
         "stop_condition": "Every absolute_rules entry is satisfied in the candidate text. Specifically: meaning preserved (AR-001), no em-dashes anywhere (AR-002), all punctuation grammatically correct and complete (AR-003)."
       },
       {
         "phase": 1,
         "name": "Lexical pass",
-        "purpose": "Substitute flagged words and phrases, denominalize, balance abstract/concrete, repair function-word distribution. Highest-impact single intervention.",
+        "purpose": "Substitute flagged words and phrases, denominalize, and balance abstract and concrete wording. Lexical work is a low-impact layer in foundation.priority_hierarchy, so apply it lightly.",
         "tools": [{"name": "humanizer_get_lexical_patterns", "params": {"risk_level": "optional; filter by 'high'|'moderate'|'low'"}}],
         "rule_paths": [
           "lexical_patterns.flagged_verbs[*]",
@@ -170,33 +174,32 @@
           "lexical_patterns.flagged_transitions[*]",
           "lexical_patterns.flagged_qualifiers.items[*]",
           "lexical_patterns.adverb_patterns.flagged_ai_adverbs[*]",
-          "lexical_patterns.function_word_patterns",
           "lexical_patterns.vocabulary_diversity",
           "lexical_patterns.word_length_patterns",
           "lexical_patterns.nominalization",
           "lexical_patterns.abstract_concrete_balance",
           "lexical_patterns.credibility_insistence",
-          "lexical_patterns.orwell"
+          "lexical_patterns.orwell",
+          "lexical_patterns.terms_of_art"
         ],
         "stop_condition": "Every flagged term considered; substitutions applied contextually per lexical_patterns.meta.application_rule, NOT uniformly."
       },
       {
         "phase": 2,
         "name": "Structural pass",
-        "purpose": "Break structural uniformity in sentence length, syntactic construction, and punctuation. Addresses burstiness, the most measurable axis of human-likeness.",
+        "purpose": "Remove the stock shapes (closers, contrast pairs, framing beats) and vary syntactic construction and punctuation. Sentence length follows the content.",
         "tools": [{"name": "humanizer_get_structural_patterns"}],
         "rule_paths": [
           "structural_patterns.sentence_length.rules[*]",
           "structural_patterns.syntactic_variety.rules[*]",
           "structural_patterns.punctuation_diversity.rules[*]",
-          "structural_patterns.pos_distribution_targets",
           "structural_patterns.n_gram_patterns",
-          "structural_patterns.sentence_starter_diversity",
-          "structural_patterns.paragraph_dynamics",
           "structural_patterns.enumeration_patterns",
-          "structural_patterns.cross_segment_variation"
+          "structural_patterns.dependency_proximity",
+          "structural_patterns.cross_segment_variation",
+          "foundation.section_level_variation"
         ],
-        "stop_condition": "Sentence-length variance increased; syntactic variety introduced; punctuation choice varies across sections without being uniform; rules applied unevenly across sections; all output punctuation grammatically correct per AR-003 (every sentence has a terminal mark, no stacked marks, no comma splices)."
+        "stop_condition": "The repeated shapes are broken up and syntactic variety is introduced; punctuation choice varies across sections without being uniform; rules applied unevenly across sections; all output punctuation grammatically correct per AR-003 (every sentence has a terminal mark, no stacked marks, no comma splices)."
       },
       {
         "phase": 3,
@@ -206,8 +209,9 @@
         "rule_paths": [
           "sentiment_tone.neutral_bias",
           "sentiment_tone.emotional_layering",
-          "sentiment_tone.subjectivity_markers",
-          "sentiment_tone.sensing_and_experience_language"
+          "sentiment_tone.subjectivity",
+          "sentiment_tone.sensing_and_experience_language",
+          "sentiment_tone.readability"
         ],
         "stop_condition": "Tone shifts respect AR-001 (preserve meaning, intent, claims, stance)."
       },
@@ -218,14 +222,13 @@
         "tools": [{"name": "humanizer_get_discourse_cohesion"}],
         "rule_paths": [
           "discourse_cohesion.discourse_markers",
-          "discourse_cohesion.modal_epistemic_markers",
+          "discourse_cohesion.modal_and_epistemic_markers",
           "discourse_cohesion.cohesive_devices",
-          "discourse_cohesion.transition_phrases",
           "discourse_cohesion.repetition_patterns",
-          "discourse_cohesion.comparative_superlative_use",
+          "discourse_cohesion.subordination_vs_coordination",
           "discourse_cohesion.explicit_antithesis_and_reused_shape"
         ],
-        "stop_condition": "No formulaic transition repetition; modal/epistemic markers distributed unevenly; cohesive devices not pattern-matched."
+        "stop_condition": "No formulaic transition repetition; each hedge and each plain claim kept as the source put it, with no hedge added or dropped; cohesive devices not pattern-matched."
       },
       {
         "phase": 5,
@@ -241,7 +244,7 @@
       {
         "phase": 6,
         "name": "Psycholinguistic texture pass",
-        "purpose": "Subtlest layer. Allow human cognitive-process traces through rather than polishing them away. The right behavior here is restraint, not addition.",
+        "purpose": "Subtlest layer. Allow human cognitive-process traces through rather than polishing them away. The right behavior here is restraint, which means keeping what the source has and adding nothing it lacks.",
         "tools": [{"name": "humanizer_get_psycholinguistic_texture"}],
         "rule_paths": [
           "psycholinguistic_texture.cognitive_load_artifacts",
@@ -272,7 +275,7 @@
           "caveats.newer_model_convergence",
           "caveats.ethical_considerations"
         ],
-        "stop_condition": "Distribution of interventions is irregular across the document (no uniform pattern of 'one fragment per paragraph', 'one informal word per paragraph', etc.). Ethical_considerations honored."
+        "stop_condition": "Distribution of interventions is irregular across the document (no run of paragraphs that end on the same closer, turn on the same contrast or open with the same transition). Ethical_considerations honored."
       },
       {
         "phase": 9,
@@ -298,7 +301,7 @@
           "lexical_patterns.orwell.jargon_carve_out",
           "lexical_patterns.orwell.rewriting_guidance[*]"
         ],
-        "stop_condition": "Every stale figure either cut or deliberately justified; every word that can go is gone; the passive kept only where the agent is genuinely unknown or irrelevant; every domain term defined in plain words at first use and then used plainly, never substituted (caveats.jargon_substitution_loses_meaning). Then phase 9 is re-run, because trimming changes sentence-length variance and can undo the burstiness work."
+        "stop_condition": "Every stale figure either cut or deliberately justified; every word that can go is gone; the passive kept only where the agent is unknown or irrelevant; every domain term defined in plain words at first use and then used plainly, never substituted (caveats.jargon_substitution_loses_meaning). Then phase 9 is re-run, because cutting words can create or expose findings such as a comma splice or a new run-on."
       }
     ]
   },

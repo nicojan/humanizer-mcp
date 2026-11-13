@@ -1,7 +1,7 @@
 {
   "meta": {
     "layer": "content_profiles",
-    "priority": 5,
+    "priority": 4,
     "description": "Content-type-specific adjustments to all other layers. Each profile specifies how aggressively to apply lexical, structural, sentiment, discourse, and psycholinguistic rules for that content type.",
     "usage": "Call with a content_type parameter to get the adjusted ruleset. These profiles modify the baseline rules; they do not replace them."
   },
@@ -10,19 +10,19 @@
       "label": "Academic and research writing",
       "description": "Formal register where some AI-correlated patterns (structured transitions, passive voice, hedging) are actually conventional. The rewriting challenge is distinguishing AI-formulaic from field-conventional usage.",
       "perplexity_target": "moderate to high",
-      "burstiness_target": "moderate, clustered within sections via terminology, relaxing elsewhere",
+      "burstiness_target": "longer sentences where the argument is dense, plainer ones where it relaxes",
       "layer_adjustments": {
         "lexical_patterns": {
           "aggressiveness": "moderate",
-          "notes": "Some flagged words ('comprehensive', 'facilitate', 'elucidate') are legitimate in academic contexts. Replace only when they appear as filler rather than precise terminology. Focus on removing buzzwords ('cutting-edge', 'game-changing', 'revolutionary') that don't belong in academic prose. Increase vocabulary diversity: academic writing should show domain-specific precision, not generic formality."
+          "notes": "Some flagged words ('comprehensive', 'facilitate', 'elucidate') are legitimate in academic contexts. Replace only when they appear as filler rather than precise terminology. Focus on removing buzzwords ('cutting-edge', 'game-changing', 'revolutionary') that don't belong in academic prose. Use the field's exact term for each thing, and use it every time."
         },
         "structural_patterns": {
           "aggressiveness": "moderate",
-          "notes": "Academic writing allows longer sentences and more complex syntax. The issue is uniformity: if every sentence is 25 words with the same structure, that's AI. Vary sentence length within paragraphs. Use fragments sparingly (they're acceptable in humanities, less so in STEM). Vary paragraph length: some short transitional paragraphs, some longer analytical ones."
+          "notes": "Academic writing allows longer sentences and more complex syntax. The issue is uniformity: if every sentence is 25 words with the same structure, that's AI. Let sentence length follow the argument. A fragment belongs only where it answers a question or renders speech (absolute_rules AR-003), and never for rhythm. A short transitional paragraph and a long analytical one can sit side by side."
         },
         "sentiment_tone": {
           "aggressiveness": "low to moderate",
-          "notes": "Academic writing is conventionally more neutral, so the neutral bias is less of a signal. However, human academic writers still express evaluation: 'This finding is surprising,' 'The methodology is questionable,' 'The results are compelling.' Reintroduce evaluative language where the author would naturally judge. Maintain author stance through hedging that signals expertise ('This likely reflects...') rather than AI-formulaic hedging ('Generally speaking...')."
+          "notes": "Academic writing is conventionally more neutral, so the neutral bias is less of a signal. However, human academic writers still express evaluation: 'This finding is surprising,' 'The methodology is questionable,' 'The effect was larger than we expected.' Reintroduce evaluative language where the author would naturally judge. Maintain author stance through hedging that signals expertise ('This likely reflects...') rather than AI-formulaic hedging ('Generally speaking...')."
         },
         "discourse_cohesion": {
           "aggressiveness": "moderate",
@@ -35,7 +35,7 @@
       },
       "special_considerations": [
         "ESL academic writing may align with AI patterns not because it's AI-generated but because it follows instruction-driven structure. Be cautious about over-correcting ESL-conventional patterns.",
-        "Citations and specific references are strong human signals in academic writing. Ensure the text includes concrete citations, specific dates, named researchers, and particular studies rather than vague references to 'recent research' or 'studies show.'",
+        "Citations and specific references are strong human signals in academic writing. Keep every citation, date, named researcher and study the source gives, and use them in place of vague references to 'recent research' or 'studies show.' Never invent one. When drafting a piece that needs a citation the source lacks, leave a marked placeholder as absolute_rules AR-001 describes.",
         "Academic writing should show the author's intellectual position. Pure summary without evaluation reads as AI."
       ]
     },
@@ -43,31 +43,31 @@
       "label": "Marketing and copywriting",
       "description": "Persuasive, audience-aware prose where energy and personality matter. AI marketing copy is detectable because it lacks genuine voice, relies on buzzwords, and maintains uniform enthusiasm.",
       "perplexity_target": "moderate to high",
-      "burstiness_target": "high; short punchy sentences mixed with longer persuasive ones",
+      "burstiness_target": "short where the claim is simple, longer where the case needs building",
       "layer_adjustments": {
         "lexical_patterns": {
           "aggressiveness": "high",
-          "notes": "Marketing copy is where AI buzzwords are most damaging. 'Innovative,' 'cutting-edge,' 'seamless,' 'game-changing,' 'transformative': these are content-free filler in marketing. Replace with specific claims: not 'innovative technology' but 'the first system that can X.' Remove all flagged transitions. Replace hedging with direct claims."
+          "notes": "Marketing copy is where AI buzzwords are most damaging. 'Innovative,' 'cutting-edge,' 'seamless,' 'game-changing,' 'transformative': these are content-free filler in marketing. Replace with specific claims: not 'innovative technology' but 'the first system that can X.' Remove all flagged transitions. Keep the hedges the source has, and swap a formulaic one for a plain word that marks the same limit."
         },
         "structural_patterns": {
           "aggressiveness": "high",
-          "notes": "Marketing copy should have the highest burstiness of any content type. Very short sentences for impact. Fragments. Then a longer sentence that builds the case. Paragraph length should vary dramatically: some single-sentence paragraphs, some three-sentence blocks. Use questions. Use imperatives."
+          "notes": "Let sentence length follow the content, short where the point is short and longer where the case needs building. Paragraph length can vary too, from a single sentence to a block of three. Imperatives suit a call to action."
         },
         "sentiment_tone": {
           "aggressiveness": "high",
-          "notes": "Marketing copy should have clear emotional valence: enthusiasm, urgency, confidence, empathy. The AI neutral tone is the biggest problem here. But avoid uniform enthusiasm; vary the emotional register. A moment of empathy ('We know this is frustrating') before the pitch ('Here's how we fix it') reads as human."
+          "notes": "Marketing copy should have clear emotional valence: enthusiasm, urgency, confidence, empathy. The AI neutral tone is the biggest problem here. But avoid uniform enthusiasm; vary the emotional register. A moment of empathy ('We know this is frustrating') before the pitch reads as human."
         },
         "discourse_cohesion": {
           "aggressiveness": "high",
-          "notes": "Marketing transitions should be invisible or conversational. Never 'Furthermore' or 'Moreover.' Use: 'Here's the thing.' 'But wait.' 'And that's just the beginning.' 'So what does this mean for you?' Or no transition at all; just jump to the next point."
+          "notes": "Marketing transitions should mostly be invisible. Do not use 'Furthermore' or 'Moreover' at all. Start the next point; where a bridge is needed, use a plain one ('So', 'But', 'Then')."
         },
         "psycholinguistic_texture": {
           "aggressiveness": "moderate",
-          "notes": "Marketing copy should feel written by a real person with opinions. Include: personal anecdotes or customer stories, specific numbers and examples, direct address ('you'), and occasional humor or colloquial language. Let the writer's personality come through."
+          "notes": "Use the customer stories, numbers and examples the user or the source supplies, and never invent one. When drafting copy that needs one that is missing, leave a marked placeholder as absolute_rules AR-001 describes. Address the reader as 'you'. Keep humor or colloquial language where the brand's voice already has it."
         }
       },
       "special_considerations": [
-        "The line between 'energetic' and 'AI-generated enthusiasm' is thin. The difference is specificity. AI says 'amazing results.' A human says 'a 34% increase in three months.'",
+        "The line between 'energetic' and 'AI-generated enthusiasm' is thin. The difference is specificity. AI says 'amazing results.' A human says 'a 34% increase in three months,' with the number taken from the source.",
         "Marketing copy should sound like it was written by someone who actually uses the product or believes in the service, not by someone describing it from the outside.",
         "Avoid the AI pattern of listing three benefits in parallel structure with the same sentence construction. Vary how benefits are presented."
       ]
@@ -76,7 +76,7 @@
       "label": "Technical documentation",
       "description": "Clarity-first prose where precision matters more than personality. Some uniformity is expected and appropriate. The AI signal in technical writing is not formality; it's generic formality without domain precision.",
       "perplexity_target": "moderate; domain-specific terminology raises perplexity naturally",
-      "burstiness_target": "lower, but still some variation between explanatory passages and procedural ones",
+      "burstiness_target": "short and even in procedures, longer in explanatory passages",
       "layer_adjustments": {
         "lexical_patterns": {
           "aggressiveness": "low to moderate",
@@ -84,11 +84,11 @@
         },
         "structural_patterns": {
           "aggressiveness": "low",
-          "notes": "Technical documentation has conventionally lower burstiness than other prose. Short, clear sentences are appropriate for procedures. The intervention: vary structure between explanatory sections (more burstiness) and procedural sections (less). Introduce occasional asides ('Note that this only works if...') to break the monotone."
+          "notes": "Technical documentation has conventionally lower burstiness than other prose. Short, clear sentences are appropriate for procedures. Explanatory sections can run longer where the reasoning needs it. Put a warning where the reader needs it ('Note that this only works if...'); do not add asides to vary the rhythm."
         },
         "sentiment_tone": {
           "aggressiveness": "low",
-          "notes": "Technical documentation is conventionally neutral. The intervention is small: introduce occasional evaluative markers ('This is the most reliable method,' 'This approach can be tricky,' 'The simpler option is...') that signal an author with actual experience using the tools."
+          "notes": "Technical documentation is conventionally neutral. The intervention is small. Keep the evaluative markers the source or the user gives ('This is the most reliable method,' 'This approach can be tricky,' 'The simpler option is...'), because they show an author who has used the tools, and add none the source lacks (absolute_rules AR-001)."
         },
         "discourse_cohesion": {
           "aggressiveness": "moderate",
@@ -96,11 +96,11 @@
         },
         "psycholinguistic_texture": {
           "aggressiveness": "low",
-          "notes": "The key human signal in technical documentation is domain expertise. Use precise terminology, reference specific versions and configurations, include 'gotchas' and edge cases that only come from experience. Occasional informal remarks ('This is surprisingly finicky') are strong human signals."
+          "notes": "The key human signal in technical documentation is domain expertise. Use precise terminology, and give the versions, configurations and edge cases the source or the user supplies; never invent one. When drafting a document that needs one that is missing, leave a marked placeholder as absolute_rules AR-001 describes. Keep an informal remark the source makes ('This is surprisingly finicky'); do not add one for texture."
         }
       },
       "special_considerations": [
-        "Technical writing should include specific version numbers, configuration details, and platform names. AI tends to generalize; human technical writers are precise.",
+        "Technical writing should give the version numbers, configuration details and platform names the source supplies. AI tends to generalize; human technical writers are precise.",
         "Include warnings, edge cases, and known issues. AI tends to present the happy path. Human documentation includes 'Be careful with X' and 'This doesn't work if Y.'",
         "Code examples should include comments that reflect the developer's thinking, not just documentation boilerplate."
       ]
@@ -109,7 +109,7 @@
       "label": "General professional prose",
       "description": "Business writing, reports, email, correspondence, blog posts, and general-purpose content. The broadest category where all layers apply at moderate levels.",
       "perplexity_target": "moderate",
-      "burstiness_target": "moderate to high",
+      "burstiness_target": "plain points run short, explanations run longer",
       "layer_adjustments": {
         "lexical_patterns": {
           "aggressiveness": "moderate to high",
@@ -117,7 +117,7 @@
         },
         "structural_patterns": {
           "aggressiveness": "moderate to high",
-          "notes": "Professional prose should read like it was written by a real person. Vary sentence length. Use fragments occasionally. Start some sentences with 'And' or 'But.' Mix simple and complex constructions."
+          "notes": "Let sentence length and construction follow what each sentence has to say, simple for a plain point and complex where ideas depend on each other. A sentence may start with 'And' or 'But' where the link is that plain. Fragments and one-line questions written for rhythm read as a model's cadence."
         },
         "sentiment_tone": {
           "aggressiveness": "moderate",
@@ -129,20 +129,20 @@
         },
         "psycholinguistic_texture": {
           "aggressiveness": "moderate",
-          "notes": "Include personal anecdotes, specific examples, named references, and occasional humor where tone allows. Let the writing be slightly uneven: more energy around the writer's core points, less around supporting detail."
+          "notes": "Use the anecdotes, examples and named references the user or the source supplies, and never invent one. When drafting a piece that needs one that is missing, leave a marked placeholder as absolute_rules AR-001 describes. Keep humor where the source's tone has it. Give more space to the writer's core points than to supporting detail."
         }
       },
       "special_considerations": [
         "General prose is the category where human readers are best at detecting AI. Their expectations are calibrated to reading human writing daily: emails, articles, reports. Any AI uniformity stands out.",
         "The most important intervention for general prose is voice. The text should sound like it was written by one person with one perspective, not by a committee or a machine trying to sound neutral.",
-        "Professional edited prose may naturally smooth out some human markers. The goal is not to make text look unedited; it's to ensure the editing didn't remove all human texture."
+        "Professional edited prose may naturally smooth out some human markers. Check that the editing kept the human texture the source had, without trying to make the text look unedited."
       ]
     },
     "creative": {
       "label": "Creative and literary prose",
       "description": "Fiction, short stories, personal essays, narrative non-fiction, poetry prose, and any text where voice, rhythm, and originality are the primary goals. This is the content type where AI is most detectable: LLM outputs cluster tightly while human texts scatter broadly in stylometric analysis.",
       "perplexity_target": "high",
-      "burstiness_target": "high",
+      "burstiness_target": "set by the scene, short in tension and long in reflection",
       "layer_adjustments": {
         "lexical_patterns": {
           "aggressiveness": "high",
@@ -150,7 +150,7 @@
         },
         "structural_patterns": {
           "aggressiveness": "very high",
-          "notes": "Maximum burstiness. Fragments, single-sentence paragraphs, long flowing sentences with multiple clauses, and abrupt shifts between them. Vary paragraph length dramatically: a one-line paragraph followed by a seven-line paragraph. Start sentences with 'And' or 'But'. Use sentence structure to mirror the emotional rhythm of the content: short and sharp for tension, long and winding for reflection."
+          "notes": "Let sentence structure follow the scene, short and sharp in tension and long and winding in reflection. Paragraph length can swing widely when the story calls for it. A sentence can open with 'And' or 'But'. A fragment belongs in dialogue or where the scene breaks off; a run of fragments placed for rhythm reads as a model's cadence."
         },
         "sentiment_tone": {
           "aggressiveness": "very high",
@@ -162,12 +162,12 @@
         },
         "psycholinguistic_texture": {
           "aggressiveness": "very high",
-          "notes": "Maximum human texture. Self-corrections, parenthetical asides, uneven development (more space for the moments that matter, less for the ones that don't), and a narrator who occasionally addresses the reader or reflects on their own telling. The prose should feel written by a specific person with specific preoccupations, not by a system optimizing for coherence."
+          "notes": "Give more space to the moments that matter and less to the ones that don't. A narrator who corrects themselves or addresses the reader belongs where the voice already does it; do not add those moves for texture. The prose should sound like one particular person with particular preoccupations."
         }
       },
       "special_considerations": [
         "O'Sullivan (2025) demonstrates via Burrows' Delta that LLM creative writing forms tight, uniform clusters while human creative writing scatters broadly. The single most important quality for creative prose is stylistic individuality; the text should not read like it could have been written by anyone.",
-        "Creative writing is where function word distributions (the, a, of, and, but, in, to) matter most. These are the features Burrows' Delta analyzes. AI models have distinctive function word signatures that are statistically separable from human patterns even when content vocabulary is controlled for.",
+        "Stylistic individuality reaches down to the small words a narrator leans on. Keep the source's habits there, and do not adjust common words to move a statistic.",
         "Voice is the highest priority. If the creative text doesn't sound like a specific, opinionated, slightly imperfect human being, no amount of lexical substitution or structural variation will save it."
       ],
       "research_basis": "O'Sullivan (2025) applies Burrows' Delta and MDS clustering to short stories, finding clear and consistent stylistic distinctions between human and LLM creative texts."
@@ -176,7 +176,7 @@
       "label": "Case studies, portfolio and product copy",
       "description": "Writing that explains a product or a piece of design work to someone who has never used it: portfolio case studies, landing pages, release notes and app-store text. Its reader is a stranger skimming for one decision and its payoff, often a hiring manager with a minute to spare. AI drafts here explain the mechanism in long chains, borrow the product's internal words, and close sections with brochure benefits or tidy maxims. A month of reviewer flags on one portfolio passed the checker clean (caveats.reviewed_copy_passes_the_checker), so the self-review items carry most of this profile.",
       "perplexity_target": "moderate",
-      "burstiness_target": "moderate to high; short plain sentences, with a longer one only where a decision needs its reason",
+      "burstiness_target": "short plain sentences, with a longer one only where a decision needs its reason",
       "layer_adjustments": {
         "lexical_patterns": {
           "aggressiveness": "high",
@@ -196,7 +196,7 @@
         },
         "psycholinguistic_texture": {
           "aggressiveness": "moderate",
-          "notes": "Specifics a competitor could not paste onto their own site: the named app, the real number, the user quote, the constraint that shaped the decision. If the evidence is missing, say less rather than inventing a payoff."
+          "notes": "Specifics a competitor could not paste onto their own site: the named app, the real number, the user quote, the constraint that shaped the decision. If the evidence is missing, say less; when drafting a piece that needs it, leave a marked placeholder as absolute_rules AR-001 describes. Never invent a payoff."
         }
       },
       "special_considerations": [

@@ -293,23 +293,14 @@ def test_bs035_extension_requires_a_cross_reference(text):
 
 
 # --- lexical additions --------------------------------------------------------
-def test_lexical_additions_present():
-    terms = load_flagged_terms()
-    flat = set()
-
-    def walk(o):
-        if isinstance(o, dict):
-            for v in o.values():
-                walk(v)
-        elif isinstance(o, list):
-            for v in o:
-                walk(v)
-        elif isinstance(o, str):
-            flat.add(o.lower())
-
-    walk(terms)
-    for w in ("profound", "renowned", "nestle", "diverse array", "natural beauty"):
-        assert w in flat, w
+def test_lexical_additions_are_top_level_terms():
+    """The additions were first nested inside other entries' alternatives,
+    where they never fired. `profound` was dropped on measurement; see
+    tests/checker/test_repair_round_2026_11.py."""
+    terms = {t["term"].lower() for t in load_flagged_terms()}
+    for w in ("renowned", "nestle", "diverse array", "natural beauty"):
+        assert w in terms, w
+    assert "profound" not in terms
 
 
 # --- corpus and ReDoS ---------------------------------------------------------

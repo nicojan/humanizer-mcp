@@ -3,7 +3,7 @@
     "layer": "anti_patterns",
     "priority": "cross-cutting",
     "description": "Concrete before/after examples showing AI patterns and their human-patterned alternatives. Each entry has a uniform schema: id, category, before, after, explanation. Use as a lookup table during editing. Match the pattern category to the text being reviewed, then apply the transformation shown.",
-    "usage": "Call humanizer_get_anti_patterns(category=...) after lexical/structural/discourse passes to find concrete rewrite templates for the cases where the layer-level rules left you uncertain how to transform a passage. The 'after' fields are exemplar humanized prose and conform to absolute_rules (notably AR-002: no em-dashes); 'before' fields intentionally retain anti-patterns including em-dashes when they are the thing being demonstrated. The explanation often references specific rules from other layers; follow those references when present.",
+    "usage": "Call humanizer_get_anti_patterns(category=...) after lexical/structural/discourse passes to find concrete rewrite templates for the cases where the layer-level rules left you uncertain how to transform a passage. The 'after' fields are exemplar humanized prose and conform to absolute_rules (notably AR-002: no em-dashes); 'before' fields intentionally retain anti-patterns including em-dashes when they are the thing being demonstrated. The explanation often references specific rules from other layers; follow those references when present. Names, numbers, quotations and details in an 'after' stand for facts its source supplied. In your text they come from the user or the source, or become a marked placeholder (absolute_rules AR-001).",
     "schema": {
       "id": "Unique identifier in the form AP-NNN.",
       "category": "One of: lexical, structural, sentiment, discourse, psycholinguistic.",
@@ -26,7 +26,7 @@
       "category": "structural",
       "before": "The project — which started as a side experiment — became the main product. The team was exhausted — but proud. It was a strange outcome — nobody had predicted it.",
       "after": "The project, which started as a side experiment, became the main product. The team was exhausted, but proud. It was a strange outcome; nobody had predicted it.",
-      "explanation": "Never use em-dashes (—). This is absolute_rules AR-002. Em-dashes have become a strong AI tell, and any presence of them in revised output is a red flag regardless of how naturally they read. Replace em-dash parentheticals with subordinate clauses, commas, or parentheses. Replace em-dash pivots with a comma, semicolon, or period. The meaning of the source text is preserved exactly; only punctuation changes."
+      "explanation": "Never use em-dashes (—). This is absolute_rules AR-002. Em-dashes have become a strong AI tell, and any presence of them in revised output is a red flag regardless of how naturally they read. Replace em-dash parentheticals with subordinate clauses, commas, or parentheses. Replace an em-dash pivot with a period, or a semicolon when the clauses are closely joined, and use a comma only before a tail that is not a clause. The meaning of the source text is preserved exactly; only punctuation changes."
     },
     {
       "id": "AP-003",
@@ -53,7 +53,7 @@
       "id": "AP-007",
       "category": "structural",
       "before": "It's not the tooling that's the problem, but the approval workflow.",
-      "after": "The real bottleneck is the approval workflow.",
+      "after": "The approval workflow holds things up.",
       "explanation": "Negative parallelism ('not X, but Y') creates artificial drama. State the point directly instead of negating an alternative first."
     },
     {
@@ -116,7 +116,7 @@
       "id": "AP-016",
       "category": "discourse",
       "before": "However, it's important to note that these caucuses operate outside the formal ANC structure and their influence on policy decisions may vary.",
-      "after": "These informal groups work outside the formal ANC structure, and their actual influence varies.",
+      "after": "These informal groups work outside the formal ANC structure, and their influence on policy decisions may vary.",
       "explanation": "Didactic disclaimers ('it's important to note', 'it's worth noting', 'it's crucial to remember') are a strong AI tell from earlier models (2023-2024). They add no information. Cut the preamble and state the fact directly."
     },
     {
@@ -131,13 +131,13 @@
       "category": "lexical",
       "before": "The implementation of the optimization of resource allocation led to the enhancement of operational efficiency across the organisation.",
       "after": "We tuned how resources were allocated, and operations ran more efficiently as a result.",
-      "explanation": "AI stacks nominalizations ('implementation of', 'optimization of', 'enhancement of'), each burying a verb inside a noun phrase. Unpack the nouns back into verbs. Three nominalizations in one sentence is a strong AI tell. The human version uses active verbs ('tuned', 'allocated', 'ran') and names the agent ('we'). Note: the rewrite deliberately avoids 'optimized' as the unpack-target — although it is the literal verb hiding inside 'optimization of', it is itself a flagged AI word (see flagged_verbs.optimize in lexical_patterns). Substitute with a denominalization that does not retain the flag."
+      "explanation": "AI stacks nominalizations ('implementation of', 'optimization of', 'enhancement of'), each burying a verb inside a noun phrase. Unpack the nouns back into verbs. Three nominalizations in one sentence is a strong AI tell. The human version uses active verbs ('tuned', 'allocated', 'ran') and names the agent ('we'). Note: the rewrite deliberately avoids 'optimized' as the unpack-target. Although it is the literal verb hiding inside 'optimization of', it is itself a flagged AI word (see flagged_verbs.optimize in lexical_patterns). Substitute with a denominalization that does not retain the flag."
     },
     {
       "id": "AP-019",
       "category": "structural",
       "before": "That the new framework enables more efficient processing of heterogeneous data is evident from the benchmark results.",
-      "after": "The benchmark results are clear: the new framework handles mixed data faster.",
+      "after": "The benchmark results show that the new framework handles mixed data faster.",
       "explanation": "That-clause subjects ('That X is Y') are rare in natural human prose and common in AI text. Move the evidence or source to the front of the sentence, and let the claim follow. Human writers rarely ask the reader to hold a full subordinate clause in memory before reaching the main verb."
     },
     {
@@ -151,8 +151,8 @@
       "id": "AP-021",
       "category": "structural",
       "before": "Machine learning models analyze large datasets to identify patterns. These patterns help businesses make better decisions. The technology continues to improve with more data. Companies across industries are adopting these tools. The results have been consistently impressive across sectors.",
-      "after": "Machine learning works by chewing through enormous datasets, far more than any team could review manually. The patterns it finds? Sometimes obvious in retrospect. Sometimes genuinely surprising. What's changed recently isn't the technology itself but the sheer volume of companies betting on it. Whether the results justify the hype depends on who you ask.",
-      "explanation": "All sentences in the AI version are 15-20 words with the same Subject-Verb-Object structure. The rewrite varies length from 3 words to 30+, uses a fragment for emphasis ('Sometimes genuinely surprising.'), introduces a rhetorical question, swaps in informal vocabulary ('chewing through', 'the hype'), and adds an evaluative stance ('whether the results justify the hype'). The factual claim (ML uses large datasets and adoption is growing) is preserved."
+      "after": "Machine learning models find patterns in large datasets that help businesses make better decisions. The models improve as they see more data. Companies across industries are adopting them. Across sectors, the results have been consistently impressive.",
+      "explanation": "Every sentence in the AI version is short and about the same length, and each states one claim in the same Subject-Verb-Object order. The rewrite folds the first two claims into one sentence with a relative clause, shortens the rest, and moves 'across sectors' to the front of the last sentence, so the lengths and openings differ. Every claim is the original's; none is added or softened."
     },
     {
       "id": "AP-022",
@@ -165,49 +165,49 @@
       "id": "AP-023",
       "category": "discourse",
       "before": "Furthermore, the study found that employee satisfaction increased. Additionally, productivity metrics showed improvement. Moreover, the company reported lower turnover rates. It is also worth noting that customer satisfaction scores rose during the same period.",
-      "after": "Employee satisfaction went up, which was no surprise given the changes. Productivity followed. The real shock was turnover: it dropped 23% in six months. Customer satisfaction climbed too, though whether that's cause or coincidence is harder to say.",
-      "explanation": "Removed four formulaic transitions (Furthermore, Additionally, Moreover, It is also worth noting). Replaced them with a conversational opener, a two-word sentence ('Productivity followed.'), a colon-led emphasis, and an honest qualification at the end. Sentence length now varies from 3 to 20+ words. Note: the '23% in six months' figure must come from the source study; do not fabricate statistics."
+      "after": "According to the study, employee satisfaction and productivity both went up. Turnover fell, the company reported, and customer satisfaction scores rose over the same period.",
+      "explanation": "Removed four formulaic transitions (Furthermore, Additionally, Moreover, It is also worth noting). The first two findings share a sentence, the company's report is attributed mid-sentence, and the time qualifier closes the last clause, so the sentences no longer open the same way. Every finding is the source's, and none is added, sharpened or played down. If the source gives figures, keep them; do not invent them to make the text feel concrete."
     },
     {
       "id": "AP-024",
       "category": "sentiment",
       "before": "While there are certain challenges associated with remote work, there are also numerous benefits. The key is finding the right balance between flexibility and collaboration. Each organization must evaluate its unique circumstances to determine the most effective approach.",
-      "after": "Remote work has real problems: isolation, blurred boundaries, the slow erosion of team culture that nobody notices until it's too late. But going back to five days in the office isn't the answer either. Most companies I've worked with land somewhere messy in the middle, and that's probably fine.",
-      "explanation": "Neutral framing replaced with specific negative emotions (isolation, erosion). First-person experience introduced ('Most companies I've worked with'). Honest, slightly resigned stance ('that's probably fine'). Concrete detail replaces abstractions. Colon used in place of an em-dash. Note: the first-person 'I've worked with' should only be used when the source text is genuinely first-person; otherwise restructure with 'Most companies seem to land...' so you don't invent a narrator."
+      "after": "Remote work has some problems and many benefits. Each organization has to look at its own circumstances and find the balance between flexibility and collaboration that suits it.",
+      "explanation": "The AI version wraps its position in neutral framing ('certain challenges', 'The key is', 'unique circumstances'). The rewrite states the same position in plain words and drops the framing phrases. It adds no emotion, experience or example the source lacks. When the source or the user holds a stronger view (a named problem, a recommendation, first-person experience), state that view plainly; do not supply one to make the text sound human."
     },
     {
       "id": "AP-025",
       "category": "discourse",
       "before": "The team implemented a new testing framework. This framework enabled faster detection of bugs. This faster detection led to shorter release cycles. These shorter cycles improved overall product quality. This improvement was reflected in customer satisfaction scores.",
-      "after": "The new testing framework caught bugs earlier, sometimes within hours of a commit. Release cycles shrank. Customers noticed. Satisfaction scores hit their highest point in two years, and the team finally stopped dreading deploy day.",
-      "explanation": "Explicit 'this' chains removed. Causal connections left implicit (the reader follows the logic). Specific details added ('within hours of a commit', 'two years', 'deploy day'). Human emotion introduced ('finally stopped dreading'). Short sentences for pace. Note: '2 years' and 'within hours of a commit' should reflect the source; do not invent metrics."
+      "after": "Because the team's new testing framework caught bugs sooner, release cycles got shorter and the product improved. Customer satisfaction scores showed the difference.",
+      "explanation": "Explicit 'this' chains removed. The causal steps are joined with 'because' and 'and' instead of a new sentence that restates the last one's object each time. Every claim is the original's; none is added, softened or sharpened. If the source gives numbers or details (how much sooner, which scores), use them; do not invent them."
     },
     {
       "id": "AP-026",
       "category": "structural",
       "before": "Data security is a critical concern for modern businesses. With the increasing frequency of cyber attacks, companies must prioritize protecting their sensitive information. Implementing robust security measures can help mitigate these risks. Organizations that invest in security are better positioned for long-term success.\n\nEmployee training is another important aspect of data security. Many security breaches occur due to human error, making education essential. Regular training sessions can help employees identify potential threats. A well-trained workforce serves as the first line of defense against cyber attacks.",
-      "after": "Most data breaches start with a person, not a system. Someone clicks a link. Someone reuses a password. Someone plugs in a USB they found in the parking lot.\n\nCompanies pour money into firewalls and encryption, and they should. But the weakest link is almost always human. The fix isn't more technology. It's better habits, and those take time to build.\n\nTraining helps. Not the annual compliance slideshow that everyone clicks through during lunch. Real training: phishing simulations, tabletop exercises, the kind of practice that makes people actually pause before clicking.",
-      "explanation": "Paragraph structure breaks the AI mold of topic-supporting-supporting-concluding. Paragraph lengths vary; one paragraph is mostly fragments for emphasis. Specific examples replace abstractions (USB in parking lot, compliance slideshow during lunch). Evaluative language throughout ('weakest link', 'Not the annual compliance slideshow'). Punctuation: commas, periods, and a colon replace the em-dashes that an earlier version of this example used."
+      "after": "Cyber attacks are getting more frequent, so companies need to protect their sensitive data. Strong security measures can help reduce that risk. Companies that invest in security are better positioned for long-term success.\n\nMany breaches come from human error, which makes training essential. Regular training can help employees spot threats, and a well-trained workforce is the first line of defense against an attack.",
+      "explanation": "The AI version builds both paragraphs on the same plan: a topic sentence, supporting sentences and a concluding line. The rewrite drops the topic sentences, which only announced the subject, links cause and effect with 'so' and 'which', and gives the two paragraphs different lengths. It keeps the original's claims and adds none. If the source names specific mistakes or training methods, use them; do not invent examples to make the text feel concrete."
     },
     {
       "id": "AP-027",
       "category": "psycholinguistic",
       "before": "The project was completed on schedule. The team utilized agile methodology to manage their workflow effectively. Key milestones were met consistently throughout the development process. Stakeholder feedback was incorporated at each stage. The final deliverable exceeded expectations in terms of both quality and scope.",
       "after": "Somehow, we shipped on time. I still don't fully understand how. The first two sprints were a mess, and we lost a week to that authentication bug that kept coming back. But the team figured it out. Teodora's idea to run daily standups on the blocker board (instead of the usual status updates that nobody listens to) probably saved us. The client's happy. We're exhausted.",
-      "explanation": "First-person perspective introduced. Specific details (authentication bug, Teodora, blocker board) replace abstract claims. Honest admission of difficulty ('I still don't fully understand how'). Emotional texture ('We're exhausted'). Parenthetical aside with opinion ('nobody listens to'). Uneven development: more space for the key insight, less for the outcome. Em-dash from an earlier version replaced with a period. Note: this rewrite injects significant specifics (Sarah, the authentication bug); apply only when those specifics are present in source notes, otherwise keep the rewrite vaguer. The name was Sarah until 2026-10-30: Russell, Karpinska and Iyyer (ACL 2025) found an Emily or a Sarah in 63 to 70 percent of GPT-4o and Claude 3.5 articles, so a stock default name in the human example taught the tell it was meant to cure. A specific name belongs to the source notes, never to the model's defaults."
+      "explanation": "First-person perspective introduced. Specific details (authentication bug, Teodora, blocker board) replace abstract claims. Honest admission of difficulty ('I still don't fully understand how'). Emotional texture ('We're exhausted'). Parenthetical aside with opinion ('nobody listens to'). Uneven development: more space for the key insight, less for the outcome. Em-dash from an earlier version replaced with a period. Note: this rewrite injects significant specifics (Teodora, the authentication bug); apply only when those specifics are present in source notes, otherwise keep the rewrite vaguer. A specific name belongs to the source notes. A stock default name in an example teaches the tell it was meant to cure."
     },
     {
       "id": "AP-028",
       "category": "lexical",
       "before": "Generally speaking, renewable energy tends to be more cost-effective than fossil fuels in most cases. Solar power arguably offers the most potential for widespread adoption. To some extent, wind energy can also contribute to a more sustainable energy mix. Broadly speaking, the transition to renewables appears to be accelerating.",
-      "after": "Renewables are cheaper than fossil fuels in most markets now. That's not a projection; it's what the numbers show. Solar leads the pack, with costs down 90% since 2010. Wind has a role too, though it's more geography-dependent. The transition is happening faster than most predictions from even five years ago anticipated.",
-      "explanation": "Removed four formulaic hedges (Generally speaking, arguably, To some extent, Broadly speaking). Direct claims replace hedged ones. Specific data added (90% since 2010, five years ago) where source material supports it. One genuine hedge kept ('though it's more geography-dependent') because it's specific, not formulaic. Semicolon used in place of an em-dash. Note: the '90% since 2010' figure is a well-known IRENA/IEA-reported statistic, but you should still verify it against the source before publishing."
+      "after": "Renewable energy is more cost-effective than fossil fuels in most cases. Solar may offer the most potential for widespread adoption, and wind can play a part in a more sustainable energy mix. The transition to renewables appears to be speeding up.",
+      "explanation": "Removed four formulaic hedges (Generally speaking, arguably, To some extent, Broadly speaking). Where the AI version stacks two or three qualifiers on one claim, the rewrite keeps the one that marks the same limit ('in most cases', 'may', 'can', 'appears'), so each claim stays as tentative as the source made it and reads plainly. No fact is added and no claim is made firmer. If the source gives figures or names markets, use them; do not invent them."
     },
     {
       "id": "AP-029",
       "category": "structural",
       "before": "They were drawn as five separate machines, and the studio is not five machines. It is one studio that a student moves through.",
-      "after": "They were drawn as five separate machines, but a studio is really one thing: a single path a student moves along.",
+      "after": "They were drawn as five separate machines, but a student moves through the studio as a single place.",
       "explanation": "The two-sentence copula flip ('X is not Y. It is Z.') is the single most characteristic antithesis of LLM prose (banned_structures BS-013). It is the same overweighted contrast as the 'not just X, but Y' of AP-006/AP-007, split across two sentences so the single-sentence checks miss it. Make the positive claim and let it stand; do not negate an alternative first."
     },
     {
@@ -228,8 +228,8 @@
       "id": "AP-032",
       "category": "lexical",
       "before": "This is a real engagement, and it is mid-build, so I will not claim numbers I have not measured. But the design is real.",
-      "after": "The engagement is live and mid-build, so I will not report outcomes I have not measured. The design work itself, though, is done.",
-      "explanation": "Reality-assertion / credibility insistence: a writer who repeatedly labels their own account 'real' (or actual/genuine/true) is making a defensive credibility hedge that reads as machine-flavored. The density is the tell, not any single use; the checker surfaces it as credibility_insistence (lexical_patterns.credibility_insistence) once a token recurs. Cut the assertions and let the specifics ('live and mid-build', 'the design work is done') carry the credibility. Keep at most one, and only for a genuine contrast. This rewrite also removes the disclaimer-then-'But' reversal (BS-017)."
+      "after": "The engagement is live and mid-build, so I will not report numbers I have not measured, though the design itself is real.",
+      "explanation": "Reality-assertion / credibility insistence: a writer who repeatedly labels their own account 'real' (or actual/genuine/true) is making a defensive credibility hedge that reads as machine-flavored. Density is the tell, since any single use can be ordinary; the checker surfaces it as credibility_insistence (lexical_patterns.credibility_insistence) once a token recurs. Cut the repeated assertions and let a specific ('live and mid-build') carry the credibility. Keep at most one, and only where it marks a contrast the source draws, as the one kept here does. This rewrite also removes the disclaimer-then-'But' reversal (BS-017)."
     },
     {
       "id": "AP-033",
@@ -243,14 +243,14 @@
       "category": "structural",
       "before": "The same board, rebuilt.",
       "after": "We rebuilt the same board.",
-      "explanation": "Noun-comma-past-participle fragment: a determiner-led noun phrase, a comma, and a trailing past participle, with no finite verb ('The same board, rebuilt.'). It reads as AI copy — a verbless flourish standing in for a sentence. Give it a subject and a finite verb, or fold the participle into the neighboring sentence. Detected deterministically as BS-021."
+      "explanation": "Noun-comma-past-participle fragment: a determiner-led noun phrase, a comma, and a trailing past participle, with no finite verb ('The same board, rebuilt.'). It reads as AI copy because a verbless flourish stands in for a sentence. Give it a subject and a finite verb, or fold the participle into the neighboring sentence. Detected deterministically as BS-021."
     },
     {
       "id": "AP-035",
       "category": "structural",
       "before": "in 200 words",
       "after": "the direction problem",
-      "explanation": "Meta label: a heading or standalone line that names the artifact's own format or length ('in 200 words', 'in brief', 'the short version', 'at a high level', 'to put it simply') instead of its subject. A self-aware flourish that performs concision rather than saying one more specific thing, and topic-agnostic — the same label could head almost any piece. Replace it with a phrase about the content, or cut it and let the content name the section. The standalone-label form is detected deterministically as BS-022; the judgment forms (self-satisfied closers, first-person meta-commentary, paradox-substitution headlines) are a self_review rubric item."
+      "explanation": "Meta label: a heading or standalone line that names the artifact's own format or length ('in 200 words', 'in brief', 'the short version', 'at a high level', 'to put it simply') instead of its subject. A self-aware flourish that performs concision rather than saying one more specific thing, and it is topic-agnostic, since the same label could head almost any piece. Replace it with a phrase about the content, or cut it and let the content name the section. The standalone-label form is detected deterministically as BS-022; the judgment forms (self-satisfied closers, first-person meta-commentary, paradox-substitution headlines) are a self_review rubric item."
     },
     {
       "id": "AP-036",
@@ -263,8 +263,8 @@
       "id": "AP-037",
       "category": "sentiment_tone",
       "before": "Studies show that remote work boosts productivity.",
-      "after": "A 2024 Stanford study of 16,000 workers found remote work raised output 13% (Bloom et al.).",
-      "explanation": "Vague authority attribution: the sentence leans on an unnamed authority ('studies show', 'researchers say', 'experts agree', 'it is widely believed') to borrow credibility it never earns. Name the specific study, person, or body — or drop the claim. Detected as BS-024; scoped so named/specific references ('The researchers at MIT published...') are not flagged."
+      "after": "A [year] study of [number] workers by [authors] found that remote work raised output by [percentage].",
+      "explanation": "Vague authority attribution: the sentence leans on an unnamed authority ('studies show', 'researchers say', 'experts agree', 'it is widely believed') to borrow credibility it never earns. Name the study, person or body the source gives. When the source names none, mark a placeholder or drop the claim (absolute_rules AR-001). Detected as BS-024; scoped so named/specific references ('The researchers at MIT published...') are not flagged."
     },
     {
       "id": "AP-038",
@@ -354,7 +354,7 @@
       "id": "AP-050",
       "category": "discourse",
       "before": "Here's the kicker: the part most people miss is the review queue.",
-      "after": "The review queue, not the build, is where the week goes.",
+      "after": "Most people overlook the review queue.",
       "explanation": "Withheld-insight teaser: the sentence spends itself announcing that an insight is coming. Lead with the insight. Distinct from the bare 'Here's the thing' marker, which is ordinary casual register and is deliberately not flagged. Detected as BS-037."
     },
     {
@@ -368,8 +368,8 @@
       "id": "AP-052",
       "category": "structural",
       "before": "The handoff is where it breaks. Not because the released person stopped mattering, but because the officer is where a design can reach.",
-      "after": "The handoff is where it breaks: the officer is the only point in the system a design can reach.",
-      "explanation": "Antithesis fragment. The rejected half answers a charge nobody made, so it exists to give the real clause a running start. Cut it and the sentence loses nothing but the drum roll. Fragment sibling of the two-sentence copula flip in AP-021; detected as BS-039."
+      "after": "The handoff is where it breaks, because the officer is the only point in the system a design can reach.",
+      "explanation": "Antithesis fragment. The rejected half answers a charge nobody made, so it exists to give the real clause a running start. Cut it and the sentence loses nothing but the drum roll. Fragment sibling of the two-sentence copula flip in AP-029; detected as BS-039."
     },
     {
       "id": "AP-053",

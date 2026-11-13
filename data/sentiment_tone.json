@@ -19,8 +19,8 @@
         "guidance": "Frustration, skepticism, disappointment, and concern are all human emotions that AI tends to soften. 'This approach has serious problems' is more human than 'This approach presents certain challenges that merit consideration.'"
       },
       {
-        "rule": "Vary sentiment across paragraphs.",
-        "guidance": "Human text shifts emotional register section by section: enthusiastic in one paragraph, cautious in the next, blunt in a third. AI maintains a steady tone throughout. Introduce deliberate shifts."
+        "rule": "Keep the sentiment shifts the source has.",
+        "guidance": "Where the source shifts register from one paragraph to the next (enthusiastic, then cautious, then blunt), keep each shift and do not flatten them into one steady tone. Add no shift the source does not make (absolute_rules AR-001)."
       }
     ]
   },
@@ -45,8 +45,8 @@
         "guidance": "Human writing reflects the author's position. AI defaults to objective reporting. Where the content type allows it (opinion, analysis, marketing), let the writer's stance come through."
       },
       {
-        "rule": "Use exclamation marks sparingly to signal genuine emphasis or spontaneity.",
-        "guidance": "AI almost never uses exclamation marks. In informal, marketing, or conversational content, a rare exclamation mark signals authentic enthusiasm or surprise. 'The fix worked!' reads as more human than 'The fix was successful.' Use at most one per section, and never in formal or academic prose. Overuse is its own AI signal in some contexts: one is a human touch, five is a chatbot."
+        "rule": "Use an exclamation mark only where the content carries surprise or excitement.",
+        "guidance": "Model prose rarely uses exclamation marks. In informal, marketing or conversational content, one placed where the source's feeling calls for it reads as human. 'The fix worked!' reads as more human than 'The fix was successful.' Keep them out of formal and academic prose. A string of them is its own tell."
       }
     ]
   },
@@ -55,16 +55,16 @@
     "human_pattern": "Human text varies between subjective and objective registers depending on context. Even in formal writing, human authors insert personal evaluation, qualification based on experience, and markers of individual judgment.",
     "rules": [
       {
-        "rule": "Introduce first-person perspective where appropriate.",
-        "guidance": "Phrases like 'In my experience,' 'What I've found,' 'I'd argue,' signal a human perspective. Use them in opinion, analysis, and professional prose, not uniformly but where the writer would naturally ground a claim in experience."
+        "rule": "Use the first person only where the user or the source supplies the position or experience.",
+        "guidance": "A phrase like 'In my experience' or 'I'd argue' belongs in the draft only when the user or the source supplies the experience or the position behind it. Never invent one to make the text sound human (see absolute_rules AR-001)."
       },
       {
-        "rule": "Use evaluative language that reflects judgment.",
-        "guidance": "'Interesting,' 'surprising,' 'disappointing,' 'overdue': these words carry the writer's assessment. AI defaults to neutral descriptors. Replace some neutral descriptions with evaluative ones."
+        "rule": "State the evaluation the source or the user holds.",
+        "guidance": "'Interesting,' 'surprising,' 'disappointing,' 'overdue': words like these carry the writer's assessment. Where the source or the user makes a judgment, keep it in an evaluative word; AI drafts tend to flatten it into a neutral description. Do not add a judgment the source does not make (see absolute_rules AR-001)."
       },
       {
-        "rule": "Allow hedging based on expertise, not politeness.",
-        "guidance": "Human hedging says 'I'm not sure this holds for every case'; it's specific and based on knowledge limits. AI hedging says 'Generally speaking'; it's formulaic and universal. Replace formulaic hedges with specific qualifications."
+        "rule": "Base each hedge on a limit the writer knows.",
+        "guidance": "Human hedging says 'I'm not sure this holds for every case'; it's specific and based on knowledge limits. AI hedging says 'Generally speaking'; it's formulaic and universal. Where the source states the limit behind a formulaic hedge, use it; otherwise swap the formula for a plain word that marks the same limit (absolute_rules AR-001)."
       }
     ]
   },
@@ -73,22 +73,22 @@
     "ai_underuses": ["feels like", "felt", "looks like", "sounds like", "read", "look", "hear", "hate", "love", "struggle"],
     "rewriting_guidance": [
       "Reintroduce sensory and experiential language where the content allows it.",
-      "Replace abstract descriptions with concrete observations: 'The interface has usability issues' → 'The interface feels clunky; buttons are tiny and labels overlap.'",
-      "Use verbs of perception: 'It looks like,' 'This reads as,' 'What you'll notice is.' These signal embodied experience."
+      "Where the source gives the concrete observation behind an abstract description, use it. If the notes say the buttons are tiny and the labels overlap, 'The interface has usability issues' → 'The buttons are tiny and the labels overlap.' Do not invent the observation (absolute_rules AR-001).",
+      "Use verbs of perception: 'It looks like,' 'This reads as.' These signal embodied experience."
     ]
   },
   "readability": {
-    "description": "AI text consistently scores at a higher grade level (lower readability) than human text on Flesch Reading Ease and Gunning Fog Index. Human writers naturally adjust complexity to their audience; AI writes at a uniformly elevated register.",
+    "description": "AI text often reads harder than its audience needs. Human writers adjust complexity to their reader; AI writes at a uniformly elevated register.",
     "ai_pattern": "AI defaults to longer words, complex sentence structures, and formal vocabulary regardless of the target audience. A blog post reads at the same grade level as an academic paper.",
     "human_pattern": "Human writers calibrate. A newsletter aimed at general audiences uses shorter sentences and simpler words than a research paper. Even within a single document, humans simplify when explaining and complexify when analyzing.",
     "rules": [
       {
         "rule": "Match readability to the content type and audience.",
-        "guidance": "Blog posts and marketing: aim for Flesch Reading Ease 60-70 (8th-9th grade). Professional reports: 40-60. Academic writing: 30-50. If the text reads at a higher grade level than its audience expects, simplify."
+        "guidance": "Write for the reader the piece is for. A blog post or a marketing page should read more easily than a professional report, and a report more easily than a research paper. If the text reads harder than its audience expects, simplify."
       },
       {
-        "rule": "Vary readability within a document.",
-        "guidance": "Human writers simplify explanatory passages and let analytical passages be more complex. If every paragraph scores at the same readability level, the uniformity is an AI signal. Let introductions and conclusions be more accessible; let the technical core be denser."
+        "rule": "Let the difficulty of a passage follow its job.",
+        "guidance": "Human writers simplify where they explain and let analysis run denser. An introduction often reads more easily than the technical core because its reader needs the way in."
       },
       {
         "rule": "Prefer short, common words when meaning is clear from context.",
