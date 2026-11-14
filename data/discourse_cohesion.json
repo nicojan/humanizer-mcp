@@ -24,7 +24,7 @@
       },
       {
         "rule": "Keep transitions plain.",
-        "guidance": "Where a bridge is needed, use a plain one such as 'So', 'Now' or 'But'. Do not add a conversational transition to sound human."
+        "guidance": "Where a bridge is needed, use the plain word for the relation the source states, such as 'So' for a result or 'But' for a contrast, and 'Now' only to turn to a new point. Do not add a conversational transition to sound human."
       }
     ]
   },

@@ -8,6 +8,7 @@ quota pattern over all served text, and a before/after fact check on two
 anti-pattern examples. See docs/RULE-HISTORY.md for the round index.
 """
 
+import json
 import re
 
 from src.storage.json_store import load_json
@@ -287,6 +288,16 @@ def test_transition_guidance_names_the_plain_word_for_each_stated_relation():
     assert "'And' or 'Also' for an addition" in g
     assert "'So' for a result" in g and "'But' for a contrast" in g
     assert "the relation the source states" in g
+
+
+def test_no_transition_rule_offers_a_generic_bridge_list():
+    """rules[3] still offered "So", "Now" or "But" as interchangeable bridges
+    after rules[2] was fixed; a bridge word asserts a relation, so every
+    transition rule ties the word to the relation the source states."""
+    rules = load_json("discourse_cohesion.json")["discourse_markers"]["rules"]
+    blob = json.dumps(rules, ensure_ascii=False)
+    assert "such as 'So', 'Now' or 'But'" not in blob
+    assert "the relation the source states" in rules[3]["guidance"]
 
 
 def test_paragraph_opening_rule_header_asks_for_no_variety():
