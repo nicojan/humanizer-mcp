@@ -159,8 +159,8 @@ Top-level keys: `meta`, `profiles`.
 | `profiles` | object | Keyed by content type: `academic`, `marketing`, `technical`, `general_prose`, `creative`, `case_study` and `resume` (the last two added 2026-11-09). Aliases live in `CONTENT_TYPE_ALIASES` in `src/tools/read.py`. `resume` also changes `humanizer_check_text` (no length or rule-of-three measures, via `RESUME_TYPES` in `src/checker/metrics.py`); every other profile is guidance only. |
 | `profiles.<type>.label` | string | Display name (e.g., "Academic and research writing"). |
 | `profiles.<type>.description` | string | When this profile applies. |
-| `profiles.<type>.perplexity_target` | string | Target perplexity band for this type. |
-| `profiles.<type>.burstiness_target` | string | Descriptive band for this type. A data key kept for the schema; no served text presents it as a target, and the checker reports sentence-length numbers only (`metrics.length_mean`, `length_stdev`), never a burstiness finding. |
+| `profiles.<type>.perplexity_target` | string | Not a target despite the key name (served by name from `get_summary` in `src/tools/read.py`, so renaming needs code). Since 2026-11-13 every value opens "Not a target." and gives one clause on what drives word choice for this type. |
+| `profiles.<type>.burstiness_target` | string | Not a target despite the key name; every value opens "Not a target." (resume: "Not applicable"). A data key kept for the schema; no served text presents it as a target, and the checker reports sentence-length numbers only (`metrics.length_mean`, `length_stdev`), never a burstiness finding. |
 | `profiles.<type>.layer_adjustments` | object | Keyed by layer (`lexical_patterns`, `structural_patterns`, `sentiment_tone`, `discourse_cohesion`, `psycholinguistic_texture`); each `{aggressiveness, notes}`. **`notes` is the actionable content and is not stripped.** |
 | `profiles.<type>.special_considerations` | array of strings | Type-specific reminders. |
 | `profiles.creative.research_basis` | string | Present only on `creative` (dropped at serve time). |
