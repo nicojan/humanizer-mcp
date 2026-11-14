@@ -15,8 +15,8 @@
         "guidance": "If the content expresses a position, let it express that position with conviction. AI defaults to 'on the other hand' balance even when the text doesn't call for it."
       },
       {
-        "rule": "Allow negative emotions where appropriate.",
-        "guidance": "Frustration, skepticism, disappointment, and concern are all human emotions that AI tends to soften. 'This approach has serious problems' is more human than 'This approach presents certain challenges that merit consideration.'"
+        "rule": "Keep a negative judgment at the strength the source gives it.",
+        "guidance": "Frustration, skepticism, disappointment and concern stay as strong as the source states them. 'This approach presents certain challenges that merit consideration' → 'This approach has some problems worth looking at.' The rewrite keeps the strength: do not harden a mild judgment, and do not soften a strong one."
       },
       {
         "rule": "Keep the sentiment shifts the source has.",
@@ -29,24 +29,24 @@
     "human_pattern": "Human authors naturally embed emotional layers in their writing, drawing from lived experience, empathy, and reflective processes. Emotional expression evolves organically within the text, showing contextual variation and dynamic sentiment progression.",
     "rules": [
       {
-        "rule": "Build emotional intensity gradually rather than stating it.",
-        "guidance": "Instead of 'This was a deeply frustrating experience,' show the frustration building through increasingly specific detail and shorter, sharper sentences."
+        "rule": "State a feeling at the strength the source gives it.",
+        "guidance": "Do not build intensity or shorten sentences for effect. If the source gives the detail behind a feeling, use it, and add no detail the source lacks (absolute_rules AR-001)."
       },
       {
-        "rule": "Mix emotional registers within a passage.",
-        "guidance": "Human writers combine humor with seriousness, enthusiasm with caution, confidence with vulnerability, often within the same paragraph. AI keeps these registers separate."
+        "rule": "Keep the mix of registers the source has.",
+        "guidance": "Where the source combines humor with seriousness, enthusiasm with caution or confidence with vulnerability, keep each in place and do not separate them. Add no register the source lacks (absolute_rules AR-001)."
       },
       {
         "rule": "Use emotion words sparingly but precisely.",
         "guidance": "Human text has high emotion word count but embeds it in layers. Rather than labeling an emotion ('I felt angry'), human writers describe the experience that produces the emotion and let the reader feel it."
       },
       {
-        "rule": "Allow personal stance.",
-        "guidance": "Human writing reflects the author's position. AI defaults to objective reporting. Where the content type allows it (opinion, analysis, marketing), let the writer's stance come through."
+        "rule": "Keep the stance the user or the source holds.",
+        "guidance": "Where the content type allows it (opinion, analysis, marketing) and the user or the source takes a position, let it come through; supply none (absolute_rules AR-001)."
       },
       {
         "rule": "Use an exclamation mark only where the content carries surprise or excitement.",
-        "guidance": "Model prose rarely uses exclamation marks. In informal, marketing or conversational content, one placed where the source's feeling calls for it reads as human. 'The fix worked!' reads as more human than 'The fix was successful.' Keep them out of formal and academic prose. A string of them is its own tell."
+        "guidance": "Model prose rarely uses exclamation marks. In informal, marketing or conversational content, keep one where the source's feeling calls for it, as in 'The fix worked!' Keep them out of formal and academic prose. A string of them is its own tell."
       }
     ]
   },
@@ -72,9 +72,9 @@
     "description": "Human text uses more sensing verbs and experience-based language that AI tends to avoid.",
     "ai_underuses": ["feels like", "felt", "looks like", "sounds like", "read", "look", "hear", "hate", "love", "struggle"],
     "rewriting_guidance": [
-      "Reintroduce sensory and experiential language where the content allows it.",
+      "Keep the sensory and experiential words the source uses. Do not add an experience the source lacks (absolute_rules AR-001).",
       "Where the source gives the concrete observation behind an abstract description, use it. If the notes say the buttons are tiny and the labels overlap, 'The interface has usability issues' → 'The buttons are tiny and the labels overlap.' Do not invent the observation (absolute_rules AR-001).",
-      "Use verbs of perception: 'It looks like,' 'This reads as.' These signal embodied experience."
+      "Use verbs of perception where the writer reports what they saw or read: 'It looks like,' 'This reads as.' Do not use one to suggest an experience the source does not give."
     ]
   },
   "readability": {

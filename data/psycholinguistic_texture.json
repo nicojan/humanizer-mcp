@@ -16,18 +16,18 @@
     "rewriting_guidance": [
       "Do not raise every paragraph to the same density. When a dense passage is followed by a plainer one, leave the plainer one plain.",
       "Don't develop every point to the same depth. A secondary point can be stated once and left, as long as every claim the source makes is still there.",
-      "Inside dense technical passages, prefer the shorter, plainer word. 'The algorithm works by checking each node' reads more human than 'The algorithm functions by evaluating each node' when the surrounding context is already complex."
+      "Inside dense technical passages, prefer the shorter, plainer word where it says the same thing: 'The algorithm works by checking each node' for 'The algorithm functions by evaluating each node.'"
     ]
   },
   "self_monitoring_traces": {
     "theory": "Human writers engage in metacognitive monitoring; they evaluate their own text as they write, adjusting tone, correcting course, and responding to their own arguments. This self-monitoring produces visible artifacts: abrupt stylistic changes, mid-course corrections, and context-sensitive modifications. AI lacks this metacognitive capability.",
     "human_markers": [
-      "Mid-paragraph tone shifts where the writer catches themselves being too formal or too casual",
+      "Mid-paragraph tone shifts where the writer catches themselves being too formal or too casual. They belong to the source; a staged one reads as performance.",
       "Self-corrections ('or rather', 'to be more precise') where the writer changed course mid-thought. They belong to the source; a staged one reads as performance.",
       "Parenthetical qualifications that interrupt the main argument to add nuance",
       "Inconsistent punctuation use that drifts over the course of a document (selective Oxford commas, parentheses used in some sections and not others)",
       "Questions the writer asks of their own argument, where the source reasons aloud. A one-line question added for effect reads as a model's tic.",
-      "Contractions used in some sentences but not others, reflecting natural register drift"
+      "Contractions where the source uses them, with the register drift the source has. Set no ratio."
     ],
     "rewriting_guidance": [
       "Allow the CHOICE of punctuation to drift among valid options. If the first half uses Oxford commas and the second half sometimes drops them, leave it. Drift never means omitting required punctuation, dropping terminal marks, or using marks incorrectly (see absolute_rules AR-003).",
@@ -38,7 +38,7 @@
     "theory": "Word selection in human writing involves a complex interplay between semantics, grammar, memory, and personal experience. This cognitive process can result in occasional retrieval quirks: near-misses, contextually unusual but defensible choices, and vocabulary that reflects the writer's specific background rather than a generic register.",
     "human_markers": [
       "Domain-specific vocabulary that reflects the writer's actual expertise, not generic formal words",
-      "Occasional informal or colloquial words mixed into formal prose when the writer's natural voice breaks through",
+      "Informal or colloquial words in formal prose where the source's own voice has them. They belong to the source; an added one reads as performance.",
       "Idioms that come from the writer's own speech rather than a stock list",
       "Words chosen for their exact meaning, which are often not the most probable next token",
       "Proper nouns and specific references drawn from the writer's knowledge rather than generic categories"
@@ -53,7 +53,7 @@
   "discourse_planning_traces": {
     "theory": "Effective writing requires logical progression of ideas. Human writers build narratives hierarchically, from broad ideas to fine-grained detail. But under cognitive load, this planning may falter, leading to abrupt topic changes, uneven development, or weak transitions that the writer didn't go back to fix.",
     "human_markers": [
-      "Occasional topic shifts that feel slightly abrupt; the writer moved on before fully closing the previous point",
+      "Topic shifts where the source moves on before fully closing a point. Add none.",
       "Uneven development: some ideas get three paragraphs, others get one sentence, reflecting the writer's sense of what matters",
       "Implied transitions where the connection between ideas is clear but not explicitly stated",
       "Occasional tangential observations that are relevant but break the strict logical flow"
@@ -62,7 +62,7 @@
       "Give more space to the ideas that matter most. A model gives every point equal airtime by default.",
       "Keep asides the source has. Do not invent a tangent to make the text sound human.",
       "Leave some transitions implicit. The reader can often follow the logic without a bridge sentence.",
-      "Vary the granularity of argument. Some points deserve detailed evidence. Others can be asserted and moved on from. AI tends to develop every point to the same depth."
+      "Give each point the depth its evidence supports. Do not pad a minor point or cut evidence the source gives."
     ]
   }
 }

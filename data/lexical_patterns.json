@@ -1182,16 +1182,16 @@
     },
     "rewriting_guidance": [
       "Use the same word for the same thing.",
-      "Replace generic nouns with specific ones: 'factors' → name the factors; 'things' → name the things.",
-      "Humans prefer shorter words when context is predictable. Mix in plain, short words alongside longer ones."
+      "Replace generic nouns with specific ones: 'factors' → name the factors the source names; 'things' → name the things the source names.",
+      "Prefer the plain short word where it says the same thing."
     ]
   },
   "word_length_patterns": {
     "description": "AI text tends to use longer tokens and does not shorten words when context makes meaning predictable, a tendency humans naturally exhibit.",
     "rewriting_guidance": [
       "In casual or conversational passages, prefer shorter words over longer synonyms.",
-      "Mix word lengths within sentences. A sentence of all long words reads as AI; a sentence of all short words reads as choppy. Vary.",
-      "Use contractions selectively: not uniformly, not never. Some sentences with, some without."
+      "Use the word the sentence needs, short or long. Do not mix lengths for effect.",
+      "Contractions follow the register and the source: use them where the source does or the register is casual, and leave them out where it is formal. Set no ratio."
     ]
   },
   "nominalization": {
@@ -1220,8 +1220,8 @@
         "guidance": "Two or more 'the X of Y' phrases in a single sentence is a strong AI signal. 'The optimization of the utilization of resources' should become 'using resources better.'"
       },
       {
-        "rule": "Apply unevenly; some nominalizations are natural.",
-        "guidance": "Technical writing legitimately uses nominalizations as established terms ('risk assessment', 'load balancing'). The problem is density: three nominalizations in two sentences reads as AI. One per paragraph is fine."
+        "rule": "Keep established nominal terms.",
+        "guidance": "Technical writing legitimately uses nominalizations as established terms ('risk assessment', 'load balancing'). The problem is density: three nominalizations in two sentences reads as AI."
       }
     ],
     "research_basis": "Herbold et al. (2023) and Reinhart et al. (2024) both find higher nominalization rates in AI text. This overlaps with the existing POS finding that AI overuses nouns relative to verbs."
@@ -1229,15 +1229,15 @@
   "abstract_concrete_balance": {
     "description": "AI defaults to abstract, intangible nouns while human writers ground claims in concrete, observable specifics.",
     "ai_pattern": "AI gravitates toward words like 'framework', 'methodology', 'paradigm', 'dynamic', 'landscape', 'ecosystem': nouns that name categories rather than things you can point at.",
-    "human_pattern": "Human writers anchor abstract ideas in tangible language. Instead of 'the educational landscape', a human says 'classrooms and lecture halls'. Instead of 'stakeholder engagement', a human says 'meetings with the people who use the product'.",
+    "human_pattern": "Human writers anchor abstract ideas in tangible language the source supplies. If the notes say classrooms and lecture halls, 'the educational landscape' becomes 'classrooms and lecture halls'. If the notes say meetings with the people who use the product, 'stakeholder engagement' becomes that. With no such detail, keep the abstract term and add none (absolute_rules AR-001).",
     "rules": [
       {
         "rule": "For every abstract noun, ask: can I name the concrete thing it refers to?",
-        "guidance": "'Factors' → name them. 'Challenges' → describe one. 'Stakeholders' → say who. 'Resources' → specify which. If the concrete version is available and no shorter than the abstract one, prefer it."
+        "guidance": "'Factors' → name the ones the source names. 'Challenges' → describe one the source describes. 'Stakeholders' → say who, if the source does. 'Resources' → specify which, if the source does. If the concrete version is available and no shorter than the abstract one, prefer it; if the source gives none, keep the abstract noun."
       },
       {
-        "rule": "Use sensory and spatial nouns where appropriate.",
-        "guidance": "Concrete nouns that invoke a mental image ('spreadsheet', 'parking lot', 'whiteboard', 'inbox') anchor the reader's attention more than abstract containers ('tool', 'space', 'platform', 'system')."
+        "rule": "Name the concrete thing the source names.",
+        "guidance": "Concrete nouns that invoke a mental image ('spreadsheet', 'parking lot', 'whiteboard', 'inbox') anchor the reader's attention more than abstract containers ('tool', 'space', 'platform', 'system'). Use the concrete noun the source gives; swapping in one it does not give adds a fact (absolute_rules AR-001)."
       }
     ],
     "research_basis": "Opara (2025) identifies AbstractNounCount as a discriminating stylometric feature in the StyloAI framework, linked to higher-level cognitive functions in human writing."

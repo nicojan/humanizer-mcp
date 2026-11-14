@@ -133,7 +133,7 @@
       "description": "Three or more consecutive sentences opening with This/These/It.",
       "detection": { "method": "heuristic", "confidence": "medium" },
       "gate": "checklist",
-      "fix": "Leave causal links implicit; vary sentence openings.",
+      "fix": "Name what each 'This' refers to, or join the sentences so one leads into the next.",
       "source_examples": ["AP-025"]
     },
     {

@@ -19,8 +19,8 @@
         "guidance": "Instead of 'Furthermore, the team discovered that...' try just starting the next point. 'The team also found...' or even just 'They found...' The connection is clear from context."
       },
       {
-        "rule": "Vary transition types across the document.",
-        "guidance": "If three paragraphs in a row start with conjunctive adverbs ('Moreover,' 'Additionally,' 'Furthermore,'), the pattern is detectable. Mix in sentence-level transitions ('This connects to...') and implicit ones, where the new point simply starts."
+        "rule": "Break a run of formulaic transitions.",
+        "guidance": "If three paragraphs in a row start with conjunctive adverbs ('Moreover,' 'Additionally,' 'Furthermore,'), the pattern is detectable. Drop most of them. Where the new point needs a link, use the plain word for the relation the source states: 'And' or 'Also' for an addition, 'So' for a result, 'But' for a contrast. Where it needs none, start the point."
       },
       {
         "rule": "Keep transitions plain.",
@@ -48,23 +48,23 @@
   },
   "cohesive_devices": {
     "ai_pattern": "AI text often relies heavily on cohesive devices and formulaic syntactic constructions, such as repetitive use of 'this,' 'these,' 'such,' and explicit referencing that overconnects ideas. It also uses more phrasal coordination and present participial clauses.",
-    "human_pattern": "Human writers use cohesive devices unevenly. Some ideas are connected explicitly, others are left for the reader to connect. Pronoun reference is sometimes loose. This mild ambiguity is natural.",
+    "human_pattern": "Human writers use cohesive devices unevenly. Some ideas are connected explicitly, others are left for the reader to connect.",
     "rules": [
       {
         "rule": "Reduce explicit referencing.",
         "guidance": "Not every sentence needs to reference the previous one. AI writes 'This approach enables... This enables... This in turn enables...', with each sentence pointing back. Human writers let some sentences stand alone."
       },
       {
-        "rule": "Use pronouns with occasionally loose reference.",
-        "guidance": "Human text sometimes uses 'it' or 'this' where the referent is clear from context but not grammatically precise. This mild looseness is a human signal. Don't tighten every pronoun reference."
+        "rule": "Let a pronoun carry a clear referent.",
+        "guidance": "Where 'it' or 'this' is clear from context, use it and do not repeat the noun. Never make a reference vaguer than the source's."
       },
       {
-        "rule": "Vary paragraph-opening structures.",
-        "guidance": "If every paragraph opens with a topic sentence that explicitly connects to the previous paragraph's conclusion, the text reads as AI-structured. Let some paragraphs start fresh: with an example, a question, or a claim that the reader connects to the previous section themselves."
+        "rule": "Open a paragraph on what it carries.",
+        "guidance": "If every paragraph opens with a topic sentence that explicitly connects to the previous paragraph's conclusion, the text reads as AI-structured. Let some paragraphs start with the example or the claim they carry, and let the reader connect it to the previous section."
       },
       {
-        "rule": "Use comparative and superlative forms.",
-        "guidance": "AI text contains fewer comparative and superlative structures. Human writers naturally say 'more common,' 'the worst part,' 'better than expected,' 'the clearest example.' Reintroduce these where they fit."
+        "rule": "Keep the comparisons the source makes.",
+        "guidance": "Where the source compares, say so plainly: 'more common,' 'better than expected,' 'the clearest example.' Add no comparison the source lacks (absolute_rules AR-001)."
       },
       {
         "rule": "Use second-person pronouns ('you', 'your') for direct reader engagement where register allows.",
@@ -96,8 +96,8 @@
         "guidance": "Ask: is the relationship between these clauses causal ('because', 'since'), temporal ('when', 'after', 'once'), conditional ('if', 'unless'), or concessive ('although', 'even though')? If so, the subordinating conjunction is more precise than 'and'. Not every 'and' needs replacing, but three consecutive coordinated clauses is a pattern to break."
       },
       {
-        "rule": "Front-load subordinate clauses occasionally.",
-        "guidance": "'Although the data is noisy, the trend is clear' puts the qualification first, which is a human ordering pattern. AI tends to put the main clause first and append the qualification: 'The trend is clear, although the data is noisy.' Vary the order."
+        "rule": "Put the qualification where its weight belongs.",
+        "guidance": "'Although the data is noisy, the trend is clear' and 'The trend is clear, although the data is noisy' make the same claim. The first stresses the trend and the second ends on the limit. Choose the order that gives the content the emphasis it has."
       }
     ],
     "research_basis": "Muñoz-Ortiz et al. (2024) UPOS data shows SCONJ at 1.41% in human text vs. 1.37-1.85% in LLMs, while CCONJ is consistently higher in AI."

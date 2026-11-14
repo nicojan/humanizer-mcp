@@ -39,8 +39,8 @@
       "id": "AP-005",
       "category": "structural",
       "before": "The brush-stroke wordmark comes from paint on paper, not the polished apps she gave up on.",
-      "after": "The wordmark is a brush stroke on paper. It looks handmade because it is.",
-      "explanation": "The 'x, not y' contrastive construction is an AI-characteristic rhetorical pattern. It creates a neat binary opposition that reads as constructed rather than conversational. Human writers are more likely to make the positive claim and let it stand on its own, or use a separate sentence for the contrast. Replace with a direct assertion followed by a short, confident close."
+      "after": "The brush-stroke wordmark comes from paint on paper. She gave up on the polished apps.",
+      "explanation": "The 'x, not y' contrastive construction is an AI-characteristic rhetorical pattern. It creates a neat binary opposition that reads as constructed rather than conversational. Human writers are more likely to make the positive claim and let it stand on its own, or use a separate sentence for the contrast. Replace with a direct assertion for each fact, and add no closing line."
     },
     {
       "id": "AP-006",
@@ -81,8 +81,8 @@
       "id": "AP-011",
       "category": "structural",
       "before": "The conference brings together global SEO professionals, marketing experts, and growth hackers to discuss the latest trends in digital marketing. The event features keynote sessions, panel discussions, and networking opportunities.",
-      "after": "The conference covers SEO trends and growth strategies, with talks and networking sessions.",
-      "explanation": "AI overuses the 'rule of three' (three-item lists in parallel structure). Vary list lengths: sometimes two items, sometimes four, sometimes embedded in prose rather than listed. Two consecutive rule-of-three constructions is a strong AI tell."
+      "after": "The conference brings together global SEO professionals and marketing experts, along with growth hackers, to discuss the latest trends in digital marketing. The event features keynote sessions and panel discussions, as well as networking opportunities.",
+      "explanation": "AI overuses the 'rule of three' (three-item lists in parallel structure). List as many items as the content has, and embed them in prose where they read as one point. Two consecutive rule-of-three constructions is a strong AI tell."
     },
     {
       "id": "AP-012",
@@ -144,15 +144,15 @@
       "id": "AP-020",
       "category": "structural",
       "before": "The platform provides data analytics, real-time reporting, and automated alerts. It supports integration with CRM systems, email platforms, and project management tools. Users benefit from customizable dashboards, exportable reports, and role-based access controls.",
-      "after": "The platform's core strength is its analytics; the reporting updates in real time, which is useful for teams that need to react fast. It plugs into most CRM systems and email platforms. The dashboards are customizable, though the role-based access setup takes some patience.",
-      "explanation": "Three consecutive three-item parallel lists is a strong AI structural tell. Human writers vary list length, embed items in flowing sentences, and add evaluative commentary between items rather than stacking feature lists. The human version has lists of different sizes and adds judgment ('useful for teams', 'takes some patience'). Note: evaluative judgments like 'takes some patience' should only be added if grounded in the source material or known facts about the product; do not invent product opinions."
+      "after": "The platform provides data analytics, real-time reporting and automated alerts. It integrates with CRM systems and email platforms as well as project management tools, and users get customizable dashboards and exportable reports, along with role-based access controls.",
+      "explanation": "Three consecutive three-item parallel lists is a strong AI structural tell. Fold the lists into fewer sentences and group the items as the source groups them. Keep every item and add no judgment of the product; any opinion comes from the source or the user (absolute_rules AR-001)."
     },
     {
       "id": "AP-021",
       "category": "structural",
       "before": "Machine learning models analyze large datasets to identify patterns. These patterns help businesses make better decisions. The technology continues to improve with more data. Companies across industries are adopting these tools. The results have been consistently impressive across sectors.",
       "after": "Machine learning models find patterns in large datasets that help businesses make better decisions. The models improve as they see more data. Companies across industries are adopting them. Across sectors, the results have been consistently impressive.",
-      "explanation": "Every sentence in the AI version is short and about the same length, and each states one claim in the same Subject-Verb-Object order. The rewrite folds the first two claims into one sentence with a relative clause, shortens the rest, and moves 'across sectors' to the front of the last sentence, so the lengths and openings differ. Every claim is the original's; none is added or softened."
+      "explanation": "Every sentence in the AI version is short and about the same length, and each states one claim in the same Subject-Verb-Object order. The rewrite folds the first two claims into one sentence with a relative clause, shortens the rest, and moves 'across sectors' to the front of the last sentence. Lengths and openings follow the content. Every claim is the original's; none is added or softened."
     },
     {
       "id": "AP-022",
@@ -187,14 +187,14 @@
       "category": "structural",
       "before": "Data security is a critical concern for modern businesses. With the increasing frequency of cyber attacks, companies must prioritize protecting their sensitive information. Implementing robust security measures can help mitigate these risks. Organizations that invest in security are better positioned for long-term success.\n\nEmployee training is another important aspect of data security. Many security breaches occur due to human error, making education essential. Regular training sessions can help employees identify potential threats. A well-trained workforce serves as the first line of defense against cyber attacks.",
       "after": "Cyber attacks are getting more frequent, so companies need to protect their sensitive data. Strong security measures can help reduce that risk. Companies that invest in security are better positioned for long-term success.\n\nMany breaches come from human error, which makes training essential. Regular training can help employees spot threats, and a well-trained workforce is the first line of defense against an attack.",
-      "explanation": "The AI version builds both paragraphs on the same plan: a topic sentence, supporting sentences and a concluding line. The rewrite drops the topic sentences, which only announced the subject, links cause and effect with 'so' and 'which', and gives the two paragraphs different lengths. It keeps the original's claims and adds none. If the source names specific mistakes or training methods, use them; do not invent examples to make the text feel concrete."
+      "explanation": "The AI version builds both paragraphs on the same plan: a topic sentence, supporting sentences and a concluding line. The rewrite drops the topic sentences, which only announced the subject, links cause and effect with 'so' and 'which', and lets each paragraph run as long as its points need. It keeps the original's claims and adds none. If the source names specific mistakes or training methods, use them; do not invent examples to make the text feel concrete."
     },
     {
       "id": "AP-027",
       "category": "psycholinguistic",
       "before": "The project was completed on schedule. The team utilized agile methodology to manage their workflow effectively. Key milestones were met consistently throughout the development process. Stakeholder feedback was incorporated at each stage. The final deliverable exceeded expectations in terms of both quality and scope.",
-      "after": "Somehow, we shipped on time. I still don't fully understand how. The first two sprints were a mess, and we lost a week to that authentication bug that kept coming back. But the team figured it out. Teodora's idea to run daily standups on the blocker board (instead of the usual status updates that nobody listens to) probably saved us. The client's happy. We're exhausted.",
-      "explanation": "First-person perspective introduced. Specific details (authentication bug, Teodora, blocker board) replace abstract claims. Honest admission of difficulty ('I still don't fully understand how'). Emotional texture ('We're exhausted'). Parenthetical aside with opinion ('nobody listens to'). Uneven development: more space for the key insight, less for the outcome. Em-dash from an earlier version replaced with a period. Note: this rewrite injects significant specifics (Teodora, the authentication bug); apply only when those specifics are present in source notes, otherwise keep the rewrite vaguer. A specific name belongs to the source notes. A stock default name in an example teaches the tell it was meant to cure."
+      "after": "The project finished on schedule. The team used agile methods to manage its work well, met its key milestones throughout and worked stakeholder feedback in at each stage. The final deliverable exceeded expectations in both quality and scope.",
+      "explanation": "The rewrite restates the before's claims in plain words and keeps what the source says. It adds no first person, name, feeling or event. Specific details such as a person's name or a bug come only from the source notes. Where the notes give none, keep the claims general, as here. A stock default name in an example teaches the tell it was meant to cure."
     },
     {
       "id": "AP-028",

@@ -41,12 +41,12 @@
         "guidance": "A complex sentence ('While the data suggests one thing, the experience on the ground, which few researchers have examined closely, points in another direction') can be followed by a simple one when the next fact is simple ('Two of the three sites reported the same drop.'). The simple sentence carries a fact; a short abstract verdict in that slot is a model habit."
       },
       {
-        "rule": "Front-load modifiers occasionally.",
-        "guidance": "Instead of always 'The system processes data efficiently,' sometimes write 'Efficiently, the system processes data.' Vary which elements get emphasis through position."
+        "rule": "Put the element that needs emphasis where it gets it.",
+        "guidance": "Order a sentence by the emphasis the content needs. Never move a word to the front for variety."
       },
       {
         "rule": "Use passive voice selectively.",
-        "guidance": "Instruction-tuned models use the agentless passive less often than human writers do, so do not strip passives to sound human. Use the passive where the object matters more than the actor ('The bridge was closed for two days'), and the active where the actor is the news. Human writers are uneven here; an even, all-active surface is its own pattern.",
+        "guidance": "Instruction-tuned models use the agentless passive less often than human writers do, so do not strip passives to sound human. Use the passive where the object matters more than the actor ('The bridge was closed for two days'), and the active where the actor is the news. Keep the passives the source uses where the object matters, and set no ratio.",
         "history": "Corrected 2026-10-30: instruction-tuned models use the agentless passive LESS than humans, not more (GPT-4o at about half the human rate, Reinhart et al., PNAS 2025)."
       },
       {
@@ -58,8 +58,8 @@
         "guidance": "A question belongs where the writer or the source puts one to the reader or to the argument. A one-line question placed to break a run of statements reads as a model's cadence."
       },
       {
-        "rule": "Vary clause ordering to shift emphasis.",
-        "guidance": "Human writers reorder clauses to put emphasis where they want it. 'Despite the cost, they went ahead' vs. 'They went ahead, despite the cost': same information, different emphasis. AI tends to use one ordering pattern consistently."
+        "rule": "Order clauses for the emphasis you want.",
+        "guidance": "Reorder clauses to put the emphasis where the content needs it. 'Despite the cost, they went ahead' and 'They went ahead, despite the cost' carry the same information with different emphasis."
       },
       {
         "rule": "Prefer verb-led constructions over noun-chain constructions.",
@@ -116,25 +116,25 @@
   "n_gram_patterns": {
     "ai_pattern": "AI text shows higher frequencies for word n-grams of order 3+, meaning it repeats the same multi-word phrases more than human writers. LLMs also repeat longer part-of-speech sequences more frequently. For n-grams of order 6+, LLMs produce more novel combinations than humans, while for shorter n-grams they produce fewer novel combinations.",
     "rewriting_guidance": [
-      "Check for repeated 3–4 word phrases across the document. If the same phrase appears more than twice and does not name a thing, rephrase at least one instance. A phrase that names a thing keeps one wording throughout, so keep the source's term.",
-      "Avoid formulaic sentence openings. If three sentences start with 'This [noun]...' or 'The [noun]...', rewrite at least one with a different construction."
+      "Check for repeated 3–4 word phrases across the document. If the same phrase appears more than twice and does not name a thing, rephrase the repeats. A phrase that names a thing keeps one wording throughout, so keep the source's term.",
+      "Avoid formulaic sentence openings. If three sentences start with 'This [noun]...' or 'The [noun]...', rewrite the openings that repeat by habit, and keep a repeat the content needs."
     ]
   },
   "enumeration_patterns": {
     "ai_pattern": "AI over-relies on parallel list structures within prose. Three-item lists in parallel form ('X, Y, and Z') appear at a much higher rate than in human text. AI also produces more phrasal coordination and stacks multiple coordinate structures in the same sentence.",
-    "human_pattern": "Human writers embed items in flowing prose rather than listing them. When they do list, the items are often different lengths, and they vary between two-item, three-item, and four-item constructions. They also use subordination rather than coordination to relate ideas.",
+    "human_pattern": "Human writers embed items in flowing prose rather than listing them. When they do list, they list as many items as there are, so list lengths differ, and the items are often different lengths. They also use subordination rather than coordination to relate ideas.",
     "rules": [
       {
-        "rule": "Vary list lengths. Do not default to three items.",
-        "guidance": "If three consecutive sentences or paragraphs contain three-item lists, rewrite at least one. Sometimes two items is enough. Sometimes four is better. Sometimes the 'list' should just be a sentence: 'The main benefit is speed, though reliability matters too.'"
+        "rule": "List as many items as there are.",
+        "guidance": "If three consecutive sentences or paragraphs contain three-item lists, check each against the source. Keep the items it has, and merge or split lists by content. Never pad a list or cut an item to change a count. Where the items read as one point, a sentence can carry them: 'The report exports to CSV and PDF.'"
       },
       {
         "rule": "Embed items in prose rather than enumerating them.",
-        "guidance": "'The platform offers analytics, reporting, and dashboards' → 'The platform's main draw is its analytics; the reporting fills in the gaps, and the dashboards are mostly for client presentations.' Items gain texture when they're described, not listed."
+        "guidance": "Where the source says how the items relate, put that relation in the sentence. If the notes say the dashboards present the analytics and reporting, 'The platform offers analytics, reporting, and dashboards' → 'The platform offers analytics and reporting, and its dashboards present both.' Add no relation the source lacks (absolute_rules AR-001)."
       },
       {
-        "rule": "Replace coordination with subordination where one item matters more.",
-        "guidance": "'The team designed, developed, and deployed the system' → 'The team designed and deployed the system; developing it took most of the time.' Subordination signals that the writer has judged the relative importance of items, which AI rarely does."
+        "rule": "Replace coordination with subordination where the source says one item matters more.",
+        "guidance": "If the notes say deployment was the hardest part, 'The team designed, developed, and deployed the system' → 'The team designed and developed the system before deploying it, which was the hardest part.' Rank only what the source ranks (absolute_rules AR-001)."
       }
     ],
     "research_basis": "Strübbe et al. (2025) and Wu (2025) both find higher coordination and enumeration in AI text. Anti-pattern AP-011 addresses the 'rule of three' specifically; this rule generalizes the principle."

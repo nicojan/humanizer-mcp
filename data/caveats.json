@@ -14,7 +14,7 @@
     {
       "id": "perplexity_is_not_quality",
       "statement": "High perplexity does not imply creativity or quality.",
-      "explanation": "Unusual word choices can signal human authorship or they can signal confused, unclear writing. The goal is contextually appropriate unpredictability (surprising choices that still fit), not randomness."
+      "explanation": "Unusual word choices can signal human authorship or they can signal confused, unclear writing. Word choice fits the context, and no word is picked for being unusual."
     },
     {
       "id": "burstiness_is_not_authenticity",
@@ -50,7 +50,7 @@
     {
       "id": "uniform_application_paradox",
       "statement": "Applying human-patterning rules uniformly is itself an AI signal.",
-      "explanation": "This is the most important caveat. If every paragraph ends on the same kind of closer, turns on the same contrast or opens with the same transition, the uniformity of the edits becomes detectable. Apply rules unevenly: some paragraphs get heavy editing, others barely change. The distribution of interventions should itself be irregular. (Note: em-dashes are never a valid human intervention; see absolute_rules AR-002.) This is a Tier-2 principle: it applies to stylistic moves (word choice, transitions, closers, contrasts, texture). It does not apply to Tier-1 prohibitions (em-dashes and banned structures), which must always be eliminated. See foundation.enforcement.non_uniformity_scope."
+      "explanation": "This is the most important caveat. If every paragraph ends on the same kind of closer, turns on the same contrast or opens with the same transition, the uniformity of the edits becomes detectable. Apply rules unevenly: some paragraphs get heavy editing, others barely change. Edit where the draft has a tell; a paragraph without one stays as written. (Note: em-dashes are never a valid human intervention; see absolute_rules AR-002.) This is a Tier-2 principle: it applies to stylistic moves (word choice, transitions, closers, contrasts, texture). It does not apply to Tier-1 prohibitions (em-dashes and banned structures), which must always be eliminated. See foundation.enforcement.non_uniformity_scope."
     },
     {
       "id": "newer_model_convergence",

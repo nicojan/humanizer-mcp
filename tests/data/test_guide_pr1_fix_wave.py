@@ -72,7 +72,7 @@ CONDITIONED_ON_SOURCE = (
     "This is the most reliable method",
     "usability issues",
     "then blunt",
-    "rephrase at least one instance",
+    "rephrase the repeats",
 )
 
 
@@ -148,7 +148,8 @@ def test_cross_references_name_the_right_entries():
     assert "AP-029" in _ap("AP-052")["explanation"]
     assert "AP-021" not in _ap("AP-052")["explanation"]
     assert "Sarah" not in _ap("AP-027")["explanation"]
-    assert "Teodora" in _ap("AP-027")["explanation"]
+    assert "Teodora" not in _ap("AP-027")["explanation"]
+    assert "source notes" in _ap("AP-027")["explanation"]
 
 
 def test_copula_rule_offers_no_short_abstract_verdict():

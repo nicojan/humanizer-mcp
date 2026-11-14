@@ -9,8 +9,8 @@
     "academic": {
       "label": "Academic and research writing",
       "description": "Formal register where some AI-correlated patterns (structured transitions, passive voice, hedging) are actually conventional. The rewriting challenge is distinguishing AI-formulaic from field-conventional usage.",
-      "perplexity_target": "moderate to high",
-      "burstiness_target": "longer sentences where the argument is dense, plainer ones where it relaxes",
+      "perplexity_target": "Not a target. Word choice follows the field's own terms.",
+      "burstiness_target": "Not a target. Sentence length follows the argument, and humanizer_check_text reports the spread.",
       "layer_adjustments": {
         "lexical_patterns": {
           "aggressiveness": "moderate",
@@ -30,20 +30,20 @@
         },
         "psycholinguistic_texture": {
           "aggressiveness": "low",
-          "notes": "Academic writing is more polished than other types, so many cognitive load artifacts get edited out naturally. Focus on: uneven idea development (more space for important findings), field-specific vocabulary that reflects the author's expertise, and the evaluative language the source gives."
+          "notes": "Academic writing is more polished than other types, so many cognitive load artifacts get edited out naturally. Focus on: depth that follows the evidence (more space for important findings), field-specific vocabulary that reflects the author's expertise, and the evaluative language the source gives."
         }
       },
       "special_considerations": [
         "ESL academic writing may align with AI patterns not because it's AI-generated but because it follows instruction-driven structure. Be cautious about over-correcting ESL-conventional patterns.",
         "Citations and specific references are strong human signals in academic writing. Keep every citation, date, named researcher and study the source gives, and use them in place of vague references to 'recent research' or 'studies show.' Never invent one. When drafting a piece that needs a citation the source lacks, leave a marked placeholder as absolute_rules AR-001 describes.",
-        "Academic writing should show the author's intellectual position. Pure summary without evaluation reads as AI."
+        "Keep the position the author takes visible; a passage the source only summarizes stays a summary (absolute_rules AR-001)."
       ]
     },
     "marketing": {
       "label": "Marketing and copywriting",
       "description": "Persuasive, audience-aware prose where energy and personality matter. AI marketing copy is detectable because it lacks genuine voice, relies on buzzwords, and maintains uniform enthusiasm.",
-      "perplexity_target": "moderate to high",
-      "burstiness_target": "short where the claim is simple, longer where the case needs building",
+      "perplexity_target": "Not a target. Word choice follows the brief and the product's own terms.",
+      "burstiness_target": "Not a target. Sentence length follows the claim, and humanizer_check_text reports the spread.",
       "layer_adjustments": {
         "lexical_patterns": {
           "aggressiveness": "high",
@@ -68,15 +68,15 @@
       },
       "special_considerations": [
         "The line between 'energetic' and 'AI-generated enthusiasm' is thin. The difference is specificity. AI says 'amazing results.' A human says 'a 34% increase in three months,' with the number taken from the source.",
-        "Marketing copy should sound like it was written by someone who actually uses the product or believes in the service, not by someone describing it from the outside.",
-        "Avoid the AI pattern of listing three benefits in parallel structure with the same sentence construction. Vary how benefits are presented."
+        "Write from what the brief and the source say about the product; imply no use or belief the source does not give.",
+        "Avoid the AI pattern of listing three benefits in parallel structure with the same sentence construction. Present each benefit the way its content needs."
       ]
     },
     "technical": {
       "label": "Technical documentation",
       "description": "Clarity-first prose where precision matters more than personality. Some uniformity is expected and appropriate. The AI signal in technical writing is not formality; it's generic formality without domain precision.",
-      "perplexity_target": "moderate; domain-specific terminology raises perplexity naturally",
-      "burstiness_target": "short and even in procedures, longer in explanatory passages",
+      "perplexity_target": "Not a target. Domain terms are used as the source uses them.",
+      "burstiness_target": "Not a target. Procedures run short and explanations longer because the content does, and humanizer_check_text reports the spread.",
       "layer_adjustments": {
         "lexical_patterns": {
           "aggressiveness": "low to moderate",
@@ -101,15 +101,15 @@
       },
       "special_considerations": [
         "Technical writing should give the version numbers, configuration details and platform names the source supplies. AI tends to generalize; human technical writers are precise.",
-        "Include warnings, edge cases, and known issues. AI tends to present the happy path. Human documentation includes 'Be careful with X' and 'This doesn't work if Y.'",
+        "Keep the warnings, edge cases and known issues the source or the user gives, and, when drafting, leave a marked placeholder where the doc needs one that is missing (absolute_rules AR-001).",
         "Code examples should include comments that reflect the developer's thinking, not just documentation boilerplate."
       ]
     },
     "general_prose": {
       "label": "General professional prose",
       "description": "Business writing, reports, email, correspondence, blog posts, and general-purpose content. The broadest category where all layers apply at moderate levels.",
-      "perplexity_target": "moderate",
-      "burstiness_target": "plain points run short, explanations run longer",
+      "perplexity_target": "Not a target. Word choice follows the subject and the reader.",
+      "burstiness_target": "Not a target. Sentence length follows the point, and humanizer_check_text reports the spread.",
       "layer_adjustments": {
         "lexical_patterns": {
           "aggressiveness": "moderate to high",
@@ -121,7 +121,7 @@
         },
         "sentiment_tone": {
           "aggressiveness": "moderate",
-          "notes": "Professional prose should reflect the writer's judgment and experience. Allow opinions, evaluations, and recommendations to come through clearly. The neutral, hedging tone of AI is most detectable in this category because readers expect personality."
+          "notes": "Let the opinions, evaluations and recommendations the user or the source holds come through clearly, and invent none (absolute_rules AR-001). The neutral, hedging tone of AI is most detectable in this category."
         },
         "discourse_cohesion": {
           "aggressiveness": "moderate",
@@ -141,20 +141,20 @@
     "creative": {
       "label": "Creative and literary prose",
       "description": "Fiction, short stories, personal essays, narrative non-fiction, poetry prose, and any text where voice, rhythm, and originality are the primary goals. This is the content type where AI is most detectable: LLM outputs cluster tightly while human texts scatter broadly in stylometric analysis.",
-      "perplexity_target": "set by the narrator's world and vocabulary; no number to aim for",
-      "burstiness_target": "set by the scene, short in tension and long in reflection",
+      "perplexity_target": "Not a target. Word choice comes from the narrator's world and the author's draft.",
+      "burstiness_target": "Not a target. Sentence length follows the scene, and humanizer_check_text reports the spread.",
       "layer_adjustments": {
         "lexical_patterns": {
           "aggressiveness": "high",
-          "notes": "Creative writing demands the most distinctive vocabulary. Every AI-flagged word should be replaced. Beyond replacement, the writer's voice should include idiosyncratic word choices, sensory language, and domain-specific vocabulary drawn from the character's or narrator's world. Generic formal vocabulary is fatal in creative prose."
+          "notes": "Creative writing demands the most precise vocabulary, drawn from the narrator's world. Every AI-flagged word should be replaced. Beyond replacement, the voice comes from the narrator's world and the author's draft, so use the domain-specific vocabulary they supply and add no quirks of your own. Generic formal vocabulary is fatal in creative prose."
         },
         "structural_patterns": {
           "aggressiveness": "very high",
-          "notes": "Let sentence structure follow the scene, short and sharp in tension and long and winding in reflection. Paragraph length can swing widely when the story calls for it. A sentence can open with 'And' or 'But'. A fragment belongs in dialogue or where the scene breaks off; a run of fragments placed for rhythm reads as a model's cadence."
+          "notes": "Let sentence structure follow the scene, with each moment getting the length it needs. Paragraph length can swing widely when the story calls for it. A sentence can open with 'And' or 'But'. A fragment belongs in dialogue or where the scene breaks off; a run of fragments placed for rhythm reads as a model's cadence."
         },
         "sentiment_tone": {
           "aggressiveness": "very high",
-          "notes": "Creative writing should never be neutral. The writer's emotional stance should saturate the prose. Show emotions through specific detail and action, not emotion-words. 'She slammed the drawer shut and stood there, breathing' conveys more anger than 'She felt angry.' Allow contradictory emotions within the same passage; humans feel multiple things at once."
+          "notes": "Creative writing keeps the emotional stance the draft takes, and adds none. Show emotions through specific detail and action, not emotion-words. 'She slammed the drawer shut and stood there, breathing' conveys more anger than 'She felt angry.' Keep the mixed feelings the draft gives a moment."
         },
         "discourse_cohesion": {
           "aggressiveness": "high",
@@ -162,21 +162,21 @@
         },
         "psycholinguistic_texture": {
           "aggressiveness": "very high",
-          "notes": "Give more space to the moments that matter and less to the ones that don't. A narrator who corrects themselves or addresses the reader belongs where the voice already does it; do not add those moves for texture. The prose should sound like one particular person with particular preoccupations."
+          "notes": "Give more space to the moments that matter and less to the ones that don't. A narrator who corrects themselves or addresses the reader belongs where the voice already does it; do not add those moves for texture. The voice comes from the draft and the narrator; add none."
         }
       },
       "special_considerations": [
         "O'Sullivan (2025) demonstrates via Burrows' Delta that LLM creative writing forms tight, uniform clusters while human creative writing scatters broadly. The single most important quality for creative prose is stylistic individuality; the text should not read like it could have been written by anyone.",
         "Stylistic individuality reaches down to the small words a narrator leans on. Keep the source's habits there, and do not adjust common words to move a statistic.",
-        "Voice is the highest priority. If the creative text doesn't sound like a specific, opinionated, slightly imperfect human being, no amount of lexical substitution or structural variation will save it."
+        "Voice is the highest priority. If the creative text doesn't sound like the author's or the narrator's own voice, no amount of lexical substitution or structural variation will save it. Keep the voice the draft has and add no imperfection."
       ],
       "research_basis": "O'Sullivan (2025) applies Burrows' Delta and MDS clustering to short stories, finding clear and consistent stylistic distinctions between human and LLM creative texts."
     },
     "case_study": {
       "label": "Case studies, portfolio and product copy",
       "description": "Writing that explains a product or a piece of design work to someone who has never used it: portfolio case studies, landing pages, release notes and app-store text. Its reader is a stranger skimming for one decision and its payoff, often a hiring manager with a minute to spare. AI drafts here explain the mechanism in long chains, borrow the product's internal words, and close sections with brochure benefits or tidy maxims. A month of reviewer flags on one portfolio passed the checker clean (caveats.reviewed_copy_passes_the_checker), so the self-review items carry most of this profile.",
-      "perplexity_target": "moderate",
-      "burstiness_target": "short plain sentences, with a longer one only where a decision needs its reason",
+      "perplexity_target": "Not a target. Word choice follows the source notes and a reader new to the product.",
+      "burstiness_target": "Not a target. Sentence length follows the content, and humanizer_check_text reports the spread.",
       "layer_adjustments": {
         "lexical_patterns": {
           "aggressiveness": "high",
@@ -201,7 +201,7 @@
       },
       "special_considerations": [
         "Test every sentence on a stranger: could someone who has never used the product follow it on first read? If not, rewrite it before checking anything else.",
-        "Make at least one UX decision land per piece: a plain heading about the user, media that shows it, and a short why. One that lands beats five that are listed.",
+        "Make the UX decision the source names as the main one land: a plain heading about the user, media that shows it, and a short why.",
         "A clean humanizer_check_text report says little on this register. Read the self-review items for the 'so' tail, backstory order, the cold-reader test and the performative framing beat, because they hold what the regex layer cannot catch.",
         "Credit and history belong where readers expect them (a repository, a changelog), not in the story of the design."
       ]
@@ -209,8 +209,8 @@
     "resume": {
       "label": "Résumés and CVs",
       "description": "A résumé is fragments and lists by design: a role label, dated facts and a Skills block that recruiters and parsers scan. Pass content_type 'resume' (or 'cv') to humanizer_check_text and the checker stops measuring sentence-length variance, segment uniformity and rule-of-three density, which are undefined or wrong for this format. Every other layer still runs. AI drafts here fail on voice, not structure: an adjective about the writer's own habits, a narrative-ordering closer, a lesson clause.",
-      "perplexity_target": "low to moderate",
-      "burstiness_target": "not applicable; fragments and lists are the format",
+      "perplexity_target": "Not a target. Word choice follows the role's own terms.",
+      "burstiness_target": "Not applicable, and not a target; fragments and lists are the format.",
       "layer_adjustments": {
         "lexical_patterns": {
           "aggressiveness": "high",

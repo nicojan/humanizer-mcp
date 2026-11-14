@@ -56,8 +56,8 @@
       },
       {
         "id": "generic_competence",
-        "short": "Cut smooth but empty phrasing, reflexive hedges and motivational closers, and keep at least one concrete detail taken from the source or the user.",
-        "detail": "Ask whether this could have been written about almost any topic, by almost anyone. Cut smooth but empty phrasing, reflexive hedges and motivational closers. State the point of view the user or the source holds, and give at least one concrete, specific, checkable detail from the source or the user, never invented (see AR-001).",
+        "short": "Cut smooth but empty phrasing, reflexive hedges and motivational closers, and keep the concrete details the source or the user gives.",
+        "detail": "Ask whether this could have been written about almost any topic, by almost anyone. Cut smooth but empty phrasing, reflexive hedges and motivational closers. State the point of view the user or the source holds, and keep the concrete, specific, checkable details the source or the user gives, never invented (see AR-001).",
         "applies_to": [
           "all"
         ]
