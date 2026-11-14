@@ -46,3 +46,28 @@ def test_density_surfaces_through_run_checks():
     )
     r = run_checks(text, "prose")
     assert any(m.get("type") == "rule_of_three_density" for m in r["must_clear"])
+
+
+NEW_DENSITY_FIX = (
+    "Two or more parallel three-item lists sit close together, a rule-of-three "
+    "tell. Check each list against the source and keep every item it gives. "
+    "Merge or split lists by content; never pad a list or cut an item to change "
+    "a count. Where the items read as one point, fold them into a sentence. Add "
+    "nothing the source lacks (absolute_rules AR-001)."
+)
+
+
+def test_density_fix_text_keeps_every_source_item():
+    text = (
+        "Every send, payment, or publish goes through a gate. "
+        "A person approves, edits, or rejects it."
+    )
+    fix = find_rule_of_three_density(text)[0]["fix"]
+    assert fix == NEW_DENSITY_FIX
+    for old in (
+        "drop to two items",
+        "expand to four",
+        "commentary between them",
+        "Vary one",
+    ):
+        assert old not in fix

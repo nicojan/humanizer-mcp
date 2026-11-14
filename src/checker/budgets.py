@@ -52,8 +52,8 @@ def find_budget_overruns(
             "budget": budget,
             "detail": (
                 f"{name} appears {count} times in the text supplied; the "
-                f"budget for the whole piece is {budget}. A repeated "
-                f"rhetorical shape is the durable tell, not any single use."
+                f"budget for the whole piece is {budget}. The repeated "
+                f"rhetorical shape is the durable tell, more than any single use."
             ),
             "fix": (
                 "Keep the strongest instance and rewrite the rest. Counted "

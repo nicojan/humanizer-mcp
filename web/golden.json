@@ -378,7 +378,7 @@
           "type": "comma_splice",
           "offset": 22,
           "excerpt": "The results were clear, we shipped the release that night.",
-          "fix": "Two independent clauses are joined by only a comma. Use a period (two sentences), or a semicolon when the clauses are closely joined; or add a coordinating conjunction (and, but, so) after the comma. If the splice is a deliberate stylistic choice, justify it."
+          "fix": "Two independent clauses are joined by only a comma. Use a period (two sentences), or a semicolon when the clauses are closely joined. A coordinating conjunction after the comma also works: 'and' for an addition, and 'so' or 'but' only where the source states a cause or a contrast. If the splice is a deliberate stylistic choice, justify it."
         }
       ],
       "metrics": {
@@ -429,7 +429,7 @@
           "type": "comma_splice",
           "offset": 14,
           "excerpt": "It rained hard, we quickly left the field.",
-          "fix": "Two independent clauses are joined by only a comma. Use a period (two sentences), or a semicolon when the clauses are closely joined; or add a coordinating conjunction (and, but, so) after the comma. If the splice is a deliberate stylistic choice, justify it."
+          "fix": "Two independent clauses are joined by only a comma. Use a period (two sentences), or a semicolon when the clauses are closely joined. A coordinating conjunction after the comma also works: 'and' for an addition, and 'so' or 'but' only where the source states a cause or a contrast. If the splice is a deliberate stylistic choice, justify it."
         }
       ],
       "metrics": {
@@ -795,7 +795,7 @@
           "confidence": "medium",
           "offset": 0,
           "excerpt": "The implementation of the automation of the reduction of complexity remains a priority for the organization this quarter.",
-          "fix": "Unpack the nouns back into verbs; name the agent."
+          "fix": "Unpack the nouns back into verbs; name the agent where the source names one."
         }
       ],
       "metrics": {
@@ -848,7 +848,7 @@
           "confidence": "low",
           "offset": 76,
           "excerpt": "…ch over six weeks with the whole team.  The craft is mostly restraint.",
-          "fix": "End on the concrete thing the passage is about. If the maxim is earned, attach it to a specific action rather than floating it as a closer."
+          "fix": "End on the concrete thing the passage is about. If the maxim is earned, attach it to an action the passage already describes rather than floating it as a closer."
         }
       ],
       "metrics": {
@@ -938,6 +938,58 @@
     }
   },
   {
+    "name": "rule_of_three_stacked_prose",
+    "content_type": "prose",
+    "text": "We built it for speed, scale, and safety. The team values trust, focus, and craft. Our clients get clarity, momentum, and results. The office has light, space, and quiet.",
+    "rubric": "short",
+    "report": {
+      "prohibitions_clear": true,
+      "note": "prohibitions_clear means no hard prohibitions remain. It does NOT mean humanization is complete.",
+      "hard_violations": [],
+      "must_clear": [
+        {
+          "type": "rule_of_three_density",
+          "confidence": "low",
+          "count": 4,
+          "offset": 16,
+          "excerpt": "We built it for speed, scale, and safety. The team values trust, focus, and craft. Our clients get clarity, momentum, and results. The office has light, space, and quiet.",
+          "fix": "Two or more parallel three-item lists sit close together, a rule-of-three tell. Check each list against the source and keep every item it gives. Merge or split lists by content; never pad a list or cut an item to change a count. Where the items read as one point, fold them into a sentence. Add nothing the source lacks (absolute_rules AR-001)."
+        }
+      ],
+      "metrics": {
+        "sentence_count": 4,
+        "length_mean": 7.2,
+        "length_stdev": 0.4,
+        "min": 7,
+        "max": 8,
+        "length_metrics_apply": true,
+        "segment_variation": {
+          "segment_count": 1,
+          "uniformity_flag": false
+        }
+      },
+      "manual_review": [
+        "Check that claims, numbers, names, stance and the requested tone match the source, and that a new draft invents no name, number, date, quote or experience.",
+        "Read the draft in your head and recombine or split any run of sentences that march at one length and shape, starting with runs of short fragments.",
+        "Count each rhetorical shape (antithesis, copula maxim, rule of three) across the whole piece and vary the construction wherever one repeats.",
+        "Count every 'X, not Y' contrast and every negation flip ('It's not X. It's Y.') across the whole piece, and recast the repeats as positive claims.",
+        "Let each section's texture follow its job, and check that the piece does not hold one flat style from start to finish.",
+        "Cut smooth but empty phrasing, reflexive hedges and motivational closers, and keep the concrete details the source or the user gives.",
+        "Find abstract nouns acting as the subject of a human verb ('the work decided', 'the layout carries the weight') and give each sentence a person or concrete subject.",
+        "Delete any closer, label or headline that performs insight or closure without adding a fact, and end each section on its last substantive point.",
+        "Keep the caveats, exceptions and open points the source has instead of smoothing every thread into a neat resolution, and add none it lacks.",
+        "Read every heading and dek, cut any part after the comma that only says the subject matters, and allow one such label per document at most.",
+        "Before the final rubric=\"full\" check, read for stale figures, words that can go and passives that hide who acted, then confirm prohibitions_clear on the result.",
+        "Change constructions and section texture as well as words, because vocabulary swaps alone leave the draft's shape as it was.",
+        "Read every run of three or more sentences that open the same way, keep one only if it builds, and cut the repetition where each limb restates the first.",
+        "Cut any sentence that explains what the image, line or example before it already showed.",
+        "In an essay, post, opinion piece or cover letter, look for one I, you or question to the reader, and add one only where it states a position the source holds.",
+        "Use 'says' for every quote attribution, and drop bold-label bullets, emoji at the start of lines and stock names unless the house style wants them."
+      ],
+      "next_action": "Resolve every hard_violation. For each must_clear item, rewrite only the flagged span and keep the rest of the draft as it is, or justify the item. Re-run humanizer_check_text; stop after two fix rounds and justify any must_clear item left. A hard_violation is never justified, so keep fixing until prohibitions_clear is true. Then run one last check on the assembled document with rubric=\"full\" and do the self-review against your draft, changing only the spans an item points to. If the self-review changed anything, run humanizer_check_text once more and confirm prohibitions_clear is true before returning."
+    }
+  },
+  {
     "name": "rule_of_three",
     "content_type": "marketing",
     "text": "We design, build, and ship. We plan, test, and measure. Our tools are fast, clean, and simple.",
@@ -953,7 +1005,7 @@
           "count": 3,
           "offset": 3,
           "excerpt": "We design, build, and ship. We plan, test, and measure. Our tools are fast, clean, and simple.",
-          "fix": "Two or more parallel three-item lists sit close together, a strong rule-of-three tell. Vary one: drop to two items, expand to four, or fold the items into a sentence with commentary between them."
+          "fix": "Two or more parallel three-item lists sit close together, a rule-of-three tell. Check each list against the source and keep every item it gives. Merge or split lists by content; never pad a list or cut an item to change a count. Where the items read as one point, fold them into a sentence. Add nothing the source lacks (absolute_rules AR-001)."
         }
       ],
       "metrics": {
@@ -1009,7 +1061,7 @@
           "confidence": "low",
           "offset": 59,
           "excerpt": "…unt of a real project with real stakes. The genuine, authentic truth is that it actually happened, really.",
-          "fix": "End on the concrete thing the passage is about. If the maxim is earned, attach it to a specific action rather than floating it as a closer."
+          "fix": "End on the concrete thing the passage is about. If the maxim is earned, attach it to an action the passage already describes rather than floating it as a closer."
         },
         {
           "type": "credibility_insistence",
@@ -1019,7 +1071,7 @@
           "dominant_count": 3,
           "offset": 10,
           "excerpt": "This is a real account of a real project with real sta…",
-          "fix": "The text keeps vouching for its own account ('real' x3; 7 across the set), which a writer rarely needs to do. Cut the assertions and let the specifics carry the credibility; keep at most one where a contrast needs it."
+          "fix": "The text keeps vouching for its own account ('real' x3; 7 across the set), which a writer rarely needs to do. Cut the assertions and let the specifics already in the text make the case; keep at most one where a contrast needs it."
         }
       ],
       "metrics": {
@@ -1634,7 +1686,7 @@
           "type": "comma_splice",
           "offset": 13,
           "excerpt": "“This is real,” she said. The real story is that real…",
-          "fix": "Two independent clauses are joined by only a comma. Use a period (two sentences), or a semicolon when the clauses are closely joined; or add a coordinating conjunction (and, but, so) after the comma. If the splice is a deliberate stylistic choice, justify it."
+          "fix": "Two independent clauses are joined by only a comma. Use a period (two sentences), or a semicolon when the clauses are closely joined. A coordinating conjunction after the comma also works: 'and' for an addition, and 'so' or 'but' only where the source states a cause or a contrast. If the splice is a deliberate stylistic choice, justify it."
         },
         {
           "type": "banned_structure",
@@ -1643,7 +1695,7 @@
           "confidence": "low",
           "offset": 26,
           "excerpt": "“This is real,” she said. The real story is that real people did real work.",
-          "fix": "End on the concrete thing the passage is about. If the maxim is earned, attach it to a specific action rather than floating it as a closer."
+          "fix": "End on the concrete thing the passage is about. If the maxim is earned, attach it to an action the passage already describes rather than floating it as a closer."
         },
         {
           "type": "credibility_insistence",
@@ -1653,7 +1705,7 @@
           "dominant_count": 3,
           "offset": 30,
           "excerpt": "“This is real,” she said. The real story is that real people did real work…",
-          "fix": "The text keeps vouching for its own account ('real' x3; 3 across the set), which a writer rarely needs to do. Cut the assertions and let the specifics carry the credibility; keep at most one where a contrast needs it."
+          "fix": "The text keeps vouching for its own account ('real' x3; 3 across the set), which a writer rarely needs to do. Cut the assertions and let the specifics already in the text make the case; keep at most one where a contrast needs it."
         }
       ],
       "metrics": {
@@ -1876,7 +1928,7 @@
           "type": "comma_splice",
           "offset": 14,
           "excerpt": "She left early, they stayed until the very end of the n…",
-          "fix": "Two independent clauses are joined by only a comma. Use a period (two sentences), or a semicolon when the clauses are closely joined; or add a coordinating conjunction (and, but, so) after the comma. If the splice is a deliberate stylistic choice, justify it."
+          "fix": "Two independent clauses are joined by only a comma. Use a period (two sentences), or a semicolon when the clauses are closely joined. A coordinating conjunction after the comma also works: 'and' for an addition, and 'so' or 'but' only where the source states a cause or a contrast. If the splice is a deliberate stylistic choice, justify it."
         }
       ],
       "metrics": {
@@ -1927,7 +1979,7 @@
           "type": "comma_splice",
           "offset": 18,
           "excerpt": "We shipped the fix, it worked on the very first try.",
-          "fix": "Two independent clauses are joined by only a comma. Use a period (two sentences), or a semicolon when the clauses are closely joined; or add a coordinating conjunction (and, but, so) after the comma. If the splice is a deliberate stylistic choice, justify it."
+          "fix": "Two independent clauses are joined by only a comma. Use a period (two sentences), or a semicolon when the clauses are closely joined. A coordinating conjunction after the comma also works: 'and' for an addition, and 'so' or 'but' only where the source states a cause or a contrast. If the splice is a deliberate stylistic choice, justify it."
         }
       ],
       "metrics": {
@@ -2024,7 +2076,7 @@
           "dominant_count": 3,
           "offset": 32,
           "excerpt": "Actually, it works now. This is actual, actual proof of the actual result we g…",
-          "fix": "The text keeps vouching for its own account ('actual' x3; 3 across the set), which a writer rarely needs to do. Cut the assertions and let the specifics carry the credibility; keep at most one where a contrast needs it."
+          "fix": "The text keeps vouching for its own account ('actual' x3; 3 across the set), which a writer rarely needs to do. Cut the assertions and let the specifics already in the text make the case; keep at most one where a contrast needs it."
         }
       ],
       "metrics": {
@@ -2078,7 +2130,7 @@
           "dominant_count": 3,
           "offset": 43,
           "excerpt": "…this really the plan? Really? We need a genuine, genuine, genuine rethink now.",
-          "fix": "The text keeps vouching for its own account ('genuine' x3; 4 across the set), which a writer rarely needs to do. Cut the assertions and let the specifics carry the credibility; keep at most one where a contrast needs it."
+          "fix": "The text keeps vouching for its own account ('genuine' x3; 4 across the set), which a writer rarely needs to do. Cut the assertions and let the specifics already in the text make the case; keep at most one where a contrast needs it."
         }
       ],
       "metrics": {
@@ -2620,7 +2672,7 @@
           "confidence": "medium",
           "offset": 11,
           "excerpt": "The layout carries the weight of the argument every single time.",
-          "fix": "Name the agent and the effect. 'The layout carries the weight of the argument' -> 'The layout is what makes the argument land.' For the label form, say what the words must do: 'Eight words to carry' -> 'Eight words, and they have to do the whole job.'"
+          "fix": "Name the agent and the effect the source gives. 'The layout carries the weight of the argument' -> 'The layout presents the argument.' For the label form, state the plain fact: 'Eight words to carry' -> 'The headline has eight words.'"
         }
       ],
       "metrics": {
@@ -4708,7 +4760,7 @@
           "name": "clipped_retention_verdict",
           "count": 2,
           "budget": 1,
-          "detail": "clipped_retention_verdict appears 2 times in the text supplied; the budget for the whole piece is 1. A repeated rhetorical shape is the durable tell, not any single use.",
+          "detail": "clipped_retention_verdict appears 2 times in the text supplied; the budget for the whole piece is 1. The repeated rhetorical shape is the durable tell, more than any single use.",
           "fix": "Keep the strongest instance and rewrite the rest. Counted only within this call, so run the final check on the assembled document rather than section by section (caveats.per_section_checks_miss_document_budgets)."
         }
       ],
@@ -5029,7 +5081,7 @@
           "name": "time_back_refrain",
           "count": 3,
           "budget": 1,
-          "detail": "time_back_refrain appears 3 times in the text supplied; the budget for the whole piece is 1. A repeated rhetorical shape is the durable tell, not any single use.",
+          "detail": "time_back_refrain appears 3 times in the text supplied; the budget for the whole piece is 1. The repeated rhetorical shape is the durable tell, more than any single use.",
           "fix": "Keep the strongest instance and rewrite the rest. Counted only within this call, so run the final check on the assembled document rather than section by section (caveats.per_section_checks_miss_document_budgets).",
           "excerpts": [
             "I get my Fridays back in May. I get my evenings back too. I e…",
@@ -5226,7 +5278,7 @@
           "name": "graded_contrast_about",
           "count": 2,
           "budget": 1,
-          "detail": "graded_contrast_about appears 2 times in the text supplied; the budget for the whole piece is 1. A repeated rhetorical shape is the durable tell, not any single use.",
+          "detail": "graded_contrast_about appears 2 times in the text supplied; the budget for the whole piece is 1. The repeated rhetorical shape is the durable tell, more than any single use.",
           "fix": "Keep the strongest instance and rewrite the rest. Counted only within this call, so run the final check on the assembled document rather than section by section (caveats.per_section_checks_miss_document_budgets).",
           "excerpts": [
             "The job is less about speed and more about trust. Hiring is less about pedigree an…",
@@ -6350,7 +6402,7 @@
           "name": "appended_wh_label",
           "count": 2,
           "budget": 1,
-          "detail": "appended_wh_label appears 2 times in the text supplied; the budget for the whole piece is 1. A repeated rhetorical shape is the durable tell, not any single use.",
+          "detail": "appended_wh_label appears 2 times in the text supplied; the budget for the whole piece is 1. The repeated rhetorical shape is the durable tell, more than any single use.",
           "fix": "Keep the strongest instance and rewrite the rest. Counted only within this call, so run the final check on the assembled document rather than section by section (caveats.per_section_checks_miss_document_budgets)."
         }
       ],
@@ -6421,7 +6473,7 @@
           "name": "clipped_retention_verdict",
           "count": 2,
           "budget": 1,
-          "detail": "clipped_retention_verdict appears 2 times in the text supplied; the budget for the whole piece is 1. A repeated rhetorical shape is the durable tell, not any single use.",
+          "detail": "clipped_retention_verdict appears 2 times in the text supplied; the budget for the whole piece is 1. The repeated rhetorical shape is the durable tell, more than any single use.",
           "fix": "Keep the strongest instance and rewrite the rest. Counted only within this call, so run the final check on the assembled document rather than section by section (caveats.per_section_checks_miss_document_budgets)."
         }
       ],
@@ -6475,7 +6527,7 @@
           "confidence": "medium",
           "offset": 6,
           "excerpt": "Eight words to carry. Your answer first. Section three.",
-          "fix": "Name the agent and the effect. 'The layout carries the weight of the argument' -> 'The layout is what makes the argument land.' For the label form, say what the words must do: 'Eight words to carry' -> 'Eight words, and they have to do the whole job.'"
+          "fix": "Name the agent and the effect the source gives. 'The layout carries the weight of the argument' -> 'The layout presents the argument.' For the label form, state the plain fact: 'Eight words to carry' -> 'The headline has eight words.'"
         }
       ],
       "metrics": {
@@ -6570,7 +6622,7 @@
           "count": 2,
           "offset": 76,
           "excerpt": "…ng, and usability testing. Prototyping: Figma, Framer, and HTML, CSS and JavaScript. Teaching: curriculum design, assessment, and differentiated instruction.",
-          "fix": "Two or more parallel three-item lists sit close together, a strong rule-of-three tell. Vary one: drop to two items, expand to four, or fold the items into a sentence with commentary between them."
+          "fix": "Two or more parallel three-item lists sit close together, a rule-of-three tell. Check each list against the source and keep every item it gives. Merge or split lists by content; never pad a list or cut an item to change a count. Where the items read as one point, fold them into a sentence. Add nothing the source lacks (absolute_rules AR-001)."
         }
       ],
       "metrics": {
@@ -6690,7 +6742,7 @@
           "name": "contracted_negation_flip",
           "count": 2,
           "budget": 1,
-          "detail": "contracted_negation_flip appears 2 times in the text supplied; the budget for the whole piece is 1. A repeated rhetorical shape is the durable tell, not any single use.",
+          "detail": "contracted_negation_flip appears 2 times in the text supplied; the budget for the whole piece is 1. The repeated rhetorical shape is the durable tell, more than any single use.",
           "fix": "Keep the strongest instance and rewrite the rest. Counted only within this call, so run the final check on the assembled document rather than section by section (caveats.per_section_checks_miss_document_budgets).",
           "excerpts": [
             "It's not a tool. It's a partner. This isn't a bug. It's a featu…",
@@ -6756,7 +6808,7 @@
           "name": "contracted_negation_flip",
           "count": 2,
           "budget": 1,
-          "detail": "contracted_negation_flip appears 2 times in the text supplied; the budget for the whole piece is 1. A repeated rhetorical shape is the durable tell, not any single use.",
+          "detail": "contracted_negation_flip appears 2 times in the text supplied; the budget for the whole piece is 1. The repeated rhetorical shape is the durable tell, more than any single use.",
           "fix": "Keep the strongest instance and rewrite the rest. Counted only within this call, so run the final check on the assembled document rather than section by section (caveats.per_section_checks_miss_document_budgets).",
           "excerpts": [
             "It’s not about speed; it’s about trust. This isn’t a bug. It’s a feature…",

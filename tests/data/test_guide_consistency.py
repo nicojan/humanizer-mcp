@@ -11,9 +11,12 @@ alternatives are what the guide tells the model to write, so they must pass.
 Later tasks extend this module and reuse its helpers.
 """
 
+import ast
 import functools
 import json
 import re
+import sys
+from pathlib import Path
 from typing import Any, Iterator
 
 import pytest
@@ -265,12 +268,167 @@ def banned_fix_texts(data: dict | None = None) -> list[tuple[str, str]]:
     ]
 
 
+# Dict keys in src/checker whose string value is prose the report serves to the
+# calling model. Identifier keys (type, id, rule, name, confidence, phrase,
+# term, dominant_token, excerpt) are not prose and stay out. `short` and the
+# loader's `detail` only echo data the walks above already cover.
+SERVED_CODE_KEYS: frozenset[str] = frozenset({
+    "fix", "detail", "note", "explanation", "next_action", "message", "reason",
+    "how_to_fix",
+})
+# Modules where every module-level string (or list of strings) is prose the
+# report serves, whether or not it sits under a listed key: report.py's
+# `_MANUAL_REVIEW` is the fallback rubric a direct caller gets.
+SERVED_CODE_MODULES: frozenset[str] = frozenset({"report.py"})
+# Modules that only echo data files; the data walks already cover them.
+ECHO_ONLY_CODE_MODULES: frozenset[str] = frozenset({"loader.py"})
+# Stand in for an f-string's computed parts: a numeral word and a digit, so a
+# quota written as "at least {n}" reads as one under either spelling. Plain
+# number-like tokens that no rule reads
+# (test_checker_code_text_placeholders_do_not_trip_the_checker).
+CODE_PLACEHOLDERS: dict[str, str] = {"word": "two", "digit": "2"}
+CHECKER_DIR = Path(__file__).resolve().parents[2] / "src" / "checker"
+
+
+def _static_text(node: ast.AST, consts: dict[str, str], placeholder: str) -> str | None:
+    """The text of a string expression, or None when it is not one. A Constant
+    (implicit concatenation is already one), a `+` of strings, a Name bound to
+    a module-level string, or an f-string whose computed parts become
+    `placeholder`."""
+    if isinstance(node, ast.Constant):
+        return node.value if isinstance(node.value, str) else None
+    if isinstance(node, ast.Name):
+        return consts.get(node.id)
+    if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Add):
+        left = _static_text(node.left, consts, placeholder)
+        right = _static_text(node.right, consts, placeholder)
+        return None if left is None or right is None else left + right
+    if isinstance(node, ast.JoinedStr):
+        return "".join(
+            part.value if isinstance(part, ast.Constant) else placeholder
+            for part in node.values
+        )
+    return None
+
+
+def _module_constants(tree: ast.Module, placeholder: str) -> tuple[dict[str, str], dict[str, int]]:
+    """Module-level `NAME = <string expr>` bindings and their line numbers."""
+    consts: dict[str, str] = {}
+    lines: dict[str, int] = {}
+    for node in tree.body:
+        if isinstance(node, ast.Assign) and len(node.targets) == 1 and isinstance(node.targets[0], ast.Name):
+            text = _static_text(node.value, consts, placeholder)
+            if text is not None:
+                name = node.targets[0].id
+                consts[name], lines[name] = text, node.lineno
+    return consts, lines
+
+
+def _is_data_echo(node: ast.AST) -> bool:
+    """`<name>.get("fix", ...)` or `<name>["fix"]`: a string read back from
+    loaded data, which the data walks already cover."""
+    if isinstance(node, ast.Call):
+        return (
+            isinstance(node.func, ast.Attribute)
+            and node.func.attr == "get"
+            and bool(node.args)
+            and isinstance(node.args[0], ast.Constant)
+            and isinstance(node.args[0].value, str)
+        )
+    if isinstance(node, ast.Subscript):
+        return isinstance(node.slice, ast.Constant) and isinstance(node.slice.value, str)
+    return False
+
+
+def _variants(texts: dict[str, str]) -> list[tuple[str, str]]:
+    """(path suffix, text) for each placeholder spelling; a text the
+    placeholder does not touch is returned once with no suffix."""
+    if len(set(texts.values())) == 1:
+        return [("", next(iter(texts.values())))]
+    return [(f"#{name}", text) for name, text in texts.items()]
+
+
+def code_texts_in_source(
+    source: str, rel: str, module_name: str = ""
+) -> tuple[list[tuple[str, str]], list[str]]:
+    """(texts, unresolved) for one module's source. `unresolved` lists the
+    `path:L<line>:<key>` of every expression under a SERVED_CODE_KEYS key that
+    is neither a static string nor a data echo: a silent skip would let a
+    served string through the sweeps unread."""
+    tree = ast.parse(source)
+    consts = {n: _module_constants(tree, ph) for n, ph in CODE_PLACEHOLDERS.items()}
+    found: list[tuple[str, str]] = []
+    unresolved: list[str] = []
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Dict):
+            continue
+        for key, value in zip(node.keys, node.values):
+            if not (isinstance(key, ast.Constant) and key.value in SERVED_CODE_KEYS):
+                continue
+            texts = {
+                n: _static_text(value, consts[n][0], ph) for n, ph in CODE_PLACEHOLDERS.items()
+            }
+            if any(t is None for t in texts.values()):
+                if not _is_data_echo(value):
+                    unresolved.append(f"{rel}:L{value.lineno}:{key.value}")
+                continue
+            line = consts[next(iter(consts))][1][value.id] if isinstance(value, ast.Name) else value.lineno
+            found.extend((f"{rel}:L{line}:{key.value}{sfx}", t) for sfx, t in _variants(texts))
+    if module_name in SERVED_CODE_MODULES:
+        word_consts = consts["word"][0]
+        for node in tree.body:
+            if not (isinstance(node, ast.Assign) and isinstance(node.targets[0], ast.Name)):
+                continue
+            if isinstance(node.value, ast.List):
+                name = node.targets[0].id
+                for e in node.value.elts:
+                    t = _static_text(e, word_consts, CODE_PLACEHOLDERS["word"])
+                    if t is not None:
+                        found.append((f"{rel}:L{e.lineno}:{name}", t))
+    return found, unresolved
+
+
+def _scan_checker() -> tuple[list[tuple[str, str]], list[str]]:
+    seen: dict[tuple[str, str], None] = {}
+    unresolved: list[str] = []
+    for path in sorted(CHECKER_DIR.glob("*.py")):
+        if path.name in ECHO_ONLY_CODE_MODULES:
+            continue
+        found, bad = code_texts_in_source(
+            path.read_text(encoding="utf-8"), f"src/checker/{path.name}", path.name
+        )
+        for item in found:
+            seen.setdefault(item)
+        unresolved.extend(bad)
+    return list(seen), unresolved
+
+
+def checker_code_texts() -> list[tuple[str, str]]:
+    """(path, text) for the prose src/checker builds in Python code and puts in
+    a report: every dict value under a SERVED_CODE_KEYS key (a module-level
+    string such as `_FIX`, `_NOTE` or `_NEXT_ACTION` is resolved by name and
+    reported once per use, at its definition line), plus the string lists in
+    SERVED_CODE_MODULES. Read statically with `ast`; the checker is not run.
+    An f-string is read under each CODE_PLACEHOLDERS spelling and its paths end
+    `#word` and `#digit`. Path is `src/checker/<module>.py:L<line>:<key>`. An
+    identical (path, text) pair, as when one constant sits under two keys on
+    one line, is kept once."""
+    return _scan_checker()[0]
+
+
+def checker_code_unresolved() -> list[str]:
+    """Served-key expressions in src/checker that checker_code_texts could not
+    read as text and that are not a data echo. The sweeps are blind to them."""
+    return _scan_checker()[1]
+
+
 def served_texts() -> list[tuple[str, str]]:
-    """(JSON path, string) for everything the guide serves, per content type,
-    every banned_structures `fix`, plus the `short` and `detail` of every
-    self-review rubric item (the parts a report serves; `id`, `applies_to` and
-    `history` are not served)."""
-    texts: list[tuple[str, str]] = banned_fix_texts()
+    """(path, string) for everything a model reads: the guide for each content
+    type, every banned_structures `fix`, the `short` and `detail` of every
+    self-review rubric item (`id`, `applies_to` and `history` are not served),
+    and the prose src/checker builds in Python code (`checker_code_texts`: the
+    `fix`, `detail`, `note` and `next_action` strings of a report)."""
+    texts: list[tuple[str, str]] = [*banned_fix_texts(), *checker_code_texts()]
     for ct in CONTENT_TYPES:
         texts.extend(_walk(build_guide_payload(ct), f"guide[{ct}]"))
     for i, item in enumerate(load_self_review()):
@@ -299,6 +457,8 @@ def _quotes_in(text: str) -> list[str]:
 
 
 def _in_guidance_field(path: str) -> bool:
+    if path.startswith("src/checker/"):
+        return True  # every code string is read as an instruction
     keys = re.findall(r"\.([A-Za-z_]+)", path)
     return any(k in GUIDANCE_FIELDS for k in keys)
 
@@ -418,6 +578,59 @@ def test_banned_structure_fix_texts_are_walked():
     assert any(_in_guidance_field(p) for p in paths)
 
 
+def test_checker_code_texts_are_walked():
+    texts = checker_code_texts()
+    paths = [p for p, _ in texts]
+    assert len(texts) > 20
+    assert len(set(paths)) == len(paths)
+    structures = [p for p, t in texts if p.startswith("src/checker/structures.py") and "rule-of-three tell" in t]
+    emdash = [p for p, _ in texts if p.startswith("src/checker/emdash.py")]
+    report = [p for p, _ in texts if p.startswith("src/checker/report.py")]
+    assert structures and emdash and report
+    served = {p for p, _ in served_texts()}
+    assert set(paths) <= served
+
+
+def test_checker_code_text_placeholders_do_not_trip_the_checker():
+    for placeholder in CODE_PLACEHOLDERS.values():
+        assert fires(placeholder) == []
+        assert fires(f"This {placeholder}-word span has no punctuation.") == []
+
+
+def test_every_fstring_is_walked_under_a_word_and_a_digit_placeholder():
+    source = 'def f(n):\n    return {"fix": f"Cut {n} of them.", "note": "Plain."}\n'
+    found, unresolved = code_texts_in_source(source, "src/checker/x.py")
+    assert unresolved == []
+    assert dict(found) == {
+        "src/checker/x.py:L2:fix#word": "Cut two of them.",
+        "src/checker/x.py:L2:fix#digit": "Cut 2 of them.",
+        "src/checker/x.py:L2:note": "Plain.",
+    }
+    paths = [p for p, _ in checker_code_texts()]
+    assert any(p.endswith("#word") for p in paths) and any(p.endswith("#digit") for p in paths)
+
+
+def test_unresolvable_served_expression_is_reported_not_skipped():
+    source = 'def f(y):\n    msg = f"x {y}"\n    return {"fix": msg}\n'
+    found, unresolved = code_texts_in_source(source, "src/checker/x.py")
+    assert (found, unresolved) == ([], ["src/checker/x.py:L3:fix"])
+    module_level = 'msg = f"x {y}"\nout = {"fix": msg}\n'
+    assert code_texts_in_source(module_level, "src/checker/x.py")[1] == []
+    echo = 'def g(s):\n    return [{"fix": s.get("fix", "")}, {"fix": s["fix"]}]\n'
+    assert code_texts_in_source(echo, "src/checker/x.py") == ([], [])
+
+
+def test_every_served_code_expression_resolves_to_text():
+    assert checker_code_unresolved() == []
+
+
+def test_checker_code_texts_raise_no_hard_violation():
+    from src.checker import run_checks
+
+    bad = [(p, t) for p, t in checker_code_texts() if run_checks(t)["hard_violations"] != []]
+    assert bad == []
+
+
 def test_a_firing_quote_planted_in_a_fix_text_fails_the_check():
     planted = {"structures": [{"id": "BS-X", "fix": "Write 'It is not a hammer. It is a partner.' instead."}]}
     texts = banned_fix_texts(planted)
@@ -524,21 +737,128 @@ REMOVED_PHRASES = (
     "AI tends to present the happy path", "someone who actually uses the product",
     "Instead of 'stakeholder engagement'", "Instead of 'the educational landscape'",
     "Replace generic nouns with specific ones: 'factors' → name the factors;",
+    # The pre-2026-11 rule_of_three_density fix text in src/checker/structures.py
+    # told the model to change a list's count.
+    "drop to two items", "expand to four", "commentary between them",
+    # pre-2026-11 fix texts in src/checker and their data siblings (BS-012,
+    # BS-018, BS-031, AP for BS-031): added an agent, action, relation or
+    # specifics the source lacks (AR-001)
+    "attach it to a specific action", "(and, but, so)", "name the agent.",
+    "let the specifics carry the credibility", "name the agent and the effect.",
+    # BS-031 fix example wording (2026-11 QA wave)
+    "makes the argument land", "they have to do the whole job",
+)
+
+
+def removed_phrases_in(texts: list[tuple[str, str]]) -> list[str]:
+    """The REMOVED_PHRASES that still appear (case-insensitive) in any text."""
+    blob = " ".join(s for _, s in texts).lower()
+    return [phrase for phrase in REMOVED_PHRASES if phrase.lower() in blob]
+
+
+# The rule_of_three_density fix text as src/checker/structures.py built it
+# before 2026-11. No served-text walk could see it, so it contradicted the
+# served rules until a parked-items round caught it by hand.
+OLD_RULE_OF_THREE_FIX = (
+    "Two or more parallel three-item lists sit close together, a strong "
+    "rule-of-three tell. Vary one: drop to two items, expand to four, or fold "
+    "the items into a sentence with commentary between them."
 )
 
 
 def test_removed_quota_and_performance_phrases_are_not_served():
-    blob = " ".join(s for _, s in served_texts()).lower()
-    for phrase in REMOVED_PHRASES:
-        assert phrase.lower() not in blob, phrase
+    assert removed_phrases_in(served_texts()) == []
+
+
+OLD_CODE_FIX_PHRASES = (
+    "a specific action", "(and, but, so)", "name the agent.",
+    "let the specifics carry",
+)
+NEW_CODE_FIX_PHRASES = (
+    "already describes", "only where the source states a cause or a contrast",
+    "where the source names one", "already in the text", "make the case",
+)
+
+
+def test_code_fix_texts_add_no_fact_or_relation_the_source_lacks():
+    texts = checker_code_texts()
+    blob = " ".join(t for _, t in texts)
+    offenders = [(p, ph) for p, t in texts for ph in OLD_CODE_FIX_PHRASES if ph in t]
+    assert offenders == []
+    for phrase in NEW_CODE_FIX_PHRASES:
+        assert phrase in blob, phrase
+
+
+SIBLING_FIX_TEXTS = {
+    "BS-012": "Unpack the nouns back into verbs; name the agent where the source names one.",
+    "BS-018": (
+        "End on the concrete thing the passage is about. If the maxim is earned, "
+        "attach it to an action the passage already describes rather than "
+        "floating it as a closer."
+    ),
+    "BS-009": "Name what each 'This' refers to, or join the sentences so one leads into the next.",
+    "BS-020": (
+        "Make the positive claim once. If the boundary matters, state it "
+        "without mirroring the verb in the negative."
+    ),
+}
+BS_031_FIX = (
+    "Name the agent and the effect the source gives. 'The layout carries the "
+    "weight of the argument' -> 'The layout presents the argument.' For the "
+    "label form, state the plain fact: 'Eight words to carry' -> 'The headline "
+    "has eight words.'"
+)
+BS_031_FIX_START = "Name the agent and the effect the source gives. "
+
+
+def test_data_sibling_fix_texts_name_only_what_the_source_gives():
+    structures = load_json("banned_structures.json")["structures"]
+    fixes = {e["id"]: e["fix"] for e in structures if "fix" in e}
+    for sid, text in SIBLING_FIX_TEXTS.items():
+        assert fixes[sid] == text, sid
+    assert fixes["BS-031"] == BS_031_FIX
+    ap = load_json("anti_patterns.json")
+    assert any(
+        "Name the agent and the effect the source gives. The label form" in s
+        for _, s in _walk(ap, "anti_patterns")
+    )
+
+
+def test_removed_phrase_sweep_fails_on_the_old_rule_of_three_fix():
+    old = [("src/checker/structures.py:L0:fix", OLD_RULE_OF_THREE_FIX)]
+    assert removed_phrases_in(old) == [
+        "drop to two items", "expand to four", "commentary between them",
+    ]
+    assert removed_phrases_in(served_texts()) == []
+
+
+_PER_UNIT_QUOTA = re.compile(
+    r"\bat least (?:one|two|half|\d+)\b[^.]{0,80}\bper (?:paragraph|section|sentence)\b",
+    re.I,
+)
+
+
+def quota_offenders(texts: list[tuple[str, str]]) -> list[str]:
+    """Paths of the texts that set an 'at least N per unit' quota."""
+    return [p for p, s in texts if _PER_UNIT_QUOTA.search(s)]
 
 
 def test_served_guidance_sets_no_per_unit_quota():
-    quota = re.compile(
-        r"\bat least (?:one|two|half)\b[^.]{0,80}\bper (?:paragraph|section|sentence)\b",
-        re.I,
+    assert quota_offenders(served_texts()) == []
+
+
+PLANTED_CODE_PATH = "src/checker/planted.py:L1:fix"
+PLANTED_QUOTA = "Add at least one example per paragraph."
+
+
+def test_quota_sweep_reaches_a_planted_code_string(monkeypatch):
+    assert quota_offenders(served_texts()) == []
+    monkeypatch.setattr(
+        sys.modules[__name__],
+        "checker_code_texts",
+        lambda: [(PLANTED_CODE_PATH, PLANTED_QUOTA)],
     )
-    assert [p for p, s in served_texts() if quota.search(s)] == []
+    assert quota_offenders(served_texts()) == [PLANTED_CODE_PATH]
 
 
 _ASKS_FOR_BEATS = (
@@ -982,6 +1302,14 @@ def test_code_fix_tell_control():
     assert _CODE_FIX_TELLS.search("The text keeps asserting that the work is real.")
     assert _CODE_FIX_TELLS.search("Leave causal links implicit; vary sentence openings.")
     assert not _CODE_FIX_TELLS.search(outside_quotes("Cut it ('real' x3) and name the thing."))
+
+
+def test_every_walked_code_string_carries_no_tell_word_or_contrast_reflex():
+    """Not only `fix`: a `detail`, `note` or `next_action` is read the same way."""
+    from tests.checker.test_rubric import outside_quotes
+
+    bad = [(p, t) for p, t in checker_code_texts() if _CODE_FIX_TELLS.search(outside_quotes(t))]
+    assert bad == []
 
 
 def test_code_fix_texts_carry_no_tell_words_or_contrast_reflex():

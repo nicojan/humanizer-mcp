@@ -371,7 +371,7 @@
         "confidence": "medium"
       },
       "gate": "checklist",
-      "fix": "Name the agent and the effect. 'The layout carries the weight of the argument' -> 'The layout is what makes the argument land.' For the label form, say what the words must do: 'Eight words to carry' -> 'Eight words, and they have to do the whole job.'",
+      "fix": "Name the agent and the effect the source gives. 'The layout carries the weight of the argument' -> 'The layout presents the argument.' For the label form, state the plain fact: 'Eight words to carry' -> 'The headline has eight words.'",
       "source_examples": [
         "AP-044"
       ],

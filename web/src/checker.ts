@@ -564,9 +564,10 @@ function spanHasFiniteVerb(span: string): boolean {
 
 const COMMA_SPLICE_FIX =
   "Two independent clauses are joined by only a comma. Use a period (two " +
-  "sentences), or a semicolon when the clauses are closely joined; or add a " +
-  "coordinating conjunction (and, but, so) after the comma. If the splice is " +
-  "a deliberate stylistic choice, justify it.";
+  "sentences), or a semicolon when the clauses are closely joined. A " +
+  "coordinating conjunction after the comma also works: 'and' for an " +
+  "addition, and 'so' or 'but' only where the source states a cause or a " +
+  "contrast. If the splice is a deliberate stylistic choice, justify it.";
 
 function findCommaSplices(text: string): Finding[] {
   const out: Finding[] = [];
@@ -767,7 +768,7 @@ function copulaMaximCloser(text: string): Finding[] {
       confidence: "low",
       offset: sStart,
       excerpt: excerpt(text, sStart, sStart + last.length),
-      fix: "End on the concrete thing the passage is about. If the maxim is earned, attach it to a specific action rather than floating it as a closer.",
+      fix: "End on the concrete thing the passage is about. If the maxim is earned, attach it to an action the passage already describes rather than floating it as a closer.",
     });
   }
   return out;
@@ -822,7 +823,7 @@ function stackedNominalization(text: string): Finding[] {
         confidence: "medium",
         offset: s0,
         excerpt: excerpt(text, s0, s0 + sent.length),
-        fix: "Unpack the nouns back into verbs; name the agent.",
+        fix: "Unpack the nouns back into verbs; name the agent where the source names one.",
       });
     }
   }
@@ -880,7 +881,7 @@ function findRuleOfThreeDensity(text: string): Finding[] {
       count: group.length,
       offset: group[0],
       excerpt: excerpt(text, group[0], end),
-      fix: "Two or more parallel three-item lists sit close together, a strong rule-of-three tell. Vary one: drop to two items, expand to four, or fold the items into a sentence with commentary between them.",
+      fix: "Two or more parallel three-item lists sit close together, a rule-of-three tell. Check each list against the source and keep every item it gives. Merge or split lists by content; never pad a list or cut an item to change a count. Where the items read as one point, fold them into a sentence. Add nothing the source lacks (absolute_rules AR-001).",
     });
   };
   for (const s of starts.slice(1)) {
@@ -937,8 +938,8 @@ function findBudgetOverruns(
       budget,
       detail:
         `${name} appears ${count} times in the text supplied; the budget for ` +
-        `the whole piece is ${budget}. A repeated rhetorical shape is the ` +
-        "durable tell, not any single use.",
+        `the whole piece is ${budget}. The repeated rhetorical shape is the ` +
+        "durable tell, more than any single use.",
       fix:
         "Keep the strongest instance and rewrite the rest. Counted only " +
         "within this call, so run the final check on the assembled document " +
@@ -1032,7 +1033,8 @@ function findCredibilityInsistence(text: string, config: any): Finding[] {
       "The text keeps vouching for its own account " +
       `('${dominant}' x${dc}; ${total} across the set), ` +
       "which a writer rarely needs to do. Cut the " +
-      "assertions and let the specifics carry the credibility; keep " +
+      "assertions and let the specifics already in the text make " +
+      "the case; keep " +
       "at most one where a contrast needs it.",
   }];
 }

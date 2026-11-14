@@ -77,6 +77,8 @@ crafted = [
      "The craft is mostly restraint."),
     ("verb_antithesis", "prose",
      "The system carries the busywork for you. It never carries the judgment."),
+    ("rule_of_three_stacked_prose", "prose",
+     "We built it for speed, scale, and safety. The team values trust, focus, and craft. Our clients get clarity, momentum, and results. The office has light, space, and quiet."),
     ("rule_of_three", "marketing",
      "We design, build, and ship. We plan, test, and measure. Our tools are fast, "
      "clean, and simple."),

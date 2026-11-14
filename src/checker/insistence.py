@@ -105,8 +105,8 @@ def find_credibility_insistence(text: str, config: dict) -> list[dict]:
                 "The text keeps vouching for its own account "
                 f"('{dominant}' x{counts[dominant]}; {total} across the set), "
                 "which a writer rarely needs to do. Cut the "
-                "assertions and let the specifics carry the credibility; keep "
-                "at most one where a contrast needs it."
+                "assertions and let the specifics already in the text make "
+                "the case; keep at most one where a contrast needs it."
             ),
         }
     ]

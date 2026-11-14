@@ -124,7 +124,7 @@
       "description": "Three or more 'X of' nominalizations in one sentence.",
       "detection": { "method": "heuristic", "confidence": "medium" },
       "gate": "checklist",
-      "fix": "Unpack the nouns back into verbs; name the agent.",
+      "fix": "Unpack the nouns back into verbs; name the agent where the source names one.",
       "source_examples": ["AP-018"]
     },
     {
@@ -212,7 +212,7 @@
       "detection": { "method": "heuristic", "confidence": "low" },
       "document_budget": 1,
       "gate": "checklist",
-      "fix": "End on the concrete thing, not a distilled lesson about it. If the maxim is earned, attach it to a specific action rather than floating it as a closer.",
+      "fix": "End on the concrete thing the passage is about. If the maxim is earned, attach it to an action the passage already describes rather than floating it as a closer.",
       "source_examples": ["BS-014"],
       "research_basis": "proposed-rules PR2-#3; in-the-wild audit 2026-06-28."
     },
@@ -390,7 +390,7 @@
         "confidence": "medium"
       },
       "gate": "checklist",
-      "fix": "Name the agent and the effect. 'The layout carries the weight of the argument' -> 'The layout is what makes the argument land.' For the label form, say what the words must do: 'Eight words to carry' -> 'Eight words, and they have to do the whole job.'",
+      "fix": "Name the agent and the effect the source gives. 'The layout carries the weight of the argument' -> 'The layout presents the argument.' For the label form, state the plain fact: 'Eight words to carry' -> 'The headline has eight words.'",
       "source_examples": ["AP-044"],
       "research_basis": "In-the-wild report (2026-08-06) plus caveats.json metrics_do_not_apply_to_label_text (2026-08-03), which recorded 'Eight words to carry' as a genuine AI-register tell that the checker missed."
     },

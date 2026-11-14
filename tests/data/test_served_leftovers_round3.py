@@ -11,7 +11,10 @@ anti-pattern examples. See docs/RULE-HISTORY.md for the round index.
 import json
 import re
 
+import pytest
+
 from src.storage.json_store import load_json
+from tests.data import test_guide_consistency as guide_consistency
 from tests.data.test_guide_consistency import served_texts
 
 _LEVEL = re.compile(r"\b(?:low|moderate|high)\b", re.IGNORECASE)
@@ -50,7 +53,7 @@ def test_no_profile_axis_value_names_a_level():
 # ---------------------------------------------------------------------------
 
 _AT_LEAST = re.compile(
-    r"\bat least (?:one|two|three)\b|\bno fewer than\b|\ba minimum of\b", re.IGNORECASE
+    r"\bat least (?:one|two|three|\d+)\b|\bno fewer than\b|\ba minimum of\b", re.IGNORECASE
 )
 # Every remaining use needs a one-line reason here. None remain after round 3.
 AT_LEAST_ALLOWED: frozenset[str] = frozenset()
@@ -64,9 +67,48 @@ def test_at_least_control_pattern_fires():
     assert not _AT_LEAST.search("at least a week")
 
 
+def at_least_offenders(texts: list[tuple[str, str]]) -> list[str]:
+    return [p for p, s in texts if _AT_LEAST.search(s) and p not in AT_LEAST_ALLOWED]
+
+
 def test_no_served_string_sets_an_at_least_quota():
-    bad = [p for p, s in served_texts() if _AT_LEAST.search(s) and p not in AT_LEAST_ALLOWED]
-    assert bad == []
+    assert at_least_offenders(served_texts()) == []
+
+
+PLANTED_FSTRING_SOURCE = (
+    'def f(n):\n    return {"fix": f"Rewrite at least {n} of them per paragraph."}\n'
+)
+
+
+def test_quota_sweeps_catch_a_planted_fstring_quota():
+    """The old "several" placeholder read as no quota; a digit or a numeral word
+    does. Both sweeps must catch the planted code text through the walker."""
+    assert not guide_consistency.quota_offenders(
+        [("p", "Rewrite at least several of them per paragraph.")]
+    )
+    found, unresolved = guide_consistency.code_texts_in_source(
+        PLANTED_FSTRING_SOURCE, "src/checker/planted.py"
+    )
+    assert unresolved == []
+    assert len(found) == 2
+    assert guide_consistency.quota_offenders(found) == [p for p, _ in found]
+    assert at_least_offenders(found) == [p for p, _ in found]
+
+
+def test_widened_quota_patterns_match_digits():
+    assert _AT_LEAST.search("keep at least 2 examples")
+    assert guide_consistency.quota_offenders([("p", "Add at least 3 per section.")]) == ["p"]
+    assert not _AT_LEAST.search("at least a week")
+
+
+def test_at_least_sweep_reaches_a_planted_code_string(monkeypatch):
+    path = "src/checker/planted.py:L1:fix"
+    monkeypatch.setattr(
+        guide_consistency,
+        "checker_code_texts",
+        lambda: [(path, "Add at least one example per paragraph.")],
+    )
+    assert at_least_offenders(served_texts()) == [path]
 
 
 # ---------------------------------------------------------------------------
@@ -318,16 +360,28 @@ def test_enumeration_examples_rank_nothing_and_match_the_new_wording():
     assert "repeat by habit" in ngram and "keep a repeat the content needs" in ngram
 
 
-def test_bs009_fix_matches_the_wording_the_checker_serves():
+# Heuristic rules: the live fix text comes from src/checker/structures.py, so
+# the data entry has to repeat it character for character.
+HEURISTIC_TRIGGERS = {
+    "BS-009": "This is slow. This costs money. This hurts users.",
+    "BS-012": "The implementation of the optimization of the configuration of the system failed.",
+    "BS-018": "We tried three layouts and threw two away. The craft is mostly restraint.",
+    "BS-020": "AI carries the busywork. It never carries the judgment.",
+}
+
+
+@pytest.mark.parametrize("sid", sorted(HEURISTIC_TRIGGERS))
+def test_heuristic_data_fix_matches_the_wording_the_checker_serves(sid):
     from src.checker import run_checks
 
-    served = next(
+    served = [
         f["fix"]
-        for f in run_checks("This is slow. This costs money. This hurts users.")["must_clear"]
-        if f.get("id") == "BS-009"
-    )
-    data = next(s for s in load_json("banned_structures.json")["structures"] if s["id"] == "BS-009")
-    assert data["fix"] == served
+        for f in run_checks(HEURISTIC_TRIGGERS[sid])["must_clear"]
+        if f.get("id") == sid
+    ]
+    assert served, sid
+    data = next(s for s in load_json("banned_structures.json")["structures"] if s["id"] == sid)
+    assert data["fix"] == served[0]
 
 
 def test_surface_pattern_guidance_sets_no_evenness_or_human_comparison():

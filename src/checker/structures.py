@@ -115,8 +115,8 @@ def _copula_maxim_closer(text: str) -> list[dict]:
                 "excerpt": excerpt(text, s_start, s_start + len(last)),
                 "fix": (
                     "End on the concrete thing the passage is about. If the "
-                    "maxim is earned, attach it to a specific action rather "
-                    "than floating it as a closer."
+                    "maxim is earned, attach it to an action the passage "
+                    "already describes rather than floating it as a closer."
                 ),
             }
         )
@@ -206,9 +206,11 @@ def find_rule_of_three_density(text: str) -> list[dict]:
                 "excerpt": excerpt(text, group[0], end),
                 "fix": (
                     "Two or more parallel three-item lists sit close together, a "
-                    "strong rule-of-three tell. Vary one: drop to two items, "
-                    "expand to four, or fold the items into a sentence with "
-                    "commentary between them."
+                    "rule-of-three tell. Check each list against the source and "
+                    "keep every item it gives. Merge or split lists by content; "
+                    "never pad a list or cut an item to change a count. Where "
+                    "the items read as one point, fold them into a sentence. "
+                    "Add nothing the source lacks (absolute_rules AR-001)."
                 ),
             }
         )
@@ -238,7 +240,10 @@ def _stacked_nominalization(text: str) -> list[dict]:
                     "confidence": "medium",
                     "offset": max(start, 0),
                     "excerpt": excerpt(text, max(start, 0), max(start, 0) + len(sent)),
-                    "fix": "Unpack the nouns back into verbs; name the agent.",
+                    "fix": (
+                        "Unpack the nouns back into verbs; name the agent where "
+                        "the source names one."
+                    ),
                 }
             )
     return out
